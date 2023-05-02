@@ -1,0 +1,200 @@
+.image-container {
+  border: 15px solid #ffffff00;
+  display: inline-block;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.image-container:hover {
+	cursor: pointer;
+	transform: scale(1.1);
+}
+
+.image-container:hover .overlay {
+	opacity: 1;
+}
+
+.overlay {
+  color: white;
+	position: absolute;
+	background: rgba(0, 0, 0, 0.5);
+	width: 100%;
+	transition: 0.5s ease;
+	opacity: 0;
+	bottom: 0;
+	font-size: 20px;
+	text-align: center;
+}
+
+.searchResultImg {
+  width: 250px;
+}
+
+.searchField {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  width: 500px;
+}
+
+.searchButtons {
+  text-align: center;
+}
+
+.albumImg {
+  float: left;
+  width: 500px;
+}
+
+.albumInformation, .tracksInformation {
+  padding-left: 20px;
+  float: left;
+}
+
+.strongText {
+  font-size: 25px;
+  font-family: 'Brush Script MT', cursive;
+}
+
+.albumAdd {
+  text-align: center;
+}
+
+.addNewLink {
+  float: right;
+}
+
+.feedbackMessage {
+  text-align: center;
+  border: 10;
+}
+
+input[type="number"]{
+  width: 40px;
+}
+
+input[type="text"]{
+  width: 300px;
+}
+
+input[type="url"]{
+  width: 300px;
+} 
+
+th, tfoot {
+  background: linear-gradient(90deg, rgb(232, 232, 237) 0%, rgb(239, 239, 243) 35%, rgb(154, 158, 193) 100%);
+}
+
+tr:nth-child(even){background-color: #f2f2f2;}
+
+.staticIcon {
+  position:absolute;
+  background: white;
+  opacity:1;
+  width: 30px;
+}
+
+.staticIcon:hover {
+  opacity:0;
+  width: 30px;
+}
+
+.activeIcon {
+  position:absolute;
+  background: white;
+  opacity:0;
+  width: 30px;
+}
+
+.activeIcon:hover {
+  opacity:1;
+  width: 30px;
+}
+
+
+
+
+.editStaticIcon {
+  right: 0;
+  position:absolute;
+  background: white;
+  opacity:1;
+  width: 30px;
+  padding-right: 10px;
+}
+
+.editStaticIcon:hover {
+  right: 0;
+  opacity:0;
+  width: 30px;
+  padding-right: 10px;
+}
+
+.editActiveIcon {
+  right: 0;
+  position:absolute;
+  background: white;
+  opacity:0;
+  width: 30px;
+  padding-right: 10px;
+}
+
+.editActiveIcon:hover {
+  right: 0;
+  opacity:1;
+  width: 30px;
+  padding-right: 10px;
+}
+
+
+
+.addNewStaticIcon {
+  right: 0;
+  position:absolute;
+  background: white;
+  opacity:1;
+  width: 40px;
+  padding-right: 10px;
+}
+
+.addNewStaticIcon:hover {
+  right: 0;
+  opacity:0;
+  width: 40px;
+  padding-right: 10px;
+}
+
+.addNewActiveIcon {
+  right: 0;
+  position:absolute;
+  background: white;
+  opacity:0;
+  width: 40px;
+  padding-right: 10px;
+}
+
+.addNewActiveIcon:hover {
+  right: 0;
+  opacity:1;
+  width: 40px;
+  padding-right: 10px;
+}
+
+
+.feedbackMessageError {
+  color: rgb(227, 63, 17);
+  background: rgb(255, 255, 255);
+  font-size: 20px;
+  text-align: center;
+}
+
+.feedbackMessageInfo {
+  color: rgb(43, 78, 9);
+  background: rgb(255, 255, 255);
+  font-size: 20px;
+  text-align: center;
+}
+
+.hideElement {
+  display: none;
+}
