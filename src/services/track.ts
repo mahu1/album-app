@@ -3,19 +3,19 @@ import { ITrack } from '../Interfaces'
 
 const baseUrl = 'http://localhost:3001/tracks'
 
-export const getByTrackTitle = (searchValue: string): Promise<ITrack[]> => {
+const getByTrackTitle = (searchValue: string): Promise<ITrack[]> => {
     return axios
       .get<ITrack[]>("http://localhost:3001/tracks?title_like=" + searchValue)
       .then(response => response.data)
 }
 
-export const getByAlbumId = (albumId: number): Promise<ITrack[]> => {
+ const getByAlbumId = (albumId: number): Promise<ITrack[]> => {
   return axios  
     .get<ITrack[]>("http://localhost:3001/tracks?albumId=" + albumId)
     .then(response => response.data)
 }
 
-export const create = (track: ITrack): Promise<ITrack> => {
+const create = (track: ITrack): Promise<ITrack> => {
   const request = axios.post(baseUrl, track)
   return request.then(response => response.data)
 }
@@ -46,4 +46,4 @@ const remove = (track: ITrack) => {
   return request.then(response => response.data)
 }
 
-export default { create, update, remove }
+export default { create, update, remove, getByTrackTitle }

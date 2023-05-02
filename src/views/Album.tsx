@@ -1,7 +1,7 @@
-import { IAlbum, ITrack } from '../Interfaces'
+import { IAlbum } from '../Interfaces'
 import { useEffect, useState } from 'react'
-import { getById } from '../services/album'
-import { useParams, useNavigate } from 'react-router-dom'
+import albumService from '../services/album'
+import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { getFullLength } from '../AlbumUtils'
 
@@ -9,10 +9,9 @@ import { getFullLength } from '../AlbumUtils'
 export const Album = () => {
   const { id } = useParams() as { id: string }
   const [album, setAlbum] = useState<IAlbum>()
-  const navigate = useNavigate()
 
   useEffect(() => {
-    getById(+id).then(data => {
+    albumService.getById(+id).then(data => {
       setAlbum(data)
     })
   }, [id])
@@ -26,7 +25,7 @@ export const Album = () => {
           <Link to={`/`}><img src="../icons8-go-back.png" className="staticIcon" alt="back" title="back"/><img src="../icons8-go-back.gif" className="activeIcon" alt="back" title="back"/></Link>
           <Link to={`/albumEdit/${album.id}`}><img src="../icons8-edit.png" className="editStaticIcon" alt="edit" title="edit"/><img src="../icons8-edit.gif" className="editActiveIcon" alt="edit" title="edit"/></Link>
           <br/>
-          <div><a href="#" onClick={() => navigate('/')}>back</a></div>
+          <br/>
           <img className="albumImg" src={album.cover} alt={album.title} title={album.artist + " - " + album.title} />
           <div className="albumInformation" key={album.id}>
             <div className="strongText">{album.artist} - {album.title}</div>

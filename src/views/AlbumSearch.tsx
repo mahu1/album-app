@@ -1,9 +1,8 @@
-import { useState, useEffect, useContext } from 'react'
-import { getAll, getByArtist, getByIds, getByAlbumTitle } from '../services/album'
-import { getByTrackTitle } from '../services/track'
+import { useState, useEffect } from 'react'
+import albumService from '../services/album'
+import trackService from '../services/track'
 import { IAlbum } from '../Interfaces'
 import { Link } from 'react-router-dom'
-import { FeedbackMessageContext } from '../FeedbackMessageContext'
 
 enum ItemGroup {
   Artist = 'artist',
@@ -15,10 +14,9 @@ export const AlbumSearch = () => {
   const [searchValue, setSearchValue] = useState('')
   const [searchGroup, setSearchGroup] = useState(ItemGroup.Artist)
   const [albums, setAlbums] = useState<IAlbum[]>([])
-  const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
 
   useEffect(() => {
-    getAll().then((data) => setAlbums(data))
+    albumService.getAll().then((data) => setAlbums(data))
   }, [])
 
   
@@ -26,25 +24,25 @@ export const AlbumSearch = () => {
     setSearchValue(searchValue)
 
     if (searchValue === '') {
-      getAll().then(data => {
+      albumService.getAll().then(data => {
         setAlbums(data)
       })
     } else if (searchGroup === ItemGroup.Artist) {
-      getByArtist(searchValue).then(data => {
+      albumService.getByArtist(searchValue).then(data => {
         setAlbums(data)
       })
     } else if (searchGroup === ItemGroup.Album) {
-      getByAlbumTitle(searchValue).then(data => {
+      albumService.getByAlbumTitle(searchValue).then(data => {
         setAlbums(data)
       })
     } else if (searchGroup === ItemGroup.Track) {
       const albumIds:Set<number> = new Set()
-      getByTrackTitle(searchValue).then(data => {
+      trackService.getByTrackTitle(searchValue).then(data => {
         data.forEach(d => albumIds.add(d.albumId))
         if (albumIds.size === 0) {
           setAlbums([])
         } else {
-          getByIds(albumIds).then(album => {
+          albumService.getByIds(albumIds).then(album => {
             setAlbums(album)
           })
         }

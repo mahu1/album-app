@@ -4,25 +4,25 @@ import { AlbumExistsException } from '../AlbumExistsException'
 
 const baseUrl = 'http://localhost:3001/albums'
 
-export const getAll = (): Promise<IAlbum[]> => {
+const getAll = (): Promise<IAlbum[]> => {
   return axios
     .get<IAlbum[]>(baseUrl + "?_sort=releaseDate")
     .then(response => response.data)
 }
 
-export const getByArtist = (searchValue: string): Promise<IAlbum[]>  => {
+const getByArtist = (searchValue: string): Promise<IAlbum[]>  => {
   return axios
     .get<IAlbum[]>(baseUrl + "?artist_like=" + searchValue + "&_sort=releaseDate")
     .then(response => response.data)
 }
 
-export const getByAlbumTitle = (searchValue: string): Promise<IAlbum[]> => {
+const getByAlbumTitle = (searchValue: string): Promise<IAlbum[]> => {
   return axios
     .get<IAlbum[]>(baseUrl + "?title_like=" + searchValue + "&_sort=releaseDate")
     .then(response => response.data)
 }
 
-export const getByIds = (ids: Set<number>): Promise<IAlbum[]> => {
+const getByIds = (ids: Set<number>): Promise<IAlbum[]> => {
   let idValues: string = "?"
   let iterateCounter: number = 0
   ids.forEach(id =>  {
@@ -38,24 +38,20 @@ export const getByIds = (ids: Set<number>): Promise<IAlbum[]> => {
     .then(response => response.data)
 }
 
-export const getByArtistAndTitle = (artist: string, title: string): Promise<IAlbum> => {
+const getByArtistAndTitle = (artist: string, title: string): Promise<IAlbum> => {
   return axios
     .get<IAlbum[]>(baseUrl + "?artist=" + artist + "&title=" + title)
     .then(response => response.data[0])
 }
 
 
-export const getById = (id: number): Promise<IAlbum> => {
+const getById = (id: number): Promise<IAlbum> => {
   return axios
     .get<IAlbum>(baseUrl + "/" + id + "/" + "?_embed=tracks")
     .then(response => response.data)
 }
 
-export const getById2 = async (id: number): Promise<IAlbum> => {
-  return (await axios.get<IAlbum>(`${baseUrl}/${id}`)).data
-}
-
-export const create = async (album: IAlbum): Promise<IAlbum> => {
+const create = async (album: IAlbum): Promise<IAlbum> => {
   const data = await getByArtistAndTitle(album.artist, album.title)
   if (data) {
     throw new AlbumExistsException(`Album already found: ${album.artist} - ${album.title}`)
@@ -79,4 +75,4 @@ const remove = (id: number) => {
   return request.then(response => response.data)
 }
 
-export default { create, update, remove, getById, getByArtistAndTitle, patch }
+export default { getAll, getByArtist, getByAlbumTitle, create, update, remove, getById, patch, getByIds }
