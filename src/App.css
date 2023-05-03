@@ -53,7 +53,6 @@
 
 .strongText {
   font-size: 25px;
-  font-family: 'Brush Script MT', cursive;
 }
 
 .albumAdd {
@@ -69,15 +68,15 @@
   border: 10;
 }
 
-input[type="number"]{
+input[type="number"] {
   width: 40px;
 }
 
-input[type="text"]{
+input[type="text"] {
   width: 300px;
 }
 
-input[type="url"]{
+input[type="url"] {
   width: 300px;
 } 
 
@@ -111,9 +110,6 @@ tr:nth-child(even){background-color: #f2f2f2;}
   width: 30px;
 }
 
-
-
-
 .editStaticIcon {
   right: 0;
   position:absolute;
@@ -145,8 +141,6 @@ tr:nth-child(even){background-color: #f2f2f2;}
   width: 30px;
   padding-right: 10px;
 }
-
-
 
 .addNewStaticIcon {
   right: 0;
@@ -195,6 +189,6 @@ tr:nth-child(even){background-color: #f2f2f2;}
   text-align: center;
 }
 
-.hideElement {
-  display: none;
+body {
+  font-family: "Verdana";
 }

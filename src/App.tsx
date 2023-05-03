@@ -24,7 +24,7 @@ export const App = () => {
     timer = window.setTimeout(
       () => {
         setFeedbackMessage( {text : ``, feedbackMessageType: ''} )
-      }, 50000);
+      }, 20000);
   }
 
   const FeedbackMessage = () => {

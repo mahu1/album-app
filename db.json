@@ -163,7 +163,7 @@
     },
     {
       "artist": "The Beatles",
-      "title": "Abbay Road",
+      "title": "Abbey Road",
       "releaseDate": "1969-09-26",
       "cover": "https://m.media-amazon.com/images/I/A19M5TR8iYL._AC_SX679_.jpg",
       "id": 53
@@ -340,7 +340,7 @@
     },
     {
       "trackNumber": 15,
-      "title": "All Along The Watchtower",
+      "title": "All Along the Watchtower",
       "length": "3:54",
       "albumId": 2,
       "id": 57
