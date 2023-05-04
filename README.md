@@ -4,11 +4,17 @@ An application used to search albums by names, artist and songs. User can insert
 
 # Screenshots
 
-<img src="readmeImages/search.png" width="300">
+### Albums search
 
-<img src="readmeImages/info.png" width="300">
+<img src="readmeImages/search.png" width="600">
 
-<img src="readmeImages/edit.png" width="300">
+### Album info
+
+<img src="readmeImages/info.png" width="600">
+
+### Album edit
+
+<img src="readmeImages/edit.png" width="800">
 
 ## Installation and Setup Instructions
 
