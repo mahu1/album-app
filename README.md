@@ -4,15 +4,15 @@ An application used to search albums by names, artist and songs. User can insert
 
 # Screenshots
 
-![search](assets\images\search.png)
+<img src="readmeImages/search.png" width="300">
 
-![info](assets\images\info.png)
+<img src="readmeImages/info.png" width="300">
 
-![edit](assets\images\edit.png)
+<img src="readmeImages/edit.png" width="300">
 
 ## Installation and Setup Instructions
 
-Clone down this repository. You will need [node](https://nodejs.org/en) and [JSON server]https://github.com/typicode/json-server installed on your machine.
+Clone down this repository. You will need [node](https://nodejs.org/en) and [JSON server](https://github.com/typicode/json-server) installed on your machine.
 
 Install JSON server:
 
