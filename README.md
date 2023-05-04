@@ -4,7 +4,7 @@ An application used to search albums by names, artists and songs. User can inser
 
 # Screenshots
 
-### Albums search
+### Album search
 
 <img src="readmeImages/search.png" width="600">
 
