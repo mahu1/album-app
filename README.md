@@ -1,6 +1,6 @@
 # Album application
 
-An application used to search albums by names, artist and songs. User can insert, remove and update albums and track lists. Data is saved to db.json-file. Built with React, TypeScript, CSS and JSON server. 
+An application used to search albums by names, artists and songs. User can insert, remove and update albums and track lists. Data is saved to db.json-file. Built with React, TypeScript, CSS and JSON server. 
 
 # Screenshots
 
@@ -15,6 +15,10 @@ An application used to search albums by names, artist and songs. User can insert
 ### Album edit
 
 <img src="readmeImages/edit.png" width="800">
+
+### Album insert
+
+<img src="readmeImages/insert.png" width="800">
 
 ## Installation and Setup Instructions
 
