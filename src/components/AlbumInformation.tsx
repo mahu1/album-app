@@ -176,8 +176,6 @@ export const AlbumInformation = (props: { albumId: number }) => {
       if (album && album.id) {
         if (window.confirm(`Are you sure you want to remove album: ${album.artist} - ${album.title}?`)) {
           await albumService.remove(album.id)
-          setAlbum(undefined)
-          setFeedbackMessage( { text: `Album removed: ${album.artist} - ${album.title}`, feedbackMessageType: FeedbackMessageType.Info } )
           navigate('/')
         }
       }
@@ -220,60 +218,60 @@ export const AlbumInformation = (props: { albumId: number }) => {
 
     return (
       <>
-      {!album ? (
-        <div></div>
-      ) : (
-        <div>
-          <br/>
-          <br/>
-          <img className="albumImg" src={album.cover} alt={album.title} title={album.artist + " - " + album.title} />
-          <div className="albumInformation">
-            <input required type="text" placeholder="Artist" name="artist" key={'artist: ' + album.artist} defaultValue={album.artist} onFocus={(e) => setArtist(e.target.value)} onChange={(e) => setArtist(e.target.value)} onBlur={() => editArtist(album)} />
-            <input required type="text" placeholder="Album title" name="title" key={'album: ' + album.title} defaultValue={album.title} onFocus={(e) => setTitle(e.target.value)} onChange={(e) => setTitle(e.target.value)} onBlur={() => editTitle(album)} />
-            <input required type="date" placeholder="Release date" name="releaseDate" key={'releaseDate: ' + album.releaseDate} defaultValue={album.releaseDate} onFocus={(e) => setReleaseDate(e.target.value)} onChange={(e) => setReleaseDate(e.target.value)} onBlur={() => editReleaseDate(album)} />
-            <input required type="text" placeholder="Cover" name="cover" key={'cover: ' + album.cover} defaultValue={album.cover} onFocus={(e) => setCover(e.target.value)} onChange={(e) => setCover(e.target.value)} onBlur={() => editCover(album)} />
-            <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt="remove album" title="remove album" /></button>
+        {!album ? (
+          <div></div>
+        ) : (
+          <div>
+            <br/>
+            <br/>
+            <img className="albumImg" src={album.cover} alt={album.title} title={album.artist + " - " + album.title} />
+            <div className="albumInformation">
+              <input required type="text" placeholder="Artist" name="artist" key={'artist: ' + album.artist} defaultValue={album.artist} onFocus={(e) => setArtist(e.target.value)} onChange={(e) => setArtist(e.target.value)} onBlur={() => editArtist(album)} />
+              <input required type="text" placeholder="Album title" name="title" key={'album: ' + album.title} defaultValue={album.title} onFocus={(e) => setTitle(e.target.value)} onChange={(e) => setTitle(e.target.value)} onBlur={() => editTitle(album)} />
+              <input required type="date" placeholder="Release date" name="releaseDate" key={'releaseDate: ' + album.releaseDate} defaultValue={album.releaseDate} onFocus={(e) => setReleaseDate(e.target.value)} onChange={(e) => setReleaseDate(e.target.value)} onBlur={() => editReleaseDate(album)} />
+              <input required type="text" placeholder="Cover" name="cover" key={'cover: ' + album.cover} defaultValue={album.cover} onFocus={(e) => setCover(e.target.value)} onChange={(e) => setCover(e.target.value)} onBlur={() => editCover(album)} />
+              <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt="remove album" title="remove album" /></button>
+            </div>
+            <br/>
+            <br/>
+            <div className="tracksInformation">
+              <form onSubmit={(e) => addTrack(e)}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>No.</th>
+                      <th>Title</th>
+                      <th>Length</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((t) => (
+                    <tr key={t.id}>
+                      <td><input required type="number" placeholder="Track number" name="trackNumber" defaultValue={t.trackNumber} onFocus={(e) => setTrackNumber(e.target.valueAsNumber)} onChange={(e) => setTrackNumber(e.target.valueAsNumber)} onBlur={() => editTrackNumber(t)} /></td>
+                      <td><input required type="text" placeholder="Track title" name="trackTitle" defaultValue={t.title} onFocus={(e) => setTrackTitle(e.target.value)} onChange={(e) => setTrackTitle(e.target.value)} onBlur={() => editTrackTitle(t)} /></td>
+                      <td><input required type="number" placeholder="MM" min="0" name="trackLengthMinutes" defaultValue={t.length.split(':').at(0)} onFocus={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onChange={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onBlur={() => editTrackLengthMinutes(t)} />:<input required type="number" placeholder="SS" min="0" name="trackLengthSeconds" defaultValue={t.length.split(':').at(1)} onFocus={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onChange={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onBlur={() => editTrackLengthSeconds(t)} /></td>
+                      <td><button onClick={(e) => removeTrack(e, t)}><img src="../icons8-delete.png" alt="remove track" title="remove track" /></button></td>
+                    </tr>
+                    ))}
+                    <tr>
+                      <td></td>
+                      <td><input required type="text" placeholder="Track title" name="newTrackTitle" value={newTrackTitle} onChange={(e) => setNewTrackTitle(e.target.value)} /></td>
+                      <td><input required type="number" placeholder="MM" min="0" name="newTrackLengthMinutes" value={newTrackLengthMinutes} onChange={(e) => setNewTrackLengthMinutes(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} />:<input required type="number" placeholder="SS" min="0" name="newTrackLengthSeconds" value={newTrackLengthSeconds} onChange={(e) => setNewTrackLengthSeconds(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} /></td>
+                      <td><button type="submit"><img src="../icons8-plus.png" alt="add track" title="add track" /></button></td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td/>
+                      <td/>
+                      <td>{getFullLength(album.tracks)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </form>
+            </div>
           </div>
-          <br/>
-          <br/>
-          <div className="tracksInformation">
-            <form onSubmit={(e) => addTrack(e)}>
-              <table>
-                <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>Title</th>
-                    <th>Length</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((t) => (
-                  <tr key={t.id}>
-                    <td><input required type="number" placeholder="Track number" name="trackNumber" defaultValue={t.trackNumber} onFocus={(e) => setTrackNumber(e.target.valueAsNumber)} onChange={(e) => setTrackNumber(e.target.valueAsNumber)} onBlur={() => editTrackNumber(t)} /></td>
-                    <td><input required type="text" placeholder="Track title" name="trackTitle" defaultValue={t.title} onFocus={(e) => setTrackTitle(e.target.value)} onChange={(e) => setTrackTitle(e.target.value)} onBlur={() => editTrackTitle(t)} /></td>
-                    <td><input required type="number" placeholder="MM" min="0" name="trackLengthMinutes" defaultValue={t.length.split(':').at(0)} onFocus={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onChange={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onBlur={() => editTrackLengthMinutes(t)} />:<input required type="number" placeholder="SS" min="0" name="trackLengthSeconds" defaultValue={t.length.split(':').at(1)} onFocus={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onChange={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onBlur={() => editTrackLengthSeconds(t)} /></td>
-                    <td><button onClick={(e) => removeTrack(e, t)}><img src="../icons8-delete.png" alt="remove track" title="remove track" /></button></td>
-                  </tr>
-                  ))}
-                  <tr>
-                    <td></td>
-                    <td><input required type="text" placeholder="Track title" name="newTrackTitle" value={newTrackTitle} onChange={(e) => setNewTrackTitle(e.target.value)} /></td>
-                    <td><input required type="number" placeholder="MM" min="0" name="newTrackLengthMinutes" value={newTrackLengthMinutes} onChange={(e) => setNewTrackLengthMinutes(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} />:<input required type="number" placeholder="SS" min="0" name="newTrackLengthSeconds" value={newTrackLengthSeconds} onChange={(e) => setNewTrackLengthSeconds(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} /></td>
-                    <td><button type="submit"><img src="../icons8-plus.png" alt="add track" title="add track" /></button></td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td/>
-                    <td/>
-                    <td>{getFullLength(album.tracks)}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </form>
-          </div>
-        </div>
-      )}
+        )}
       </>
     )
 }

@@ -28,7 +28,7 @@ const getByIds = (ids: Set<number>): Promise<IAlbum[]> => {
   ids.forEach(id =>  {
     iterateCounter++
     idValues += "id=" + id
-    if (ids.size !== iterateCounter) {
+    if (ids.size > iterateCounter) {
       idValues += "&"
     }
   })

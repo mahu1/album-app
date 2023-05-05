@@ -9,12 +9,6 @@ const getByTrackTitle = (searchValue: string): Promise<ITrack[]> => {
       .then(response => response.data)
 }
 
- const getByAlbumId = (albumId: number): Promise<ITrack[]> => {
-  return axios  
-    .get<ITrack[]>("http://localhost:3001/tracks?albumId=" + albumId)
-    .then(response => response.data)
-}
-
 const create = (track: ITrack): Promise<ITrack> => {
   const request = axios.post(baseUrl, track)
   return request.then(response => response.data)

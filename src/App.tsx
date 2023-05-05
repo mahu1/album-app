@@ -5,7 +5,7 @@ import { Album } from './views/Album'
 import { AlbumAdd } from './views/AlbumAdd'
 import { AlbumEdit } from './views/AlbumEdit'
 import { NotFoundError } from './views/NotFoundError'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 
 
@@ -16,20 +16,19 @@ export enum FeedbackMessageType {
 
 
 export const App = () => {
-  const [feedbackMessage, setFeedbackMessage] = useState( {text: '', feedbackMessageType: ''} )
-  let timer: NodeJS.Timeout | number = 0
-
+  const [feedbackMessage, setFeedbackMessage] = useState( {text: ``, feedbackMessageType: '', useTimer: false} )
 
   const runTimer = () => {
-    timer = window.setTimeout(
+    setTimeout(
       () => {
-        setFeedbackMessage( {text : ``, feedbackMessageType: ''} )
-      }, 20000);
+        setFeedbackMessage( {text : ``, feedbackMessageType: '', useTimer: false} )
+      }, 5000);
   }
 
   const FeedbackMessage = () => {
-    clearTimeout(timer)
-    runTimer()
+    if (feedbackMessage.useTimer) {
+      runTimer()
+    }
 
     const prefix = feedbackMessage.feedbackMessageType === FeedbackMessageType.Error ? 'Error: ' : ''
     return <div className={feedbackMessage.feedbackMessageType}>{prefix + feedbackMessage.text}</div>

@@ -1,16 +1,19 @@
 import { IAlbum } from '../Interfaces'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import albumService from '../services/album'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { getFullLength } from '../AlbumUtils'
+import { FeedbackMessageContext } from '../FeedbackMessageContext'
 
 
 export const Album = () => {
   const { id } = useParams() as { id: string }
   const [album, setAlbum] = useState<IAlbum>()
+  const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
 
   useEffect(() => {
+    setFeedbackMessage( {text: ``, feedbackMessageType: ''} )
     albumService.getById(+id).then(data => {
       setAlbum(data)
     })
