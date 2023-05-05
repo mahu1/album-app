@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import albumService from '../services/album'
 import trackService from '../services/track'
 import { IAlbum } from '../Interfaces'
 import { Link } from 'react-router-dom'
+import { FeedbackMessageContext } from '../FeedbackMessageContext'
+import { FeedbackMessageType } from '../App'
 
 enum ItemGroup {
   Artist = 'artist',
@@ -14,14 +16,24 @@ export const AlbumSearch = () => {
   const [searchValue, setSearchValue] = useState('')
   const [searchGroup, setSearchGroup] = useState(ItemGroup.Artist)
   const [albums, setAlbums] = useState<IAlbum[]>([])
+  const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
 
   useEffect(() => {
+    setFeedbackMessage( {text: ``, feedbackMessageType: ''} )
     albumService.getAll().then((data) => setAlbums(data))
   }, [])
 
   
   const doSearch = (searchValue: string): void => {
     setSearchValue(searchValue)
+    setFeedbackMessage( {text: ``, feedbackMessageType: ''} )
+
+    const regExp = new RegExp('^[a-öA-Ö0-9_ ]*$');
+    if (!regExp.test(searchValue)) {
+      setFeedbackMessage( {text: `Do not use special characters`, feedbackMessageType: FeedbackMessageType.Error} )
+      return
+    }
+    
 
     if (searchValue === '') {
       albumService.getAll().then(data => {
