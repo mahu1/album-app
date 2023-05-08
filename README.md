@@ -30,7 +30,9 @@ Install JSON server:
 
 In the project directory, you can run:
 
-### `npm server start` // start JSON server
+### `npm install` // install dependencies
+
+### `npm run server` // start JSON server
 
 ### `npm start` // start the application
 
