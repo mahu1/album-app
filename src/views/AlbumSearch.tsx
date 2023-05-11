@@ -85,7 +85,7 @@ export const AlbumSearch = () => {
             <Link to={`/album/${a.id}`}>
               <img className="searchResultImg" src={a.cover} alt={a.title} />
               <div className="overlay">
-                <div>{a.artist}</div>
+                <div className="heavyText">{a.artist}</div>
                 <div>{a.title}</div>
               </div>
             </Link>
