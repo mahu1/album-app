@@ -19,7 +19,6 @@ export const AlbumSearch = () => {
   const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
 
   useEffect(() => {
-    setFeedbackMessage( {text: ``, feedbackMessageType: ''} )
     albumService.getAll().then((data) => setAlbums(data))
   }, [])
 

@@ -176,6 +176,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       if (album && album.id) {
         if (window.confirm(`Are you sure you want to remove album: ${album.artist} - ${album.title}?`)) {
           await albumService.remove(album.id)
+          setFeedbackMessage({ text: `Album removed: ${album.title}`, feedbackMessageType: FeedbackMessageType.Info , useTimer: true })
           navigate('/')
         }
       }

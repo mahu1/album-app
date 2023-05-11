@@ -5,7 +5,8 @@ import { Album } from './views/Album'
 import { AlbumAdd } from './views/AlbumAdd'
 import { AlbumEdit } from './views/AlbumEdit'
 import { NotFoundError } from './views/NotFoundError'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 
 
 
@@ -18,22 +19,26 @@ export enum FeedbackMessageType {
 export const App = () => {
   const [feedbackMessage, setFeedbackMessage] = useState( {text: ``, feedbackMessageType: '', useTimer: false} )
 
-  const runTimer = () => {
+  const location = useLocation()
+
+  useEffect(() => { 
+    if (feedbackMessage.useTimer) {
+      emptyFeedbackMessageAfterTimer(5000)
+    } else {
+      setFeedbackMessage( {text: ``, feedbackMessageType: '', useTimer: false} )
+    }
+  }, [location])
+
+  const emptyFeedbackMessageAfterTimer = (time: number) => {
     setTimeout(
       () => {
-        setFeedbackMessage( {text : ``, feedbackMessageType: '', useTimer: false} )
-      }, 5000);
+        setFeedbackMessage( {text: ``, feedbackMessageType: '', useTimer: false} )
+      }, time)
   }
 
   const FeedbackMessage = () => {
-    if (feedbackMessage.useTimer) {
-      runTimer()
-    }
-
     const prefix = feedbackMessage.feedbackMessageType === FeedbackMessageType.Error ? 'Error: ' : ''
     return <div className={feedbackMessage.feedbackMessageType}>{prefix + feedbackMessage.text}</div>
-  
-
   }
 
   return (
