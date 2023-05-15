@@ -2,7 +2,7 @@ import axios from 'axios'
 import { IAlbum } from '../Interfaces'
 import { AlbumExistsException } from '../AlbumExistsException'
 
-const baseUrl = 'http://localhost:3001/albums'
+const baseUrl = '/api/albums'
 
 const getAll = (): Promise<IAlbum[]> => {
   return axios

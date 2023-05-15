@@ -1,11 +1,11 @@
 import axios from 'axios'
 import { ITrack } from '../Interfaces'
 
-const baseUrl = 'http://localhost:3001/tracks'
+const baseUrl = '/api/tracks'
 
 const getByTrackTitle = (searchValue: string): Promise<ITrack[]> => {
     return axios
-      .get<ITrack[]>("http://localhost:3001/tracks?title_like=" + searchValue)
+      .get<ITrack[]>(baseUrl + "?title_like=" + searchValue)
       .then(response => response.data)
 }
 

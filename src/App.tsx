@@ -16,29 +16,38 @@ export enum FeedbackMessageType {
 }
 
 
+type Message = {
+  text: string,
+  feedbackMessageType: FeedbackMessageType,
+  useTimer: boolean
+}
+
 export const App = () => {
-  const [feedbackMessage, setFeedbackMessage] = useState( {text: ``, feedbackMessageType: '', useTimer: false} )
+  const [feedbackMessage, setFeedbackMessage] = useState<Message | null>(null)
 
   const location = useLocation()
 
   useEffect(() => { 
-    if (feedbackMessage.useTimer) {
+    if (feedbackMessage?.useTimer) {
       emptyFeedbackMessageAfterTimer(5000)
     } else {
-      setFeedbackMessage( {text: ``, feedbackMessageType: '', useTimer: false} )
+      setFeedbackMessage(null)
     }
   }, [location])
 
   const emptyFeedbackMessageAfterTimer = (time: number) => {
     setTimeout(
       () => {
-        setFeedbackMessage( {text: ``, feedbackMessageType: '', useTimer: false} )
+        setFeedbackMessage(null)
       }, time)
   }
 
-  const FeedbackMessage = () => {
-    const prefix = feedbackMessage.feedbackMessageType === FeedbackMessageType.Error ? 'Error: ' : ''
-    return <div className={feedbackMessage.feedbackMessageType}>{prefix + feedbackMessage.text}</div>
+  const FeedbackMessage = (): JSX.Element | null => {
+    if (feedbackMessage) {
+      const prefix = feedbackMessage.feedbackMessageType === FeedbackMessageType.Error ? 'Error: ' : ''
+      return <div className={feedbackMessage.feedbackMessageType}>{prefix + feedbackMessage.text}</div>
+    }
+    return null
   }
 
   return (
