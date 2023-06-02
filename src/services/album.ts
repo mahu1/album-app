@@ -60,7 +60,11 @@ const create = async (album: IAlbum): Promise<IAlbum> => {
   return request.then(response => response.data)
 }
 
-const update = (id: number, newObject: IAlbum) => {
+const update = async (id: number, newObject: IAlbum) => {
+  const data = await getByArtistAndTitle(newObject.artist, newObject.title)
+  if (data) {
+    throw new AlbumExistsException(`Album already found: ${newObject.artist} - ${newObject.title}`)
+  }
   const request = axios.put(`${baseUrl}/${id}`, newObject)
   return request.then(response => response.data)
 }
