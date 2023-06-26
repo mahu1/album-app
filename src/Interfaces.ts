@@ -10,7 +10,7 @@ export interface IAlbum {
 export interface ITrack {
     id?: number
     title: string
-    length: string
+    seconds: number
     albumId: number
     trackNumber: number
 }

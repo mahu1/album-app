@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import albumService from '../services/album'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { getFullLength } from '../AlbumUtils'
+import { getTracksFullLength, getTrackFullLength } from '../AlbumUtils'
 
 
 export const Album = () => {
@@ -40,14 +40,14 @@ export const Album = () => {
               </thead>
               <tbody>
                 {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((t) => (
-                  <tr key={t.id}><td>{t.trackNumber}</td><td>{t.title}</td><td>{t.length}</td></tr>
+                  <tr key={t.id}><td>{t.trackNumber}</td><td>{t.title}</td><td>{getTrackFullLength(t.seconds)}</td></tr>
                 ))}
               </tbody>
               <tfoot>
                   <tr>
                     <td/>
                     <td/>
-                    <td>{getFullLength(album.tracks)}</td>
+                    <td>{getTracksFullLength(album.tracks)}</td>
                   </tr>
                 </tfoot>
             </table>

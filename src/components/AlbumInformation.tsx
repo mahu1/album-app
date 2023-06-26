@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from 'react'
 import albumService from '../services/album'
 import trackService from '../services/track'
 import { FeedbackMessageContext } from '../FeedbackMessageContext'
-import { getFullLength } from '../AlbumUtils'
+import { getTracksFullLength, getTrackFullLength, getFullLengthSeconds, getMinutes, getSeconds } from '../AlbumUtils'
 import { FeedbackMessageType } from '../App'
 import { useNavigate } from 'react-router-dom'
 
@@ -140,7 +140,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
     }
 
     const editTrackLengthMinutes = async (track: ITrack): Promise<void> => {
-      if (track.id && track.length !== trackLengthMinutes + ':' + track.length.split(':').at(1)) {
+      if (track.id && getMinutes(track.seconds) !== trackLengthMinutes) {
         if (isNaN(trackLengthMinutes)) {
           setFeedbackMessage( { text: `Track minutes cannot be empty`, feedbackMessageType: FeedbackMessageType.Error } )
           return
@@ -148,19 +148,18 @@ export const AlbumInformation = (props: { albumId: number }) => {
           setFeedbackMessage( { text: `Track minutes cannot be negative`, feedbackMessageType: FeedbackMessageType.Error } )
           return
         }
-        const trackLength = trackLengthMinutes + ':' + track.length.split(':').at(1)
-        const changedTrack: {} = { length: trackLength }
+        const trackLength = getFullLengthSeconds(trackLengthMinutes, getSeconds(track.seconds))
+        const changedTrack: {} = { seconds: trackLength }
         await trackService.patch(track.id, changedTrack)
         albumService.getById(albumId).then(data => {
           setAlbum(data)
         })
-        setFeedbackMessage( { text: `Track length edited: ${track.length} → ${trackLength}`, feedbackMessageType: FeedbackMessageType.Info } )
+        setFeedbackMessage( { text: `Track length edited: ${getTrackFullLength(track.seconds)} → ${getTrackFullLength(trackLength)}`, feedbackMessageType: FeedbackMessageType.Info } )
       }
     }
 
     const editTrackLengthSeconds = async (track: ITrack): Promise<void> => {
-      const trackLengthSecondsWithLeadingZero: string = addLeadingZeroToSeconds(trackLengthSeconds)
-      if (track.id && track.length !== track.length.split(':').at(0) + ':' + trackLengthSecondsWithLeadingZero) {
+      if (track.id && getSeconds(track.seconds) !== trackLengthSeconds) {
         if (isNaN(trackLengthSeconds)) {
           setFeedbackMessage( { text: `Track seconds cannot be empty`, feedbackMessageType: FeedbackMessageType.Error } )
           return
@@ -168,22 +167,14 @@ export const AlbumInformation = (props: { albumId: number }) => {
           setFeedbackMessage( { text: `Track seconds cannot be negative`, feedbackMessageType: FeedbackMessageType.Error } )
           return
         }
-        const trackLength = track.length.split(':').at(0) + ':' + trackLengthSecondsWithLeadingZero
-        const changedTrack: {} = { length: trackLength }
+        const trackLength = getFullLengthSeconds(getMinutes(track.seconds), trackLengthSeconds)
+        const changedTrack: {} = { seconds: trackLength }
         await trackService.patch(track.id, changedTrack)
         albumService.getById(albumId).then(data => {
           setAlbum(data)
         })
-        setFeedbackMessage( { text: `Track length edited: ${track.length} → ${trackLength}`, feedbackMessageType: FeedbackMessageType.Info } )
+        setFeedbackMessage( { text: `Track length edited: ${getTrackFullLength(track.seconds)} → ${getTrackFullLength(trackLength)}`, feedbackMessageType: FeedbackMessageType.Info } )
       }
-    }
-
-    const addLeadingZeroToSeconds = (seconds: number): string => {
-      let trackLengthSecondsWithLeadingZero:string = String(seconds)
-      if (trackLengthSecondsWithLeadingZero.toString().length === 1) {
-        trackLengthSecondsWithLeadingZero = "0" + seconds
-      }
-      return trackLengthSecondsWithLeadingZero
     }
 
     const removeAlbum = async (album: IAlbum): Promise<void> => {
@@ -202,7 +193,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
         const track: ITrack = {
           trackNumber: Math.max(...album.tracks.map(o => o.trackNumber), 0) + 1,
           title: newTrackTitle,
-          length: newTrackLengthMinutes + ':' + addLeadingZeroToSeconds(newTrackLengthSeconds),
+          seconds: getFullLengthSeconds(newTrackLengthMinutes, newTrackLengthSeconds),
           albumId: album.id
           }
 
@@ -264,7 +255,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
                     <tr key={t.id}>
                       <td><input required type="number" placeholder="Track number" name="trackNumber" defaultValue={t.trackNumber} onFocus={(e) => setTrackNumber(e.target.valueAsNumber)} onChange={(e) => setTrackNumber(e.target.valueAsNumber)} onBlur={() => editTrackNumber(t)} /></td>
                       <td><input required type="text" placeholder="Track title" name="trackTitle" defaultValue={t.title} onFocus={(e) => setTrackTitle(e.target.value)} onChange={(e) => setTrackTitle(e.target.value)} onBlur={() => editTrackTitle(t)} /></td>
-                      <td><input required type="number" placeholder="MM" min="0" name="trackLengthMinutes" defaultValue={t.length.split(':').at(0)} onFocus={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onChange={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onBlur={() => editTrackLengthMinutes(t)} />:<input required type="number" placeholder="SS" min="0" name="trackLengthSeconds" defaultValue={t.length.split(':').at(1)} onFocus={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onChange={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onBlur={() => editTrackLengthSeconds(t)} /></td>
+                      <td><input required type="number" placeholder="MM" min="0" name="trackLengthMinutes" defaultValue={getMinutes(t.seconds)} onFocus={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onChange={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onBlur={() => editTrackLengthMinutes(t)} />:<input required type="number" placeholder="SS" min="0" name="trackLengthSeconds" defaultValue={getSeconds(t.seconds)} onFocus={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onChange={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onBlur={() => editTrackLengthSeconds(t)} /></td>
                       <td><button onClick={(e) => removeTrack(e, t)}><img src="../icons8-delete.png" alt="remove track" title="remove track" /></button></td>
                     </tr>
                     ))}
@@ -279,7 +270,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
                     <tr>
                       <td/>
                       <td/>
-                      <td>{getFullLength(album.tracks)}</td>
+                      <td>{getTracksFullLength(album.tracks)}</td>
                     </tr>
                   </tfoot>
                 </table>

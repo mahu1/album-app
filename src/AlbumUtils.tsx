@@ -1,15 +1,31 @@
 import { ITrack } from "./Interfaces"
 
+const SECONDSONMINUTE: number = 60
 
-export const getFullLength = (tracks: ITrack[] | undefined): string => {
-    let minutes: number = 0
-    let seconds: number = 0
-    tracks?.forEach(track =>  {
-      minutes += Number(track.length.split(":").at(0))
-      seconds += Number(track.length.split(":").at(1))
-    })
-    minutes += Math.floor(seconds / 60)
-    seconds = seconds % 60
-    const secondsString: string = seconds < 10 ? "0" + String(seconds) : String(seconds)
-    return minutes + ":" + secondsString
-  }
+export const getTracksFullLength = (tracks: ITrack[] | undefined): string => {
+  let seconds: number = 0
+  tracks?.forEach(track =>  {
+    seconds += Number(track.seconds)
+  })
+  return getTrackFullLength(seconds)
+}
+
+export const getTrackFullLength = (totalSeconds: number): string => {
+  const minutes = getMinutes(totalSeconds)
+  const seconds = getSeconds(totalSeconds)
+  const secondsString: string = seconds < 10 ? "0" + String(seconds) : String(seconds)
+  return minutes + ":" + secondsString
+}
+
+export const getFullLengthSeconds = (minutes: number, seconds: number): number => {
+  return minutes * 60 + seconds
+}
+
+export const getMinutes = (seconds: number): number => {
+  return Math.floor(seconds / SECONDSONMINUTE)
+}
+
+export const getSeconds = (seconds: number): number => {
+  return seconds % SECONDSONMINUTE
+}
+
