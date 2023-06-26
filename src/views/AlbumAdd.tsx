@@ -1,9 +1,8 @@
-import { IAlbum } from '../Interfaces'
+import { IAlbum, IArtist } from '../Interfaces'
 import { useState, useContext } from 'react'
 import albumService from '../services/album'
 import { Link } from 'react-router-dom'
 import { AlbumInformation } from '../components/AlbumInformation'
-import { AlbumExistsException } from '../AlbumExistsException'
 import { FeedbackMessageContext } from '../FeedbackMessageContext'
 import { FeedbackMessageType } from '../App'
 
@@ -17,8 +16,11 @@ export const AlbumAdd = () => {
     
     const addAlbum = async (e: React.FormEvent): Promise<void> => {
       e.preventDefault()
+      const artistObject: IArtist = {
+        title: artist 
+      }
       const album: IAlbum = {
-        artist: artist,
+        artist: artistObject,
         title: title,
         releaseDate: releaseDate,
         cover: cover
@@ -28,7 +30,7 @@ export const AlbumAdd = () => {
         const data = await albumService.create(album)
         if (data.id) {
           setAlbumId(data.id)
-          setFeedbackMessage( {text: `Album added: ${data.artist} - ${data.title}`, feedbackMessageType: FeedbackMessageType.Info} )
+          setFeedbackMessage( {text: `Album added: ${data.artist.title} - ${data.title}`, feedbackMessageType: FeedbackMessageType.Info} )
 
           setArtist('')
           setTitle('')
@@ -36,9 +38,9 @@ export const AlbumAdd = () => {
           setCover('')
         }
       } catch(error) {
-        if (error instanceof AlbumExistsException) {
-          alert(error)
-       }
+        if (error instanceof Error && error.message === 'Request failed with status code 302') {
+          setFeedbackMessage( {text: `Album ${album.artist.title} - ${title} already found`, feedbackMessageType: FeedbackMessageType.Error} )
+        }
       }
     }
 

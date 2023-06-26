@@ -26,9 +26,9 @@ export const Album = () => {
           <Link to={`/albumEdit/${album.id}`}><img src="../icons8-edit.png" className="editStaticIcon" alt="edit" title="edit"/><img src="../icons8-edit.gif" className="editActiveIcon" alt="edit" title="edit"/></Link>
           <br/>
           <br/>
-          <img className="albumImg" src={album.cover} alt={album.title} title={album.artist + " - " + album.title} />
+          <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
           <div className="albumInformation" key={album.id}>
-            <div className="strongText">{album.artist} - {album.title}</div>
+            <div className="strongText">{album.artist.title} - {album.title}</div>
             <div>{album.releaseDate}</div>
             <table>
               <thead>

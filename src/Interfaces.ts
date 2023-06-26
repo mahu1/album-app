@@ -1,11 +1,11 @@
 export interface IAlbum {
     id?: number
-    artist: string
+    artist: IArtist
     title: string
     releaseDate: string
     cover: string
     tracks?: Array<ITrack>
-  }
+}
 
 export interface ITrack {
     id?: number
@@ -13,4 +13,9 @@ export interface ITrack {
     length: string
     albumId: number
     trackNumber: number
+}
+
+export interface IArtist {
+  id?: number
+  title: string
 }

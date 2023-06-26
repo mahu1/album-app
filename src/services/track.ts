@@ -1,43 +1,24 @@
 import axios from 'axios'
 import { ITrack } from '../Interfaces'
 
-const baseUrl = '/api/tracks'
+//const baseUrl = '/api/tracks'
+const baseUrl = 'http://localhost:8080'
+const basePath = 'tracks'
 
-const getByTrackTitle = (searchValue: string): Promise<ITrack[]> => {
-    return axios
-      .get<ITrack[]>(baseUrl + "?title_like=" + searchValue)
-      .then(response => response.data)
-}
 
-const create = (track: ITrack): Promise<ITrack> => {
-  const request = axios.post(baseUrl, track)
+const create = (albumId: number, track: ITrack): Promise<ITrack> => {
+  const request = axios.post(baseUrl + '/' + basePath + '?albumId=' + albumId, track)
   return request.then(response => response.data)
 }
 
-const update = (id: number, newObject: ITrack) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
+const patch = (id: number, changes: {}) => {
+  const request = axios.patch(baseUrl  + '/' + basePath + '/' + id, changes)
   return request.then(response => response.data)
 }
 
-//const updateTrackList = (tracks: ITrack[], updatedTrackNumber: number) => {
-  //const updateTracks: ITrack[] = []
-  //tracks.filter(t => t.trackNumber > updatedTrackNumber).forEach(t => {
-    //const changedTrack: ITrack = { ...t, trackNumber: t.trackNumber - 1 }
-    //if (t.id) {
-      //updateTracks.push(changedTrack)
-    //}
-  //})
-  
-  //axios.all([
-    //updateTracks.forEach(t => {
-    //const request = axios.put(`${baseUrl}/${t.id}`, t)
-    //})
-  //])
-//}
-
-const remove = (track: ITrack) => {
-  const request = axios.delete(`${baseUrl}/${track.id}`)
+const remove = (id: number) => {
+  const request = axios.delete(baseUrl + '/' + basePath + '/' + id)
   return request.then(response => response.data)
 }
 
-export default { create, update, remove, getByTrackTitle }
+export default { create, remove, patch }

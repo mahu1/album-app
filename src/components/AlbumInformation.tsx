@@ -1,4 +1,4 @@
-import { IAlbum, ITrack } from '../Interfaces'
+import { IAlbum, ITrack, IArtist } from '../Interfaces'
 import { useState, useEffect, useContext } from 'react'
 import albumService from '../services/album'
 import trackService from '../services/track'
@@ -6,7 +6,6 @@ import { FeedbackMessageContext } from '../FeedbackMessageContext'
 import { getFullLength } from '../AlbumUtils'
 import { FeedbackMessageType } from '../App'
 import { useNavigate } from 'react-router-dom'
-
 
 
 export const AlbumInformation = (props: { albumId: number }) => {
@@ -33,41 +32,54 @@ export const AlbumInformation = (props: { albumId: number }) => {
     }, [albumId])
 
 
-    const editArtist = async (album: IAlbum | undefined): Promise<void> => {
+    const editArtist = async (album: IAlbum): Promise<void> => {
       if (artist.length === 0) {
         setFeedbackMessage( {text: `Artist cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
       }
 
-      if (album && album.id && album.artist !== artist) {
-        const changedArtist: {} = { artist: artist }
-        await albumService.patch(album.id, changedArtist)
-        setAlbum(await albumService.getById(album.id))
-        setFeedbackMessage( {text: `Artist edited: ${album.artist} → ${artist}`, feedbackMessageType: FeedbackMessageType.Info} )
+      if (album.id && album.artist.title !== artist) {
+        const artistObject: IArtist = { title: artist }
+        const editedAlbum = { ...album, artist: artistObject }
+        try {
+          await albumService.put(album.id, editedAlbum)
+          setAlbum(await albumService.getById(album.id))
+          setFeedbackMessage( {text: `Artist edited: ${album.artist.title} → ${artist}`, feedbackMessageType: FeedbackMessageType.Info} )
+        } catch (error) {
+          if (error instanceof Error && error.message === 'Request failed with status code 302') {
+            setFeedbackMessage( {text: `Album ${artist} - ${album.title} already found`, feedbackMessageType: FeedbackMessageType.Error} )
+          }
+        }
       }
     }
 
-    const editTitle = async (album: IAlbum | undefined): Promise<void> => {
+    const editTitle = async (album: IAlbum): Promise<void> => {
       if (title.length === 0) {
         setFeedbackMessage( {text: `Album title cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
       }
 
-      if (album && album.id && album.title !== title) {
+      if (album.id && album.title !== title) {
         const changedTitle: {} = { title: title }
-        await albumService.patch(album.id, changedTitle)
-        setAlbum(await albumService.getById(album.id))
-        setFeedbackMessage( {text: `Album title edited: ${album.title} → ${title}`, feedbackMessageType: FeedbackMessageType.Info} )
+        try {
+          await albumService.patch(album.id, changedTitle)
+          setAlbum(await albumService.getById(album.id))
+          setFeedbackMessage( {text: `Album title edited: ${album.title} → ${title}`, feedbackMessageType: FeedbackMessageType.Info} )
+        } catch (error) {
+          if (error instanceof Error && error.message === 'Request failed with status code 302') {
+            setFeedbackMessage( {text: `Album ${album.artist.title} - ${title} already found`, feedbackMessageType: FeedbackMessageType.Error} )
+          }
+        }
       }
     }
 
-    const editReleaseDate = async (album: IAlbum | undefined): Promise<void> => {
+    const editReleaseDate = async (album: IAlbum): Promise<void> => {
       if (releaseDate.length === 0) {
         setFeedbackMessage( {text: `Release date cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
       }
 
-      if (album && album.id && album.releaseDate !== releaseDate) {
+      if (album.id && album.releaseDate !== releaseDate) {
         const changedReleaseDate: {} = { releaseDate: releaseDate }
         await albumService.patch(album.id, changedReleaseDate)
         setAlbum(await albumService.getById(album.id))
@@ -75,13 +87,13 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editCover = async (album: IAlbum | undefined): Promise<void> => {
+    const editCover = async (album: IAlbum): Promise<void> => {
       if (cover.length === 0) {
         setFeedbackMessage( {text: `Cover cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
       }
 
-      if (album && album.id && album.cover !== cover) {
+      if (album.id && album.cover !== cover) {
         const changedCover: {} = { cover: cover }
         await albumService.patch(album.id, changedCover)
         setAlbum(await albumService.getById(album.id))
@@ -102,12 +114,12 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
 
       if (track.id && track.trackNumber !== trackNumber) {
-        const changedTrack: ITrack = { ...track, trackNumber: trackNumber }
-        await trackService.update(track.id, changedTrack)
-        albumService.getById(track.albumId).then(data => {
+        const changedTrack: {} = { trackNumber: trackNumber }
+        await trackService.patch(track.id, changedTrack)
+        albumService.getById(albumId).then(data => {
           setAlbum(data)
         })
-        setFeedbackMessage( { text: `Track number edited: ${track.trackNumber} → ${changedTrack.trackNumber}`, feedbackMessageType: FeedbackMessageType.Info} )
+        setFeedbackMessage( { text: `Track number edited: ${track.trackNumber} → ${trackNumber}`, feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 
@@ -118,12 +130,12 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
 
       if (track.id && track.title !== trackTitle) {
-        const changedTrack: ITrack = { ...track, title: trackTitle }
-        await trackService.update(track.id, changedTrack)
-        albumService.getById(track.albumId).then(data => {
+        const changedTrack: {} = { title: trackTitle }
+        await trackService.patch(track.id, changedTrack)
+        albumService.getById(albumId).then(data => {
           setAlbum(data)
         })
-        setFeedbackMessage( { text: `Track title edited: ${track.title} → ${changedTrack.title}`, feedbackMessageType: FeedbackMessageType.Info} )
+        setFeedbackMessage( { text: `Track title edited: ${track.title} → ${trackTitle}`, feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 
@@ -136,12 +148,13 @@ export const AlbumInformation = (props: { albumId: number }) => {
           setFeedbackMessage( { text: `Track minutes cannot be negative`, feedbackMessageType: FeedbackMessageType.Error } )
           return
         }
-        const changedTrack: ITrack = { ...track, length: trackLengthMinutes + ':' + track.length.split(':').at(1) }
-        await trackService.update(track.id, changedTrack)
-        albumService.getById(track.albumId).then(data => {
+        const trackLength = trackLengthMinutes + ':' + track.length.split(':').at(1)
+        const changedTrack: {} = { length: trackLength }
+        await trackService.patch(track.id, changedTrack)
+        albumService.getById(albumId).then(data => {
           setAlbum(data)
         })
-        setFeedbackMessage( { text: `Track length edited: ${track.length} → ${changedTrack.length}`, feedbackMessageType: FeedbackMessageType.Info } )
+        setFeedbackMessage( { text: `Track length edited: ${track.length} → ${trackLength}`, feedbackMessageType: FeedbackMessageType.Info } )
       }
     }
 
@@ -155,12 +168,13 @@ export const AlbumInformation = (props: { albumId: number }) => {
           setFeedbackMessage( { text: `Track seconds cannot be negative`, feedbackMessageType: FeedbackMessageType.Error } )
           return
         }
-        const changedTrack: ITrack = { ...track, length: track.length.split(':').at(0) + ':' + trackLengthSecondsWithLeadingZero }
-        await trackService.update(track.id, changedTrack)
-        albumService.getById(track.albumId).then(data => {
+        const trackLength = track.length.split(':').at(0) + ':' + trackLengthSecondsWithLeadingZero
+        const changedTrack: {} = { length: trackLength }
+        await trackService.patch(track.id, changedTrack)
+        albumService.getById(albumId).then(data => {
           setAlbum(data)
         })
-        setFeedbackMessage( { text: `Track length edited: ${track.length} → ${changedTrack.length}`, feedbackMessageType: FeedbackMessageType.Info } )
+        setFeedbackMessage( { text: `Track length edited: ${track.length} → ${trackLength}`, feedbackMessageType: FeedbackMessageType.Info } )
       }
     }
 
@@ -172,11 +186,11 @@ export const AlbumInformation = (props: { albumId: number }) => {
       return trackLengthSecondsWithLeadingZero
     }
 
-    const removeAlbum = async (album: IAlbum | undefined): Promise<void> => {
-      if (album && album.id) {
-        if (window.confirm(`Are you sure you want to remove album: ${album.artist} - ${album.title}?`)) {
+    const removeAlbum = async (album: IAlbum): Promise<void> => {
+      if (album.id) {
+        if (window.confirm(`Are you sure you want to remove album: ${album.artist.title} - ${album.title}?`)) {
           await albumService.remove(album.id)
-          setFeedbackMessage({ text: `Album removed: ${album.artist} - ${album.title}`, feedbackMessageType: FeedbackMessageType.Info , useTimer: true })
+          setFeedbackMessage({ text: `Album removed: ${album.artist.title} - ${album.title}`, feedbackMessageType: FeedbackMessageType.Info , useTimer: true })
           navigate('/')
         }
       }
@@ -192,8 +206,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
           albumId: album.id
           }
 
-        await trackService.create(track)
-        albumService.getById(track.albumId).then(data => {
+        await trackService.create(albumId, track)
+        albumService.getById(albumId).then(data => {
           setAlbum(data)
         })
         setFeedbackMessage( { text: `Track added: ${track.title}`, feedbackMessageType: FeedbackMessageType.Info })
@@ -208,8 +222,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
       e.preventDefault()
       if (track.id) {
         if (window.confirm(`Are you sure you want to remove track: ${track.title}?`)) {
-          await trackService.remove(track)
-          albumService.getById(track.albumId).then(data => {
+          await trackService.remove(track.id)
+          albumService.getById(albumId).then(data => {
             setAlbum(data)
           })
           setFeedbackMessage({ text: `Track removed: ${track.title}`, feedbackMessageType: FeedbackMessageType.Info })
@@ -225,9 +239,9 @@ export const AlbumInformation = (props: { albumId: number }) => {
           <div>
             <br/>
             <br/>
-            <img className="albumImg" src={album.cover} alt={album.title} title={album.artist + " - " + album.title} />
+            <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
             <div className="albumInformation">
-              <input required type="text" placeholder="Artist" name="artist" key={'artist: ' + album.artist} defaultValue={album.artist} onFocus={(e) => setArtist(e.target.value)} onChange={(e) => setArtist(e.target.value)} onBlur={() => editArtist(album)} />
+              <input required type="text" placeholder="Artist" name="artist" key={'artist: ' + album.artist.title} defaultValue={album.artist.title} onFocus={(e) => setArtist(e.target.value)} onChange={(e) => setArtist(e.target.value)} onBlur={() => editArtist(album)} />
               <input required type="text" placeholder="Album title" name="title" key={'album: ' + album.title} defaultValue={album.title} onFocus={(e) => setTitle(e.target.value)} onChange={(e) => setTitle(e.target.value)} onBlur={() => editTitle(album)} />
               <input required type="date" placeholder="Release date" name="releaseDate" key={'releaseDate: ' + album.releaseDate} defaultValue={album.releaseDate} onFocus={(e) => setReleaseDate(e.target.value)} onChange={(e) => setReleaseDate(e.target.value)} onBlur={() => editReleaseDate(album)} />
               <input required type="text" placeholder="Cover" name="cover" key={'cover: ' + album.cover} defaultValue={album.cover} onFocus={(e) => setCover(e.target.value)} onChange={(e) => setCover(e.target.value)} onBlur={() => editCover(album)} />
