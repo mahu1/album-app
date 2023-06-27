@@ -55,4 +55,16 @@ const put = (id: number, album: IAlbum) => {
   return request.then(response => response.data)
 }
 
-export default { getAll, getByArtist, getByAlbumTitle, getByTrackTitle, create, remove, getById, patch, put }
+const exportedObject = {
+  getAll,
+  getByArtist,
+  getByAlbumTitle,
+  getByTrackTitle,
+  create,
+  remove,
+  getById,
+  patch,
+  put
+}
+
+export default exportedObject

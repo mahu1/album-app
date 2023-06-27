@@ -21,4 +21,10 @@ const remove = (id: number) => {
   return request.then(response => response.data)
 }
 
-export default { create, remove, patch }
+const exportedObject = {
+  create,
+  patch,
+  remove
+}
+
+export default exportedObject

@@ -26,5 +26,11 @@ const create = (artist: IArtist): Promise<IArtist> => {
   return request.then(response => response.data)
 }
 
+const exportedObject = {
+  getAll,
+  patch,
+  remove,
+  create
+}
 
-export default { getAll, patch, remove, create }
+export default exportedObject

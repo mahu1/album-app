@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { FeedbackMessageContext } from "./FeedbackMessageContext";
+import { FeedbackMessageContext } from "./FeedbackMessageContext"
 import { AlbumSearch } from './views/AlbumSearch'
 import { Album } from './views/Album'
 import { AlbumAdd } from './views/AlbumAdd'
@@ -7,15 +7,13 @@ import { AlbumEdit } from './views/AlbumEdit'
 import { NotFoundError } from './views/NotFoundError'
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Artists } from './views/Artists';
-
-
+import { Artists } from './views/Artists'
+import { strings } from './Localization'
 
 export enum FeedbackMessageType {
   Error = 'feedbackMessageError',
   Info = 'feedbackMessageInfo'
 }
-
 
 type Message = {
   text: string,
@@ -45,7 +43,7 @@ export const App = () => {
 
   const FeedbackMessage = (): JSX.Element | null => {
     if (feedbackMessage) {
-      const prefix = feedbackMessage.feedbackMessageType === FeedbackMessageType.Error ? 'Error: ' : ''
+      const prefix = feedbackMessage.feedbackMessageType === FeedbackMessageType.Error ? strings.error : ''
       return <div className={feedbackMessage.feedbackMessageType}>{prefix + feedbackMessage.text}</div>
     }
     return null

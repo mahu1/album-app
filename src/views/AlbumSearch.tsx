@@ -4,6 +4,7 @@ import { IAlbum } from '../Interfaces'
 import { Link } from 'react-router-dom'
 import { FeedbackMessageContext } from '../FeedbackMessageContext'
 import { FeedbackMessageType } from '../App'
+import { strings } from '../Localization'
 
 enum ItemGroup {
   Artist = 'artist',
@@ -29,7 +30,7 @@ export const AlbumSearch = () => {
 
     const regExp = new RegExp('^[a-öA-Ö0-9_ ]*$');
     if (!regExp.test(searchValue)) {
-      setFeedbackMessage( {text: `Do not use special characters`, feedbackMessageType: FeedbackMessageType.Error} )
+      setFeedbackMessage( {text: strings.do_not_use_special_characters, feedbackMessageType: FeedbackMessageType.Error} )
       return
     }
     
@@ -57,17 +58,17 @@ export const AlbumSearch = () => {
   return (
     <div>
       <div>
-        <Link to={`/albumAdd`}><img src="../icons8-add.png" className="addNewStaticIcon" alt="add album" title="add album"/><img src="../icons8-add.gif" className="addNewActiveIcon" alt="add album" title="add album"/></Link>
-        <input className="searchField" value={searchValue} onChange={(e) => doSearch(e.target.value, searchGroup)} placeholder="Search..." />
+        <Link to={`/albumAdd`}><img src="../icons8-add.png" className="addNewStaticIcon" alt={strings.add_album} title={strings.add_album}/><img src="../icons8-add.gif" className="addNewActiveIcon" alt={strings.add_album} title={strings.add_album}/></Link>
+        <input className="searchField" value={searchValue} onChange={(e) => doSearch(e.target.value, searchGroup)} placeholder={strings.search} />
         <div className="searchButtons">
           <label>
-            <input defaultChecked onChange={(e) => doSearch(searchValue, ItemGroup.Artist)} type="radio" value="artist" name="searchGroup" />Artist
+            <input defaultChecked onChange={(e) => doSearch(searchValue, ItemGroup.Artist)} type="radio" value="artist" name="searchGroup" />{strings.artist}
           </label>
           <label>
-            <input onChange={(e) => doSearch(searchValue, ItemGroup.Album)} type="radio" value="album" name="searchGroup" />Album
+            <input onChange={(e) => doSearch(searchValue, ItemGroup.Album)} type="radio" value="album" name="searchGroup" />{strings.album}
           </label>
           <label>
-            <input onChange={(e) => doSearch(searchValue, ItemGroup.Track)} type="radio" value="track" name="searchGroup" />Track
+            <input onChange={(e) => doSearch(searchValue, ItemGroup.Track)} type="radio" value="track" name="searchGroup" />{strings.track}
           </label>
         </div>
       </div>

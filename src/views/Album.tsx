@@ -4,7 +4,7 @@ import albumService from '../services/album'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { getTracksFullLength, getTrackFullLength } from '../AlbumUtils'
-
+import { strings } from '../Localization'
 
 export const Album = () => {
   const { id } = useParams() as { id: string }
@@ -22,8 +22,8 @@ export const Album = () => {
         <div></div>
       ) : (
         <div>
-          <Link to={`/`}><img src="../icons8-go-back.png" className="staticIcon" alt="back" title="back"/><img src="../icons8-go-back.gif" className="activeIcon" alt="back" title="back"/></Link>
-          <Link to={`/albumEdit/${album.id}`}><img src="../icons8-edit.png" className="editStaticIcon" alt="edit" title="edit"/><img src="../icons8-edit.gif" className="editActiveIcon" alt="edit" title="edit"/></Link>
+          <Link to={`/`}><img src="../icons8-go-back.png" className="staticIcon" alt={strings.back} title={strings.back}/><img src="../icons8-go-back.gif" className="activeIcon" alt={strings.back} title={strings.back}/></Link>
+          <Link to={`/albumEdit/${album.id}`}><img src="../icons8-edit.png" className="editStaticIcon" alt={strings.edit} title={strings.edit}/><img src="../icons8-edit.gif" className="editActiveIcon" alt={strings.edit} title={strings.edit}/></Link>
           <br/>
           <br/>
           <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
@@ -34,8 +34,8 @@ export const Album = () => {
               <thead>
                 <tr>
                   <th></th>
-                  <th>Title</th>
-                  <th>Length</th>
+                  <th>{strings.title}</th>
+                  <th>{strings.length}</th>
                 </tr>
               </thead>
               <tbody>
