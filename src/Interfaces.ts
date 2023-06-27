@@ -18,4 +18,5 @@ export interface ITrack {
 export interface IArtist {
   id?: number
   title: string
+  albums?: Array<IAlbum>
 }

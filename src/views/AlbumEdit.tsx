@@ -8,7 +8,7 @@ export const AlbumEdit = () => {
     return (
         <div>
           <Link to={`/album/${id}`}><img src="../icons8-go-back.png" className="staticIcon" alt="back" title="back"/><img src="../icons8-go-back.gif" className="activeIcon" alt="back" title="back"/></Link>
-          <AlbumInformation albumId={+id} />
+          <AlbumInformation albumId={+id} />  
         </div>
     )
 }

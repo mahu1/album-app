@@ -2,22 +2,16 @@ import { IAlbum, ITrack, IArtist } from '../Interfaces'
 import { useState, useEffect, useContext } from 'react'
 import albumService from '../services/album'
 import trackService from '../services/track'
+import artistService from '../services/artist'
 import { FeedbackMessageContext } from '../FeedbackMessageContext'
 import { getTracksFullLength, getTrackFullLength, getFullLengthSeconds, getMinutes, getSeconds } from '../AlbumUtils'
 import { FeedbackMessageType } from '../App'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 
 export const AlbumInformation = (props: { albumId: number }) => {
     const { albumId } = props;
-    const [artist, setArtist] = useState('')
-    const [title, setTitle] = useState('')
-    const [releaseDate, setReleaseDate] = useState('')
-    const [cover, setCover] = useState('')
-    const [trackNumber, setTrackNumber] = useState(0)
-    const [trackTitle, setTrackTitle] = useState('')
-    const [trackLengthMinutes, setTrackLengthMinutes] = useState(0)
-    const [trackLengthSeconds, setTrackLengthSeconds] = useState(0)
+    const [artists, setArtists] = useState<IArtist[]>([])
     const [newTrackTitle, setNewTrackTitle] = useState('')
     const [newTrackLengthMinutes, setNewTrackLengthMinutes] = useState(0)
     const [newTrackLengthSeconds, setNewTrackLengthSeconds] = useState(0)
@@ -29,10 +23,13 @@ export const AlbumInformation = (props: { albumId: number }) => {
       albumService.getById(albumId).then(data => {
         setAlbum(data)
       })
+      artistService.getAll().then(data => {
+        setArtists(data)
+      })
     }, [albumId])
 
 
-    const editArtist = async (album: IAlbum): Promise<void> => {
+    const editArtist = async (album: IAlbum, artist: string): Promise<void> => {
       if (artist.length === 0) {
         setFeedbackMessage( {text: `Artist cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
@@ -53,7 +50,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editTitle = async (album: IAlbum): Promise<void> => {
+    const editTitle = async (album: IAlbum, title: string): Promise<void> => {
       if (title.length === 0) {
         setFeedbackMessage( {text: `Album title cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
@@ -73,7 +70,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editReleaseDate = async (album: IAlbum): Promise<void> => {
+    const editReleaseDate = async (album: IAlbum, releaseDate: string): Promise<void> => {
       if (releaseDate.length === 0) {
         setFeedbackMessage( {text: `Release date cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
@@ -87,7 +84,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editCover = async (album: IAlbum): Promise<void> => {
+    const editCover = async (album: IAlbum, cover: string): Promise<void> => {
       if (cover.length === 0) {
         setFeedbackMessage( {text: `Cover cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
@@ -101,7 +98,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editTrackNumber = async (track: ITrack): Promise<void> => {
+    const editTrackNumber = async (track: ITrack, trackNumber: number): Promise<void> => {
       if (isNaN(trackNumber)) {
         setFeedbackMessage( { text: `Track number cannot be empty`, feedbackMessageType: FeedbackMessageType.Error } )
         return
@@ -123,7 +120,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editTrackTitle = async (track: ITrack): Promise<void> => {
+    const editTrackTitle = async (track: ITrack, trackTitle: string): Promise<void> => {
       if (trackTitle.length === 0) {
         setFeedbackMessage( {text: `Track title cannot be empty`, feedbackMessageType: FeedbackMessageType.Error} )
         return
@@ -139,7 +136,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editTrackLengthMinutes = async (track: ITrack): Promise<void> => {
+    const editTrackLengthMinutes = async (track: ITrack, trackLengthMinutes: number): Promise<void> => {
       if (track.id && getMinutes(track.seconds) !== trackLengthMinutes) {
         if (isNaN(trackLengthMinutes)) {
           setFeedbackMessage( { text: `Track minutes cannot be empty`, feedbackMessageType: FeedbackMessageType.Error } )
@@ -158,7 +155,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
-    const editTrackLengthSeconds = async (track: ITrack): Promise<void> => {
+    const editTrackLengthSeconds = async (track: ITrack, trackLengthSeconds: number): Promise<void> => {
       if (track.id && getSeconds(track.seconds) !== trackLengthSeconds) {
         if (isNaN(trackLengthSeconds)) {
           setFeedbackMessage( { text: `Track seconds cannot be empty`, feedbackMessageType: FeedbackMessageType.Error } )
@@ -232,10 +229,15 @@ export const AlbumInformation = (props: { albumId: number }) => {
             <br/>
             <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
             <div className="albumInformation">
-              <input required type="text" placeholder="Artist" name="artist" key={'artist: ' + album.artist.title} defaultValue={album.artist.title} onFocus={(e) => setArtist(e.target.value)} onChange={(e) => setArtist(e.target.value)} onBlur={() => editArtist(album)} />
-              <input required type="text" placeholder="Album title" name="title" key={'album: ' + album.title} defaultValue={album.title} onFocus={(e) => setTitle(e.target.value)} onChange={(e) => setTitle(e.target.value)} onBlur={() => editTitle(album)} />
-              <input required type="date" placeholder="Release date" name="releaseDate" key={'releaseDate: ' + album.releaseDate} defaultValue={album.releaseDate} onFocus={(e) => setReleaseDate(e.target.value)} onChange={(e) => setReleaseDate(e.target.value)} onBlur={() => editReleaseDate(album)} />
-              <input required type="text" placeholder="Cover" name="cover" key={'cover: ' + album.cover} defaultValue={album.cover} onFocus={(e) => setCover(e.target.value)} onChange={(e) => setCover(e.target.value)} onBlur={() => editCover(album)} />
+              <select value={album.artist.title} onChange={(e) => editArtist(album, e.target.value)}>
+                {artists.map((artist) => (
+                  <option key={artist.title} value={artist.title}>{artist.title}</option>
+                ))}
+              </select>
+              <Link to={`/artists`}><img src="../icons8-edit.png" className="staticEditArtistIcon" alt="edit artists" title="edit artists"/><img src="../icons8-edit.gif" className="activeEditArtistIcon" alt="edit artists" title="edit artists"/></Link>
+              <input required type="text" placeholder="Album title" name="title" key={'album: ' + album.title} defaultValue={album.title} onBlur={(e) => editTitle(album, e.target.value)} />
+              <input required type="date" placeholder="Release date" name="releaseDate" key={'releaseDate: ' + album.releaseDate} defaultValue={album.releaseDate} onChange={(e) => editReleaseDate(album, e.target.value)} />
+              <input required type="text" placeholder="Cover" name="cover" key={'cover: ' + album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
               <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt="remove album" title="remove album" /></button>
             </div>
             <br/>
@@ -253,9 +255,9 @@ export const AlbumInformation = (props: { albumId: number }) => {
                   <tbody>
                     {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((t) => (
                     <tr key={t.id}>
-                      <td><input required type="number" placeholder="Track number" name="trackNumber" defaultValue={t.trackNumber} onFocus={(e) => setTrackNumber(e.target.valueAsNumber)} onChange={(e) => setTrackNumber(e.target.valueAsNumber)} onBlur={() => editTrackNumber(t)} /></td>
-                      <td><input required type="text" placeholder="Track title" name="trackTitle" defaultValue={t.title} onFocus={(e) => setTrackTitle(e.target.value)} onChange={(e) => setTrackTitle(e.target.value)} onBlur={() => editTrackTitle(t)} /></td>
-                      <td><input required type="number" placeholder="MM" min="0" name="trackLengthMinutes" defaultValue={getMinutes(t.seconds)} onFocus={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onChange={(e) => setTrackLengthMinutes(e.target.valueAsNumber)} onBlur={() => editTrackLengthMinutes(t)} />:<input required type="number" placeholder="SS" min="0" name="trackLengthSeconds" defaultValue={getSeconds(t.seconds)} onFocus={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onChange={(e) => setTrackLengthSeconds(e.target.valueAsNumber)} onBlur={() => editTrackLengthSeconds(t)} /></td>
+                      <td><input required type="number" placeholder="Track number" name="trackNumber" defaultValue={t.trackNumber} onBlur={(e) => editTrackNumber(t, e.target.valueAsNumber)} /></td>
+                      <td><input required type="text" placeholder="Track title" name="trackTitle" defaultValue={t.title} onBlur={(e) => editTrackTitle(t, e.target.value)} /></td>
+                      <td><input required type="number" placeholder="MM" min="0" name="trackLengthMinutes" defaultValue={getMinutes(t.seconds)} onBlur={(e) => editTrackLengthMinutes(t, e.target.valueAsNumber)} />:<input required type="number" placeholder="SS" min="0" name="trackLengthSeconds" defaultValue={getSeconds(t.seconds)} onBlur={(e) => editTrackLengthSeconds(t, e.target.valueAsNumber)} /></td>
                       <td><button onClick={(e) => removeTrack(e, t)}><img src="../icons8-delete.png" alt="remove track" title="remove track" /></button></td>
                     </tr>
                     ))}

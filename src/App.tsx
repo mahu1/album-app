@@ -7,6 +7,7 @@ import { AlbumEdit } from './views/AlbumEdit'
 import { NotFoundError } from './views/NotFoundError'
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { Artists } from './views/Artists';
 
 
 
@@ -29,7 +30,7 @@ export const App = () => {
 
   useEffect(() => { 
     if (feedbackMessage?.useTimer) {
-      emptyFeedbackMessageAfterTimer(5000)
+      emptyFeedbackMessageAfterTimer(3000)
     } else {
       setFeedbackMessage(null)
     }
@@ -59,6 +60,7 @@ export const App = () => {
           <Route path="/album/:id" Component={Album} />
           <Route path="/albumAdd" Component={AlbumAdd} />
           <Route path="/albumEdit/:id" Component={AlbumEdit} />
+          <Route path="/artists" Component={Artists} />
           <Route path="*" Component={NotFoundError} />
         </Routes>
       </FeedbackMessageContext.Provider>

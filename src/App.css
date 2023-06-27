@@ -46,7 +46,7 @@
   width: 500px;
 }
 
-.albumInformation, .tracksInformation {
+.albumInformation, .tracksInformation, .artistsInformation {
   padding-left: 20px;
   float: left;
 }
@@ -55,7 +55,7 @@
   font-size: 25px;
 }
 
-.albumAdd {
+.textCenter {
   text-align: center;
 }
 
@@ -87,7 +87,7 @@ th, tfoot {
 tr:nth-child(even){background-color: #f2f2f2;}
 
 .staticIcon {
-  position:absolute;
+  position: absolute;
   background: white;
   opacity:1;
   width: 30px;
@@ -99,7 +99,7 @@ tr:nth-child(even){background-color: #f2f2f2;}
 }
 
 .activeIcon {
-  position:absolute;
+  position: absolute;
   background: white;
   opacity:0;
   width: 30px;
@@ -112,7 +112,7 @@ tr:nth-child(even){background-color: #f2f2f2;}
 
 .editStaticIcon {
   right: 0;
-  position:absolute;
+  position: absolute;
   background: white;
   opacity:1;
   width: 30px;
@@ -128,7 +128,7 @@ tr:nth-child(even){background-color: #f2f2f2;}
 
 .editActiveIcon {
   right: 0;
-  position:absolute;
+  position: absolute;
   background: white;
   opacity:0;
   width: 30px;
@@ -142,9 +142,35 @@ tr:nth-child(even){background-color: #f2f2f2;}
   padding-right: 10px;
 }
 
+.staticEditArtistIcon {
+  position: absolute;
+  background: white;
+  opacity:1;
+  width: 20px;
+}
+
+.staticEditArtistIcon:hover {
+  position: relative;
+  opacity:0;
+  width: 20px;
+}
+
+.activeEditArtistIcon {
+  position: relative;
+  background: white;
+  opacity:0;
+  width: 20px;
+}
+
+.activeEditArtistIcon:hover {
+  position: relative;
+  opacity:1;
+  width: 20px;
+}
+
 .addNewStaticIcon {
   right: 0;
-  position:absolute;
+  position: absolute;
   background: white;
   opacity:1;
   width: 40px;
@@ -160,7 +186,7 @@ tr:nth-child(even){background-color: #f2f2f2;}
 
 .addNewActiveIcon {
   right: 0;
-  position:absolute;
+  position: absolute;
   background: white;
   opacity:0;
   width: 40px;
