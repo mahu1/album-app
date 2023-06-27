@@ -33,7 +33,7 @@ export const Album = () => {
             <table>
               <thead>
                 <tr>
-                  <th></th>
+                  <th>{strings.no}</th>
                   <th>{strings.title}</th>
                   <th>{strings.length}</th>
                 </tr>

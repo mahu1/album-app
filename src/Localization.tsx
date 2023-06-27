@@ -10,7 +10,7 @@ export let strings = new LocalizedStrings({
    track:"Track",
    title:"Title",
    length:"Length",
-   no:"no.",
+   no:"No.",
    track_number:"Track number",
    track_title:"Track title",
    mm:"MM",
