@@ -65,7 +65,7 @@ export const Artists = () => {
 
   const getArtistRemoveButtonText = (artist: IArtist): string => {
     if (artist.albums !== undefined && artist.albums.length > 0) {
-      return strings.formatString(strings.formatString('' + artist.albums.length) as string) as string
+      return strings.formatString(strings.cannot_remove, artist.albums.length) as string
     }
     return strings.remove
   }

@@ -62,7 +62,7 @@ export let strings = new LocalizedStrings({
    track_number_already_exists_on_album:"Track number already exists on album",
    album_title_cannot_be_empty:"Album title cannot be empty",
    release_date_cannot_be_empty:"Release date cannot be empty",
-   cannot_remove:"cannot remove (is being used by {0} albums)",
+   cannot_remove:"cannot remove - is used in {0} album(s)",
    remove:"remove"
  }
 })
