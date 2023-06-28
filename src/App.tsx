@@ -32,7 +32,7 @@ export const App = () => {
     } else {
       setFeedbackMessage(null)
     }
-  }, [location.pathname])
+  }, [location])
 
   const emptyFeedbackMessageAfterTimer = (time: number) => {
     setTimeout(
