@@ -18,7 +18,7 @@ export const AlbumAdd = () => {
     const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
 
     useEffect(() => {
-      artistService.getAll().then(data => {
+      artistService.getAll(false).then(data => {
         setArtists(data)
       })
     }, [albumId])

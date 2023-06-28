@@ -23,7 +23,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       albumService.getById(albumId).then(data => {
         setAlbum(data)
       })
-      artistService.getAll().then(data => {
+      artistService.getAll(false).then(data => {
         setArtists(data)
       })
     }, [albumId])

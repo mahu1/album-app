@@ -13,7 +13,7 @@ export const Artists = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    artistService.getAll().then((data) => setArtists(data))
+    artistService.getAll(true).then((data) => setArtists(data))
   }, [])
 
   const removeArtist = async (e: React.FormEvent, artist: IArtist): Promise<void> => {
@@ -21,7 +21,7 @@ export const Artists = () => {
     if (artist.id) {
       if (window.confirm(strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist.title) as string)) {
         await artistService.remove(artist.id)
-        artistService.getAll().then((data) => setArtists(data))
+        artistService.getAll(true).then((data) => setArtists(data))
         setFeedbackMessage( { text: strings.formatString(strings.artist_removed, artist.title), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
@@ -40,7 +40,7 @@ export const Artists = () => {
       if (artist.id && artist.title !== artistTitle) {
         const changedArtist: {} = { title: artistTitle }
         await artistService.patch(artist.id, changedArtist)
-        artistService.getAll().then((data) => setArtists(data))
+        artistService.getAll(true).then((data) => setArtists(data))
         setFeedbackMessage( { text: strings.formatString(strings.artist_title_edited, artist.title, artistTitle), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
@@ -57,7 +57,7 @@ export const Artists = () => {
     }
 
     await artistService.create(artist)
-    artistService.getAll().then((data) => setArtists(data))
+    artistService.getAll(true).then((data) => setArtists(data))
     setFeedbackMessage( { text: strings.formatString(strings.artist_added, artist.title), feedbackMessageType: FeedbackMessageType.Info })
       
     setNewArtistTitle('')
