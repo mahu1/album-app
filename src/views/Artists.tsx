@@ -64,14 +64,14 @@ export const Artists = () => {
   }
 
   const getArtistRemoveButtonText = (artist: IArtist): string => {
-    if (artist.albums === undefined || artist.albums?.length > 0) {
-      return strings.cannot_remove
+    if (artist.albums !== undefined && artist.albums.length > 0) {
+      return strings.formatString(strings.formatString('' + artist.albums.length) as string) as string
     }
     return strings.remove
   }
 
   const getArtistRemoveButtonIcon = (artist: IArtist): string => {
-    if (artist.albums === undefined || artist.albums?.length > 0) {
+    if (artist.albums !== undefined && artist.albums.length > 0) {
       return '../icons8-delete-disabled.png'
     }
     return '../icons8-delete.png'
@@ -95,7 +95,7 @@ export const Artists = () => {
               {artists.map((a) => (
                 <tr key={a.id}>
                   <td><input required type="text" placeholder={strings.artist_title} name="artistTitle" defaultValue={a.title} onBlur={(e) => editArtistTitle(a, e.target.value)} /></td>
-                  <td><button disabled={a.albums === undefined || a.albums.length > 0} onClick={(e) => removeArtist(e, a)}><img src={getArtistRemoveButtonIcon(a)} alt={getArtistRemoveButtonText(a)} title={getArtistRemoveButtonText(a)} /></button></td>
+                  <td><button disabled={a.albums !== undefined && a.albums.length > 0} onClick={(e) => removeArtist(e, a)}><img src={getArtistRemoveButtonIcon(a)} alt={getArtistRemoveButtonText(a)} title={getArtistRemoveButtonText(a)} /></button></td>
                 </tr>
               ))}
               <tr>
