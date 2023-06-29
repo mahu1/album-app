@@ -55,17 +55,15 @@ export const Artists = () => {
     const artist: IArtist = {
       title: newArtistTitle,
     }
-
     await artistService.create(artist)
     artistService.getAll(true).then((data) => setArtists(data))
     setFeedbackMessage( { text: strings.formatString(strings.artist_added, artist.title), feedbackMessageType: FeedbackMessageType.Info })
-      
     setNewArtistTitle('')
   }
 
   const getArtistRemoveButtonText = (artist: IArtist): string => {
     if (artist.albums !== undefined && artist.albums.length > 0) {
-      return strings.formatString(strings.cannot_remove, artist.albums.length) as string
+      return strings.formatString(strings.cannot_remove_is_used_by_albums, artist.albums.length) as string
     }
     return strings.remove
   }
