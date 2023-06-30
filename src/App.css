@@ -85,7 +85,7 @@ input[type="url"] {
 } 
 
 th, tfoot {
-  background: linear-gradient(90deg, rgb(232, 232, 237) 0%, rgb(239, 239, 243) 35%, rgb(154, 158, 193) 100%);
+  background: rgb(224, 224, 230)
 }
 
 tr:nth-child(even){background-color: #f2f2f2;}
