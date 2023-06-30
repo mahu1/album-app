@@ -1,4 +1,7 @@
-FROM nginx:latest
+FROM node:alpine
+WORKDIR '/app'
 
-COPY --chmod=644 default.conf /etc/nginx/conf.d/default.conf
-COPY --chown=nginx:nginx build /usr/share/nginx/app/
+COPY package.json .
+RUN npm install
+COPY . .
+CMD ["npm", "start"]
