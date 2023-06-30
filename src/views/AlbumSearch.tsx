@@ -71,6 +71,7 @@ export const AlbumSearch = () => {
             <input onChange={(e) => doSearch(searchValue, ItemGroup.Track)} type="radio" value="track" name="searchGroup" />{strings.track}
           </label>
         </div>
+        <div className="smallText">{strings.formatString(strings.results, '' + albums.length)}</div>
       </div>
       {albums.map((a) => (
         <div key={a.id} className="image-container">

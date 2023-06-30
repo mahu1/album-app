@@ -5,6 +5,7 @@ export let strings = new LocalizedStrings({
    back:"back",
    edit:"edit",
    search:"Search...",
+   results:"{0} result(s)",
    artist:"Artist",
    album:"Album",
    track:"Track",

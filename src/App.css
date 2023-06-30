@@ -55,6 +55,10 @@
   font-size: 25px;
 }
 
+.smallText {
+  font-size: 12px;
+}
+
 .textCenter {
   text-align: center;
 }
