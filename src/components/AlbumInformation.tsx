@@ -112,9 +112,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
         if (track.id) {
           const changedTrack: {} = { trackNumber: trackNumber }
           await trackService.patch(track.id, changedTrack)
-          albumService.getById(albumId).then(data => {
-            setAlbum(data)
-          })
+          setAlbum(await albumService.getById(albumId))
           setFeedbackMessage( { text: strings.formatString(strings.track_number_edited, track.trackNumber, trackNumber), feedbackMessageType: FeedbackMessageType.Info} )
         }
       }
@@ -129,9 +127,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       if (track.id && track.title !== trackTitle) {
         const changedTrack: {} = { title: trackTitle }
         await trackService.patch(track.id, changedTrack)
-        albumService.getById(albumId).then(data => {
-          setAlbum(data)
-        })
+        setAlbum(await albumService.getById(albumId))
         setFeedbackMessage( { text: strings.formatString(strings.track_title_edited, track.title, trackTitle), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
@@ -148,9 +144,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
         const trackLength = getFullLengthSeconds(trackLengthMinutes, getSeconds(track.seconds))
         const changedTrack: {} = { seconds: trackLength }
         await trackService.patch(track.id, changedTrack)
-        albumService.getById(albumId).then(data => {
-          setAlbum(data)
-        })
+        setAlbum(await albumService.getById(albumId))
         setFeedbackMessage( { text: strings.formatString(strings.track_length_edited, getTrackFullLength(track.seconds), getTrackFullLength(trackLength)), feedbackMessageType: FeedbackMessageType.Info } )
       }
     }
@@ -167,9 +161,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
         const trackLength = getFullLengthSeconds(getMinutes(track.seconds), trackLengthSeconds)
         const changedTrack: {} = { seconds: trackLength }
         await trackService.patch(track.id, changedTrack)
-        albumService.getById(albumId).then(data => {
-          setAlbum(data)
-        })
+        setAlbum(await albumService.getById(albumId))
         setFeedbackMessage( { text: strings.formatString(strings.track_length_edited, getTrackFullLength(track.seconds), getTrackFullLength(trackLength)), feedbackMessageType: FeedbackMessageType.Info } )
       }
     }
@@ -195,9 +187,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
         }
 
         await trackService.create(albumId, track)
-        albumService.getById(albumId).then(data => {
-          setAlbum(data)
-        })
+        setAlbum(await albumService.getById(albumId))
         setFeedbackMessage( { text: strings.formatString(strings.track_added, track.title), feedbackMessageType: FeedbackMessageType.Info })
         
         setNewTrackTitle('')
@@ -211,9 +201,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
       if (track.id) {
         if (window.confirm(strings.formatString(strings.are_you_sure_you_want_to_remove_track, track.title) as string)) {
           await trackService.remove(track.id)
-          albumService.getById(albumId).then(data => {
-            setAlbum(data)
-          })
+          setAlbum(await albumService.getById(albumId))
           setFeedbackMessage({ text: strings.formatString(strings.track_removed, track.title), feedbackMessageType: FeedbackMessageType.Info })
         }
       }
@@ -255,7 +243,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
                   <tbody>
                     {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((t) => (
                     <tr key={t.id}>
-                      <td><input required type="number" min="1" placeholder={strings.track_number} name="trackNumber" defaultValue={t.trackNumber} onBlur={(e) => editTrackNumber(t, e.target.valueAsNumber)} /></td>
+                      <td><input disabled type="number" min="1" placeholder={strings.track_number} name="trackNumber" value={t.trackNumber} /></td>
                       <td><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={t.title} onBlur={(e) => editTrackTitle(t, e.target.value)} /></td>
                       <td><input required type="number" placeholder={strings.mm} min="0" name="trackLengthMinutes" defaultValue={getMinutes(t.seconds)} onBlur={(e) => editTrackLengthMinutes(t, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" name="trackLengthSeconds" defaultValue={getSeconds(t.seconds)} onBlur={(e) => editTrackLengthSeconds(t, e.target.valueAsNumber)} /></td>
                       <td><button onClick={(e) => removeTrack(e, t)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></td>
