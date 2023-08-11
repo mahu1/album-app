@@ -12,21 +12,23 @@ const getAll = (): Promise<IAlbum[]> => {
 }
 
 const getByArtist = (searchValue: string): Promise<IAlbum[]>  => {
-  const searchValueEscaped = searchValue.replace('&', '%26')
+  const searchValueEscaped = escapeSearchValue(searchValue)
   return axios
     .get<IAlbum[]>(baseUrl + '/albums?artist=' + searchValueEscaped)
     .then(response => response.data)
 }
 
 const getByAlbumTitle = (searchValue: string): Promise<IAlbum[]> => {
+  const searchValueEscaped = escapeSearchValue(searchValue)
   return axios
-    .get<IAlbum[]>(baseUrl + '/albums?albumtitle=' + searchValue)
+    .get<IAlbum[]>(baseUrl + '/albums?albumtitle=' + searchValueEscaped)
     .then(response => response.data)
 }
 
 const getByTrackTitle = (searchValue: string): Promise<IAlbum[]> => {
+  const searchValueEscaped = escapeSearchValue(searchValue)
   return axios
-    .get<IAlbum[]>(baseUrl + '/albums?tracktitle=' + searchValue)
+    .get<IAlbum[]>(baseUrl + '/albums?tracktitle=' + searchValueEscaped)
     .then(response => response.data)
 }
 
@@ -55,6 +57,12 @@ const put = (id: number, album: IAlbum) => {
   const request = axios.put(baseUrl  + '/' + basePath + '/' + id, album)
   return request.then(response => response.data)
 }
+
+const escapeSearchValue = (searchValue: string): string => {
+  const searchValueEscaped = searchValue.replace('&', '%26')
+  return searchValueEscaped
+}
+
 
 const exportedObject = {
   getAll,
