@@ -116,7 +116,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
           setFeedbackMessage( { text: strings.track_minutes_cannot_be_negative, feedbackMessageType: FeedbackMessageType.Error } )
           return
         } else if (trackLengthMinutes > 99) {
-          setFeedbackMessage( { text: strings.track_minutes_cannot_be_more_than_two_characters, feedbackMessageType: FeedbackMessageType.Error } )
+          setFeedbackMessage( { text: strings.track_minutes_maximum_value_is_99, feedbackMessageType: FeedbackMessageType.Error } )
           return
         }
         const trackLength = getFullLengthSeconds(trackLengthMinutes, getSeconds(track.seconds))
@@ -135,8 +135,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
         } else if (trackLengthSeconds < 0) {
           setFeedbackMessage( { text: strings.track_seconds_cannot_be_negative, feedbackMessageType: FeedbackMessageType.Error } )
           return
-        } else if (trackLengthSeconds > 99) {
-          setFeedbackMessage( { text: strings.track_seconds_cannot_be_more_than_two_characters, feedbackMessageType: FeedbackMessageType.Error } )
+        } else if (trackLengthSeconds > 59) {
+          setFeedbackMessage( { text: strings.track_seconds_maximum_value_is_59, feedbackMessageType: FeedbackMessageType.Error } )
           return
         }
         const trackLength = getFullLengthSeconds(getMinutes(track.seconds), trackLengthSeconds)
@@ -226,14 +226,14 @@ export const AlbumInformation = (props: { albumId: number }) => {
                     <tr key={t.id}>
                       <td><input disabled type="number" min="1" placeholder={strings.track_number} name="trackNumber" value={t.trackNumber} /></td>
                       <td><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={t.title} onBlur={(e) => editTrackTitle(t, e.target.value)} /></td>
-                      <td><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(t.seconds)} onBlur={(e) => editTrackLengthMinutes(t, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="99" name="trackLengthSeconds" defaultValue={getSeconds(t.seconds)} onBlur={(e) => editTrackLengthSeconds(t, e.target.valueAsNumber)} /></td>
+                      <td><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(t.seconds)} onBlur={(e) => editTrackLengthMinutes(t, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(t.seconds)} onBlur={(e) => editTrackLengthSeconds(t, e.target.valueAsNumber)} /></td>
                       <td><button onClick={(e) => removeTrack(e, t)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></td>
                     </tr>
                     ))}
                     <tr>
                       <td></td>
                       <td><input required type="text" placeholder={strings.track_title} name="newTrackTitle" value={newTrackTitle} onChange={(e) => setNewTrackTitle(e.target.value)} /></td>
-                      <td><input required type="number" placeholder={strings.mm} min="0" max="99" name="newTrackLengthMinutes" value={newTrackLengthMinutes} onChange={(e) => setNewTrackLengthMinutes(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="99" name="newTrackLengthSeconds" value={newTrackLengthSeconds} onChange={(e) => setNewTrackLengthSeconds(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} /></td>
+                      <td><input required type="number" placeholder={strings.mm} min="0" max="99" name="newTrackLengthMinutes" value={newTrackLengthMinutes} onChange={(e) => setNewTrackLengthMinutes(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="newTrackLengthSeconds" value={newTrackLengthSeconds} onChange={(e) => setNewTrackLengthSeconds(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} /></td>
                       <td><button type="submit"><img src="../icons8-plus.png" alt={strings.add_track} title={strings.add_track} /></button></td>
                     </tr>
                   </tbody>
