@@ -5,7 +5,8 @@ export let strings = new LocalizedStrings({
    back:"back",
    edit:"edit",
    search:"Search...",
-   results:"{0} result(s)",
+   result:"{0} result",
+   results:"{0} results",
    artist:"Artist",
    album:"Album",
    track:"Track",
@@ -28,7 +29,6 @@ export let strings = new LocalizedStrings({
    album_removed:"Album removed: {0} - {1}",
    album_added:"Album added: {0} - {1}",
    album_already_found:"Album {0} - {1} already found",
-   do_not_use_special_characters:"Do not use special characters",
    error:"Error: ",
    page_not_found:"Page not found",
    artists:"Artists",
@@ -63,7 +63,8 @@ export let strings = new LocalizedStrings({
    track_number_already_exists_on_album:"Track number already exists on album",
    album_title_cannot_be_empty:"Album title cannot be empty",
    release_date_cannot_be_empty:"Release date cannot be empty",
-   cannot_remove_is_used_by_albums:"cannot remove - is used by {0} album(s)",
+   cannot_remove_is_used_by_albums:"cannot remove - is used by {0} albums",
+   cannot_remove_is_used_by_album:"cannot remove - is used by {0} album",
    remove:"remove"
  }
 })

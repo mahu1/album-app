@@ -28,6 +28,7 @@
 
 .searchResultImg {
   width: 250px;
+  height: 250px;
 }
 
 .searchField {
@@ -44,6 +45,7 @@
 .albumImg {
   float: left;
   width: 500px;
+  height: 500px;
 }
 
 .albumInformation, .tracksInformation, .artistsInformation {

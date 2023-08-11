@@ -1,9 +1,7 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import albumService from '../services/album'
 import { IAlbum } from '../Interfaces'
 import { Link } from 'react-router-dom'
-import { FeedbackMessageContext } from '../FeedbackMessageContext'
-import { FeedbackMessageType } from '../App'
 import { strings } from '../Localization'
 
 enum ItemGroup {
@@ -16,7 +14,6 @@ export const AlbumSearch = () => {
   const [searchValue, setSearchValue] = useState('')
   const [searchGroup, setSearchGroup] = useState(ItemGroup.Artist)
   const [albums, setAlbums] = useState<IAlbum[]>([])
-  const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
 
   useEffect(() => {
     albumService.getAll().then((data) => setAlbums(data))
@@ -26,15 +23,7 @@ export const AlbumSearch = () => {
   const doSearch = (searchValue: string, searchGroup: ItemGroup): void => {
     setSearchValue(searchValue)
     setSearchGroup(searchGroup)
-    setFeedbackMessage( {text: ``, feedbackMessageType: ''} )
-
-    const regExp = new RegExp('^[a-öA-Ö0-9_ ]*$');
-    if (!regExp.test(searchValue)) {
-      setFeedbackMessage( {text: strings.do_not_use_special_characters, feedbackMessageType: FeedbackMessageType.Error} )
-      return
-    }
     
-
     if (searchValue === '') {
       albumService.getAll().then(data => {
         setAlbums(data)
@@ -52,7 +41,13 @@ export const AlbumSearch = () => {
         setAlbums(data)
       })
     }
+  }
 
+  const getResultText = (): string => {
+    if (albums.length === 1) {
+      return strings.formatString(strings.result, '' + albums.length) as string
+    }
+    return strings.formatString(strings.results, '' + albums.length) as string
   }
 
   return (
@@ -71,7 +66,7 @@ export const AlbumSearch = () => {
             <input onChange={(e) => doSearch(searchValue, ItemGroup.Track)} type="radio" value="track" name="searchGroup" />{strings.track}
           </label>
         </div>
-        <div className="smallText">{strings.formatString(strings.results, '' + albums.length)}</div>
+        <div className="smallText">{getResultText()}</div>
       </div>
       {albums.map((a) => (
         <div key={a.id} className="image-container">

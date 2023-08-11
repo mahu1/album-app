@@ -12,8 +12,9 @@ const getAll = (): Promise<IAlbum[]> => {
 }
 
 const getByArtist = (searchValue: string): Promise<IAlbum[]>  => {
+  const searchValueEscaped = searchValue.replace('&', '%26')
   return axios
-    .get<IAlbum[]>(baseUrl + '/albums?artist=' + searchValue)
+    .get<IAlbum[]>(baseUrl + '/albums?artist=' + searchValueEscaped)
     .then(response => response.data)
 }
 
