@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { getTracksFullLength, getTrackFullLength } from '../AlbumUtils'
 import { strings } from '../Localization'
+import { StarRate } from '../components/StarRate'
 
 export const Album = () => {
   const { id } = useParams() as { id: string }
@@ -26,7 +27,10 @@ export const Album = () => {
           <Link to={`/albumEdit/${album.id}`}><img src="../icons8-edit.png" className="editStaticIcon" alt={strings.edit} title={strings.edit}/><img src="../icons8-edit.gif" className="editActiveIcon" alt={strings.edit} title={strings.edit}/></Link>
           <br/>
           <br/>
-          <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
+          <div className="albumImgAndRating">
+            <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
+            <div className="textCenter"><StarRate album={album} /></div>
+          </div>
           <div className="albumInformation" key={album.id}>
             <div className="strongText">{album.artist.title} - {album.title}</div>
             <div>{album.releaseDate}</div>

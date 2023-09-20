@@ -8,6 +8,7 @@ import { getTracksFullLength, getTrackFullLength, getFullLengthSeconds, getMinut
 import { FeedbackMessageType } from '../App'
 import { useNavigate, Link } from 'react-router-dom'
 import { strings } from '../Localization'
+import { StarRate } from '../components/StarRate'
 
 export const AlbumInformation = (props: { albumId: number }) => {
     const { albumId } = props;
@@ -196,7 +197,10 @@ export const AlbumInformation = (props: { albumId: number }) => {
           <div>
             <br/>
             <br/>
-            <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
+            <div className="albumImgAndRating">
+              <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
+              <div className="textCenter"><StarRate album={album} /></div>
+            </div>
             <div className="albumInformation">
               <select value={album.artist.title} onChange={(e) => editArtist(album, e.target.value)}>
                 {artists.map((artist) => (

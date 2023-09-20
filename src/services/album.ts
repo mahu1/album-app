@@ -11,30 +11,37 @@ const getAll = (): Promise<IAlbum[]> => {
     .then(response => response.data)
 }
 
-const getByArtist = (searchValue: string): Promise<IAlbum[]>  => {
-  const searchValueEscaped = escapeSearchValue(searchValue)
+const getByRating = (rating: number): Promise<IAlbum[]>  => {
   return axios
-    .get<IAlbum[]>(baseUrl + '/albums?artist=' + searchValueEscaped)
+    .get<IAlbum[]>(baseUrl + '/' + basePath + '?rating=' + rating)
     .then(response => response.data)
 }
 
-const getByAlbumTitle = (searchValue: string): Promise<IAlbum[]> => {
+
+const getByArtist = (searchValue: string, rating: number): Promise<IAlbum[]>  => {
   const searchValueEscaped = escapeSearchValue(searchValue)
   return axios
-    .get<IAlbum[]>(baseUrl + '/albums?albumtitle=' + searchValueEscaped)
+    .get<IAlbum[]>(baseUrl + '/' + basePath + '?artist=' + searchValueEscaped + (rating > 0 ? '&rating=' + rating : ''))
     .then(response => response.data)
 }
 
-const getByTrackTitle = (searchValue: string): Promise<IAlbum[]> => {
+const getByAlbumTitle = (searchValue: string, rating: number): Promise<IAlbum[]> => {
   const searchValueEscaped = escapeSearchValue(searchValue)
   return axios
-    .get<IAlbum[]>(baseUrl + '/albums?tracktitle=' + searchValueEscaped)
+    .get<IAlbum[]>(baseUrl + '/' + basePath + '?albumtitle=' + searchValueEscaped + (rating > 0 ? '&rating=' + rating : ''))
+    .then(response => response.data)
+}
+
+const getByTrackTitle = (searchValue: string, rating: number): Promise<IAlbum[]> => {
+  const searchValueEscaped = escapeSearchValue(searchValue)
+  return axios
+    .get<IAlbum[]>(baseUrl + '/' + basePath + '?tracktitle=' + searchValueEscaped + (rating > 0 ? '&rating=' + rating : ''))
     .then(response => response.data)
 }
 
 const getById = (id: number): Promise<IAlbum> => {  
   return axios
-    .get<IAlbum>(baseUrl  + '/' + basePath + '/' + id + '?_embed=TRACKS')
+    .get<IAlbum>(baseUrl + '/' + basePath + '/' + id + '?_embed=TRACKS')
     .then(response => response.data)
 }
 
@@ -66,6 +73,7 @@ const escapeSearchValue = (searchValue: string): string => {
 
 const exportedObject = {
   getAll,
+  getByRating,
   getByArtist,
   getByAlbumTitle,
   getByTrackTitle,

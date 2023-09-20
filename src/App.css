@@ -42,6 +42,10 @@
   text-align: center;
 }
 
+.albumImgAndRating {
+  float: left;
+}
+
 .albumImg {
   float: left;
   width: 500px;
@@ -227,4 +231,41 @@ body {
 
 .heavyText {
   font-weight: bold;
+}
+
+.starOn {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: rgb(9, 31, 78);
+}
+
+.starOff {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: rgb(211, 208, 220);
+}
+
+.star {
+  font-size: xx-large;
+}
+
+.unRate {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: xx-large;
+}
+
+.unRate:hover {
+  opacity: 1;
+}
+
+.hide {
+  display: none;
 }

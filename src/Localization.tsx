@@ -62,6 +62,11 @@ export let strings = new LocalizedStrings({
    release_date_cannot_be_empty:"Release date cannot be empty",
    cannot_remove_is_used_by_albums:"cannot remove - is used by {0} albums",
    cannot_remove_is_used_by_album:"cannot remove - is used by {0} album",
-   remove:"remove"
+   remove:"remove",
+   clear_rating:"clear rating",
+   star:"{0} star",
+   stars:"{0} stars",
+   star_at_least:"{0} star at least",
+   stars_at_least:"{0} stars at least"
  }
 })

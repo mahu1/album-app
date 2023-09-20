@@ -4,6 +4,7 @@ export interface IAlbum {
     title: string
     releaseDate: string
     cover: string
+    rating?: number
     tracks?: Array<ITrack>
 }
 
