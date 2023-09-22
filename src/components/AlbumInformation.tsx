@@ -198,7 +198,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
             <br/>
             <br/>
             <div className="albumImgAndRating">
-              <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
+              <Link to={`/album/${album.id}`}><img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} /></Link>
               <div className="textCenter"><StarRate album={album} /></div>
             </div>
             <div className="albumInformation">
@@ -209,7 +209,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
               </select>
               <Link to={`/artists`}><img src="../icons8-edit.png" className="staticEditArtistIcon" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeEditArtistIcon" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
               <input required type="text" placeholder={strings.album_title} name="title" key={album.title} defaultValue={album.title} onBlur={(e) => editTitle(album, e.target.value)} />
-              <input required type="date" placeholder={strings.release_date} name="releaseDate" key={album.releaseDate} defaultValue={album.releaseDate} onChange={(e) => editReleaseDate(album, e.target.value)} />
+              <input required type="date" placeholder={strings.release_date} name="releaseDate" key={album.releaseDate} defaultValue={album.releaseDate} onBlur={(e) => editReleaseDate(album, e.target.value)} />
               <input required type="text" placeholder={strings.cover} name="cover" key={album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
               <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt={strings.release_date} title={strings.remove_album} /></button>
             </div>

@@ -269,3 +269,8 @@ body {
 .hide {
   display: none;
 }
+
+a:link, a:visited, a:hover, a:active {
+  color: rgb(9, 31, 78);
+  text-decoration: none;
+}

@@ -2,7 +2,7 @@ import LocalizedStrings from 'react-localization'
 
 export let strings = new LocalizedStrings({
  en:{
-   back:"back",
+   back_to_album_search:"back to album search",
    edit:"edit",
    search:"Search...",
    result:"{0} result",
@@ -31,7 +31,7 @@ export let strings = new LocalizedStrings({
    album_already_found:"Album {0} - {1} already found",
    error:"Error: ",
    page_not_found:"Page not found",
-   artists:"Artists",
+   albums:"Albums",
    artist_title:"Artist title",
    add_artist:"Add artist",
    artist_removed:"Artist removed: {0}",
@@ -47,6 +47,7 @@ export let strings = new LocalizedStrings({
    are_you_sure_you_want_to_remove_album:"Are you sure you want to remove album: {0} - {1}?",
    are_you_sure_you_want_to_remove_track: "Are you sure you want to remove track: {0}?",
    are_you_sure_you_want_to_remove_artist:"Are you sure you want to remove artist: {0}?",
+   are_you_sure_you_want_to_remove_artist_and_albums:"Are you sure you want to remove artist: {0}?\n\nAlso artist's all albums will be removed:{1}",
    track_added:"Track added: {0}",
    track_removed:"Track removed: {0}",
    track_title_cannot_be_empty:"Track title cannot be empty",
@@ -60,8 +61,6 @@ export let strings = new LocalizedStrings({
    track_seconds_maximum_value_is_59:"Track seconds maximum value is 59",
    album_title_cannot_be_empty:"Album title cannot be empty",
    release_date_cannot_be_empty:"Release date cannot be empty",
-   cannot_remove_is_used_by_albums:"cannot remove - is used by {0} albums",
-   cannot_remove_is_used_by_album:"cannot remove - is used by {0} album",
    remove:"remove",
    clear_rating:"clear rating",
    star:"{0} star",

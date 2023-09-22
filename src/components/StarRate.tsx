@@ -43,12 +43,12 @@ export const StarRate = (props: { album: IAlbum }) => {
             {[...Array(5)].map((star, index) => {
                 index++
                 return (
-                    <button type="button" title={getStarRateButtonText(index)} key={index} className={index <= (hover || rating) ? "starOn" : "starOff"} onClick={() => rateAlbum(props.album, index)} onMouseEnter={() => setHover(index)} onMouseLeave={() => setHover(rating)}>
+                    <button title={getStarRateButtonText(index)} key={index} className={index <= (hover || rating) ? "starOn" : "starOff"} onClick={() => rateAlbum(props.album, index)} onMouseEnter={() => setHover(index)} onMouseLeave={() => setHover(rating)}>
                         <span className="star">&#9733;</span>
                     </button>
                 )
             })}
-            <button type="button" title={strings.clear_rating} className={rating === 0 ? "hide" : "unRate"} onClick={() => unrateAlbum(props.album)}>
+            <button title={strings.clear_rating} className={rating === 0 ? "hide" : "unRate"} onClick={() => unrateAlbum(props.album)}>
                 <span>&#8709;</span>
             </button>
         </>

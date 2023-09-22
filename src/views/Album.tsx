@@ -23,7 +23,7 @@ export const Album = () => {
         <div></div>
       ) : (
         <div>
-          <Link to={`/`}><img src="../icons8-go-back.png" className="staticIcon" alt={strings.back} title={strings.back}/><img src="../icons8-go-back.gif" className="activeIcon" alt={strings.back} title={strings.back}/></Link>
+          <Link to={`/`}><img src="../icons8-go-back.png" className="staticIcon" alt={strings.back_to_album_search} title={strings.back_to_album_search}/><img src="../icons8-go-back.gif" className="activeIcon" alt={strings.back_to_album_search} title={strings.back_to_album_search}/></Link>
           <Link to={`/albumEdit/${album.id}`}><img src="../icons8-edit.png" className="editStaticIcon" alt={strings.edit} title={strings.edit}/><img src="../icons8-edit.gif" className="editActiveIcon" alt={strings.edit} title={strings.edit}/></Link>
           <br/>
           <br/>

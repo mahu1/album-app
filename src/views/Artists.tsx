@@ -19,7 +19,7 @@ export const Artists = () => {
   const removeArtist = async (e: React.FormEvent, artist: IArtist): Promise<void> => {
     e.preventDefault()
     if (artist.id) {
-      if (window.confirm(strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist.title) as string)) {
+      if (window.confirm(getArtistRemoveConfirmText(artist))) {
         await artistService.remove(artist.id)
         artistService.getAll(true).then((data) => setArtists(data))
         setFeedbackMessage( { text: strings.formatString(strings.artist_removed, artist.title), feedbackMessageType: FeedbackMessageType.Info} )
@@ -61,27 +61,21 @@ export const Artists = () => {
     setNewArtistTitle('')
   }
 
-  const getArtistRemoveButtonText = (artist: IArtist): string => {
+  const getArtistRemoveConfirmText = (artist: IArtist): string => {
     if (artist.albums !== undefined && artist.albums.length > 0) {
-      if (artist.albums.length === 1) {
-        return strings.formatString(strings.cannot_remove_is_used_by_album, artist.albums.length) as string
-      }
-      return strings.formatString(strings.cannot_remove_is_used_by_albums, artist.albums.length) as string
+      let albumsList: string = '\n'
+      artist.albums.forEach((album) => {
+        const albumItem: string = '* ' + album.title + '\n'
+        albumsList += albumItem
+    })
+      return strings.formatString(strings.are_you_sure_you_want_to_remove_artist_and_albums, artist.title, albumsList) as string
     }
-    return strings.remove
+    return strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist.title) as string
   }
-
-  const getArtistRemoveButtonIcon = (artist: IArtist): string => {
-    if (artist.albums !== undefined && artist.albums.length > 0) {
-      return '../icons8-delete-disabled.png'
-    }
-    return '../icons8-delete.png'
-  }
-
 
   return (
     <div>
-      <Link to={'..'} onClick={(e) => {navigate(-1)}}><img src="../icons8-go-back.png" className="staticIcon" alt={strings.back} title={strings.back}/><img src="../icons8-go-back.gif" className="activeIcon" alt={strings.back} title={strings.back}/></Link>
+      <Link to={'/'}><img src="../icons8-go-back.png" className="staticIcon" alt={strings.back_to_album_search} title={strings.back_to_album_search}/><img src="../icons8-go-back.gif" className="activeIcon" alt={strings.back_to_album_search} title={strings.back_to_album_search}/></Link>
       <br/>
       <br/>
       <div className="artistsInformation">
@@ -89,14 +83,22 @@ export const Artists = () => {
           <table>
             <thead>
               <tr>
-                <th>{strings.artists}</th>
+                <th>{strings.artist}</th>
+                <th>{strings.albums}</th>
               </tr>
             </thead>
             <tbody>
-              {artists.map((a) => (
-                <tr key={a.id}>
-                  <td><input required type="text" placeholder={strings.artist_title} name="artistTitle" defaultValue={a.title} onBlur={(e) => editArtistTitle(a, e.target.value)} /></td>
-                  <td><button disabled={a.albums !== undefined && a.albums.length > 0} onClick={(e) => removeArtist(e, a)}><img src={getArtistRemoveButtonIcon(a)} alt={getArtistRemoveButtonText(a)} title={getArtistRemoveButtonText(a)} /></button></td>
+              {artists.map((artist) => (
+                <tr key={artist.id}>
+                  <td><input required type="text" placeholder={strings.artist_title} name="artistTitle" defaultValue={artist.title} onBlur={(e) => editArtistTitle(artist, e.target.value)} /></td>
+                  <td>
+                    <ul className="smallText">
+                      {artist.albums?.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1).map((album) => (
+                        <li key={album.id}><Link to={`/album/${album.id}`}>{album.title}</Link></li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td><button onClick={(e) => removeArtist(e, artist)}><img src="../icons8-delete.png" title={strings.remove} alt={strings.remove} /></button></td>
                 </tr>
               ))}
               <tr>
