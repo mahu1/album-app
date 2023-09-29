@@ -26,7 +26,6 @@ export const AlbumSearch = () => {
     label: genre.title
   }))
 
-
   const doSearch = (searchWord: string, searchGroup: ItemGroup, rating: number, selectedGenres: Genre[]): void => {
     setSearchWord(searchWord)
     setSearchGroup(searchGroup)
