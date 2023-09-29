@@ -31,15 +31,15 @@
   height: 250px;
 }
 
-.searchField {
+.searchFields {
   display: block;
-  margin-right: auto;
   margin-left: auto;
-  width: 500px;
+  margin-right: auto;
+  width: 800px;
 }
 
-.searchButtons {
-  text-align: center;
+.searchTextField {
+    width: 500px;
 }
 
 .albumImgAndRating {
@@ -152,27 +152,27 @@ tr:nth-child(even){background-color: #f2f2f2;}
   padding-right: 10px;
 }
 
-.staticEditArtistIcon {
+.staticIconSmall {
   position: absolute;
   background: white;
   opacity:1;
   width: 20px;
 }
 
-.staticEditArtistIcon:hover {
+.staticIcon:hover {
   position: relative;
   opacity:0;
   width: 20px;
 }
 
-.activeEditArtistIcon {
+.activeIconSmall {
   position: relative;
   background: white;
   opacity:0;
   width: 20px;
 }
 
-.activeEditArtistIcon:hover {
+.activeIconSmall:hover {
   position: relative;
   opacity:1;
   width: 20px;
@@ -209,7 +209,6 @@ tr:nth-child(even){background-color: #f2f2f2;}
   width: 40px;
   padding-right: 10px;
 }
-
 
 .feedbackMessageError {
   color: rgb(227, 63, 17);
@@ -273,4 +272,29 @@ body {
 a:link, a:visited, a:hover, a:active {
   color: rgb(9, 31, 78);
   text-decoration: none;
+}
+
+.selectList {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 350px;
+  line-height: 10px;
+  display: flex;
+}
+
+.selectListInput {
+  width: 100vh;
+}
+
+.searchPageFilters {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 550px;
+  line-height: 10px;
+  display: flex;
+}
+
+.searchPageSelectListInput {
+  width: 100vh;
+  padding-right: 50px;
 }

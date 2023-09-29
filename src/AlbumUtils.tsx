@@ -1,4 +1,4 @@
-import { ITrack } from "./Interfaces"
+import { ITrack, IGenre } from "./Interfaces"
 
 const SECONDSONMINUTE: number = 60
 
@@ -29,3 +29,13 @@ export const getSeconds = (seconds: number): number => {
   return seconds % SECONDSONMINUTE
 }
 
+export enum ItemGroup {
+  Artist = 'artist',
+  Album = 'album',
+  Track = 'track'
+}
+
+export interface Genre {
+  value: IGenre,
+  label: string
+}

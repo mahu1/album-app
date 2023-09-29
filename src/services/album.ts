@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { IAlbum } from '../Interfaces'
+import { ItemGroup } from '../AlbumUtils'
 
 //const baseUrl = '/api/albums'
 const baseUrl = 'http://localhost:8080'
@@ -11,37 +12,31 @@ const getAll = (): Promise<IAlbum[]> => {
     .then(response => response.data)
 }
 
-const getByRating = (rating: number): Promise<IAlbum[]>  => {
+const getBySearchCriterias = (searchWord: string, searchGroup: ItemGroup, rating: number, genres: string[]): Promise<IAlbum[]>  => {
+  let urlParameters: string = ''
+  if (ItemGroup.Album === searchGroup) {
+    urlParameters += searchWord !== '' ? '?album=' + escapeSearchValue(searchWord) : ''
+  } else if (ItemGroup.Artist === searchGroup) {
+    urlParameters += searchWord !== '' ? '?artist=' + escapeSearchValue(searchWord) : ''
+  } else if (ItemGroup.Track === searchGroup) {
+    urlParameters += searchWord !== '' ? '?track=' + escapeSearchValue(searchWord) : ''
+  }
+  if (rating > 0) {
+    urlParameters += urlParameters === '' ? '?' : '&'
+    urlParameters += rating !== 0 ? 'rating=' + rating : ''
+  }
+  if (genres.length > 0) {
+    urlParameters += urlParameters === '' ? '?' : '&'
+    urlParameters += genres.length !== 0 ? 'genres=' + genres : ''
+  }
   return axios
-    .get<IAlbum[]>(baseUrl + '/' + basePath + '?rating=' + rating)
+    .get<IAlbum[]>(baseUrl + '/' + basePath + urlParameters)
     .then(response => response.data)
 }
 
-
-const getByArtist = (searchValue: string, rating: number): Promise<IAlbum[]>  => {
-  const searchValueEscaped = escapeSearchValue(searchValue)
+const getById = (id: number): Promise<IAlbum> => {
   return axios
-    .get<IAlbum[]>(baseUrl + '/' + basePath + '?artist=' + searchValueEscaped + (rating > 0 ? '&rating=' + rating : ''))
-    .then(response => response.data)
-}
-
-const getByAlbumTitle = (searchValue: string, rating: number): Promise<IAlbum[]> => {
-  const searchValueEscaped = escapeSearchValue(searchValue)
-  return axios
-    .get<IAlbum[]>(baseUrl + '/' + basePath + '?albumtitle=' + searchValueEscaped + (rating > 0 ? '&rating=' + rating : ''))
-    .then(response => response.data)
-}
-
-const getByTrackTitle = (searchValue: string, rating: number): Promise<IAlbum[]> => {
-  const searchValueEscaped = escapeSearchValue(searchValue)
-  return axios
-    .get<IAlbum[]>(baseUrl + '/' + basePath + '?tracktitle=' + searchValueEscaped + (rating > 0 ? '&rating=' + rating : ''))
-    .then(response => response.data)
-}
-
-const getById = (id: number): Promise<IAlbum> => {  
-  return axios
-    .get<IAlbum>(baseUrl + '/' + basePath + '/' + id + '?_embed=TRACKS')
+    .get<IAlbum>(baseUrl + '/' + basePath + '/' + id + '?_embed=TRACKS,GENRES')
     .then(response => response.data)
 }
 
@@ -73,10 +68,7 @@ const escapeSearchValue = (searchValue: string): string => {
 
 const exportedObject = {
   getAll,
-  getByRating,
-  getByArtist,
-  getByAlbumTitle,
-  getByTrackTitle,
+  getBySearchCriterias,
   create,
   remove,
   getById,

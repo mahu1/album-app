@@ -1,18 +1,23 @@
-import { IAlbum, ITrack, IArtist } from '../Interfaces'
+import { IAlbum, ITrack, IArtist, IGenre } from '../Interfaces'
 import { useState, useEffect, useContext } from 'react'
 import albumService from '../services/album'
 import trackService from '../services/track'
 import artistService from '../services/artist'
+import genreService from '../services/genre'
 import { FeedbackMessageContext } from '../FeedbackMessageContext'
 import { getTracksFullLength, getTrackFullLength, getFullLengthSeconds, getMinutes, getSeconds } from '../AlbumUtils'
 import { FeedbackMessageType } from '../App'
 import { useNavigate, Link } from 'react-router-dom'
 import { strings } from '../Localization'
 import { StarRate } from '../components/StarRate'
+import Select from "react-select"
+import { Genre } from '../AlbumUtils'
 
 export const AlbumInformation = (props: { albumId: number }) => {
     const { albumId } = props;
     const [artists, setArtists] = useState<IArtist[]>([])
+    const [genres, setGenres] = useState<IGenre[]>([])
+    const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
     const [newTrackTitle, setNewTrackTitle] = useState('')
     const [newTrackLengthMinutes, setNewTrackLengthMinutes] = useState(0)
     const [newTrackLengthSeconds, setNewTrackLengthSeconds] = useState(0)
@@ -23,13 +28,44 @@ export const AlbumInformation = (props: { albumId: number }) => {
     useEffect(() => {
       albumService.getById(albumId).then(data => {
         setAlbum(data)
+        setSelectedGenres(albumGenresList(data))
       })
       artistService.getAll(false).then(data => {
         setArtists(data)
       })
-    }, [albumId])
+      genreService.getAll(false).then(data => {
+        setGenres(data)
+      })
+    }, [albumId]) 
 
+    const selectableGenresList = (album: IAlbum): Genre[] => {
+      if (!album.genres) {
+        return []
+      }
 
+      const selectableGenres: IGenre[] = []
+      genres.forEach((genre) => {
+        if (!album.genres?.find((albumGenre) => albumGenre.title === genre.title)) {
+          selectableGenres.push(genre)
+        }
+      })
+
+      return selectableGenres.map((genre) => ({
+        value: genre,
+        label: genre.title
+      }))
+    }
+
+    const albumGenresList = (album: IAlbum): Genre[] => {
+      if (!album.genres) {
+        return []
+      }
+      return album.genres.sort((a, b) => a.title > b.title ? 1 : -1).map((genre) => ({
+        value: genre,
+        label: genre.title
+      }))
+    }
+    
     const editArtist = async (album: IAlbum, artist: string): Promise<void> => {
       if (album.id) {
         const artistObject: IArtist = { title: artist }
@@ -91,6 +127,24 @@ export const AlbumInformation = (props: { albumId: number }) => {
         await albumService.patch(album.id, changedCover)
         setAlbum(await albumService.getById(album.id))
         setFeedbackMessage( { text: strings.formatString(strings.cover_edited, album.cover.split('/').pop() as string, cover.split('/').pop() as string), feedbackMessageType: FeedbackMessageType.Info} )
+      }
+    }
+
+    const editGenres = async (selectedGenres: any): Promise<void> => {
+      setSelectedGenres(selectedGenres)
+      let converted = selectedGenres as Genre[]
+      if (album && album.id && album.genres) {
+        const updateGenres: IGenre[] = []
+        genres.forEach((genre) => {
+          if (converted.find((albumGenre) => albumGenre.label === genre.title)) {
+            updateGenres.push(genre)
+          }
+        })
+        const originalGenres = album.genres
+        album.genres = updateGenres
+        await albumService.put(album.id, album)
+        setAlbum(await albumService.getById(album.id))
+        setFeedbackMessage( { text: strings.formatString(strings.genres_edited, originalGenres.map(genre => genre.title).join(', '), converted.map(genre => genre.label).join(', ')), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 
@@ -165,10 +219,10 @@ export const AlbumInformation = (props: { albumId: number }) => {
           trackNumber: Math.max(...album.tracks.map(o => o.trackNumber), 0) + 1,
           title: newTrackTitle,
           seconds: getFullLengthSeconds(newTrackLengthMinutes, newTrackLengthSeconds),
-          albumId: album.id
+          album: album
         }
 
-        await trackService.create(albumId, track)
+        await trackService.create(track)
         setAlbum(await albumService.getById(albumId))
         setFeedbackMessage( { text: strings.formatString(strings.track_added, track.title), feedbackMessageType: FeedbackMessageType.Info })
         
@@ -197,9 +251,11 @@ export const AlbumInformation = (props: { albumId: number }) => {
           <div>
             <br/>
             <br/>
-            <div className="albumImgAndRating">
-              <Link to={`/album/${album.id}`}><img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} /></Link>
-              <div className="textCenter"><StarRate album={album} /></div>
+            <div className="albumInformation">
+              <div className="albumImgAndRating">
+                <Link to={`/album/${album.id}`}><img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} /></Link>
+                <div className="textCenter"><StarRate album={album} /></div>
+              </div>
             </div>
             <div className="albumInformation">
               <select value={album.artist.title} onChange={(e) => editArtist(album, e.target.value)}>
@@ -207,11 +263,15 @@ export const AlbumInformation = (props: { albumId: number }) => {
                   <option key={artist.title} value={artist.title}>{artist.title}</option>
                 ))}
               </select>
-              <Link to={`/artists`}><img src="../icons8-edit.png" className="staticEditArtistIcon" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeEditArtistIcon" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
+              <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
               <input required type="text" placeholder={strings.album_title} name="title" key={album.title} defaultValue={album.title} onBlur={(e) => editTitle(album, e.target.value)} />
               <input required type="date" placeholder={strings.release_date} name="releaseDate" key={album.releaseDate} defaultValue={album.releaseDate} onBlur={(e) => editReleaseDate(album, e.target.value)} />
-              <input required type="text" placeholder={strings.cover} name="cover" key={album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
+              <input required type="url" placeholder={strings.cover} name="cover" key={album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
               <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt={strings.release_date} title={strings.remove_album} /></button>
+              <div className="selectList">
+                <Select className="selectListInput" options={selectableGenresList(album)} placeholder={strings.select_genres} value={selectedGenres} onChange={editGenres} isSearchable={true} isMulti />
+                <Link to={`/genres`}><img src="../icons8-view.png" className="staticIconSmall" alt={strings.view_genres} title={strings.view_genres}/><img src="../icons8-view.gif" className="activeIconSmall" alt={strings.view_genres} title={strings.view_genres}/></Link>
+              </div>
             </div>
             <br/>
             <br/>

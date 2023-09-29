@@ -8,6 +8,7 @@ import { NotFoundError } from './views/NotFoundError'
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Artists } from './views/Artists'
+import { Genres } from './views/Genres'
 import { strings } from './Localization'
 
 export enum FeedbackMessageType {
@@ -59,6 +60,7 @@ export const App = () => {
           <Route path="/albumAdd" Component={AlbumAdd} />
           <Route path="/albumEdit/:id" Component={AlbumEdit} />
           <Route path="/artists" Component={Artists} />
+          <Route path="/genres" Component={Genres} />
           <Route path="*" Component={NotFoundError} />
         </Routes>
       </FeedbackMessageContext.Provider>

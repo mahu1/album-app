@@ -10,7 +10,6 @@ export const Artists = () => {
   const [artists, setArtists] = useState<IArtist[]>([])
   const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
   const [newArtistTitle, setNewArtistTitle] = useState('')
-  const navigate = useNavigate()
 
   useEffect(() => {
     artistService.getAll(true).then((data) => setArtists(data))
@@ -65,7 +64,7 @@ export const Artists = () => {
     if (artist.albums !== undefined && artist.albums.length > 0) {
       let albumsList: string = '\n'
       artist.albums.forEach((album) => {
-        const albumItem: string = '* ' + album.title + '\n'
+        const albumItem: string = ' * ' + album.title + '\n'
         albumsList += albumItem
     })
       return strings.formatString(strings.are_you_sure_you_want_to_remove_artist_and_albums, artist.title, albumsList) as string

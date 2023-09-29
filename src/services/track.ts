@@ -6,8 +6,8 @@ const baseUrl = 'http://localhost:8080'
 const basePath = 'tracks'
 
 
-const create = (albumId: number, track: ITrack): Promise<ITrack> => {
-  const request = axios.post(baseUrl + '/' + basePath + '?albumId=' + albumId, track)
+const create = (track: ITrack): Promise<ITrack> => {
+  const request = axios.post(baseUrl + '/' + basePath, track)
   return request.then(response => response.data)
 }
 
