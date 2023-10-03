@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { getTracksFullLength, getTrackFullLength } from '../AlbumUtils'
 import { strings } from '../Localization'
 import { StarRate } from '../components/StarRate'
+import { format } from 'date-fns'
 
 export const Album = () => {
   const { id } = useParams() as { id: string }
@@ -34,7 +35,7 @@ export const Album = () => {
             </div>
             <div className="albumInformation" key={album.id}>
               <div className="strongText">{album.artist.title} - {album.title}</div>
-              <div>{album.releaseDate}</div>
+              <div>{format(new Date(album.releaseDate), 'dd-MM-yyy')}</div>
               <div>{album.genres !== undefined ? album.genres.map((g) => g.title).sort().join(', ') : ''}</div>
               <table>
                 <thead>

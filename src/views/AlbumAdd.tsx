@@ -1,12 +1,12 @@
 import { IAlbum, IArtist, IGenre } from '../Interfaces'
-import { useState, useContext, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import albumService from '../services/album'
 import artistService from '../services/artist'
 import genreService from '../services/genre'
 import { Link } from 'react-router-dom'
 import { AlbumInformation } from '../components/AlbumInformation'
-import { FeedbackMessageContext } from '../FeedbackMessageContext'
-import { FeedbackMessageType } from '../App'
+import { useFeedbackContext } from '../FeedbackMessageContextProvider'
+import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
 import Select from "react-select"
 import { Genre } from '../AlbumUtils'
@@ -20,13 +20,13 @@ export const AlbumAdd = () => {
     const [releaseDate, setReleaseDate] = useState('')
     const [cover, setCover] = useState('')
     const [albumId, setAlbumId] = useState(0)
-    const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
+    const {setFeedbackMessage} = useFeedbackContext()
 
     useEffect(() => {
-      artistService.getAll(false).then(data => {
+      artistService.getAll().then(data => {
         setArtists(data)
       })
-      genreService.getAll(false).then(data => {
+      genreService.getAll().then(data => {
         setGenres(data)
       })
     }, [albumId])

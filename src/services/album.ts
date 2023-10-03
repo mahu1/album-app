@@ -1,42 +1,34 @@
 import axios from 'axios'
-import { IAlbum } from '../Interfaces'
+import { IAlbum, IAlbumPlain } from '../Interfaces'
 import { ItemGroup } from '../AlbumUtils'
 
 //const baseUrl = '/api/albums'
 const baseUrl = 'http://localhost:8080'
 const basePath = 'albums'
 
-const getAll = (): Promise<IAlbum[]> => {
+
+const getAll = (): Promise<IAlbumPlain[]> => {
   return axios
-    .get<IAlbum[]>(baseUrl)
+    .get<IAlbumPlain[]>(baseUrl)
     .then(response => response.data)
 }
 
-const getBySearchCriterias = (searchWord: string, searchGroup: ItemGroup, rating: number, genres: string[]): Promise<IAlbum[]>  => {
-  let urlParameters: string = ''
-  if (ItemGroup.Album === searchGroup) {
-    urlParameters += searchWord !== '' ? '?album=' + escapeSearchValue(searchWord) : ''
-  } else if (ItemGroup.Artist === searchGroup) {
-    urlParameters += searchWord !== '' ? '?artist=' + escapeSearchValue(searchWord) : ''
-  } else if (ItemGroup.Track === searchGroup) {
-    urlParameters += searchWord !== '' ? '?track=' + escapeSearchValue(searchWord) : ''
-  }
-  if (rating > 0) {
-    urlParameters += urlParameters === '' ? '?' : '&'
-    urlParameters += rating !== 0 ? 'rating=' + rating : ''
-  }
-  if (genres.length > 0) {
-    urlParameters += urlParameters === '' ? '?' : '&'
-    urlParameters += genres.length !== 0 ? 'genres=' + genres : ''
+const getBySearchCriterias = (searchWord: string, searchGroup: ItemGroup, rating: number, genres: number[]): Promise<IAlbumPlain[]>  => {
+  const params = {
+    album: searchGroup === ItemGroup.Album && searchWord.length > 0 ? searchWord : undefined,
+    artist: searchGroup === ItemGroup.Artist && searchWord.length > 0 ? searchWord : undefined,
+    track: searchGroup === ItemGroup.Track && searchWord.length > 0 ? searchWord : undefined,
+    rating: rating > 0 ? rating : undefined,
+    genres: genres.length > 0 ? genres.join(',') : undefined
   }
   return axios
-    .get<IAlbum[]>(baseUrl + '/' + basePath + urlParameters)
+    .get<IAlbumPlain[]>(baseUrl + '/' + basePath, {params})
     .then(response => response.data)
 }
 
 const getById = (id: number): Promise<IAlbum> => {
   return axios
-    .get<IAlbum>(baseUrl + '/' + basePath + '/' + id + '?_embed=TRACKS,GENRES')
+    .get<IAlbum>(baseUrl + '/' + basePath + '/' + id)
     .then(response => response.data)
 }
 
@@ -45,8 +37,8 @@ const create = (album: IAlbum): Promise<IAlbum> => {
   return request.then(response => response.data)
 }
 
-const patch = (id: number, changes: {}) => {
-  const request = axios.patch(baseUrl  + '/' + basePath + '/' + id, changes)
+const patch = (id: number, album: IAlbum) => {
+  const request = axios.patch(baseUrl  + '/' + basePath + '/' + id, album)
   return request.then(response => response.data)
 }
 
@@ -55,25 +47,13 @@ const remove = (id: number) => {
   return request.then(response => response.data)
 }
 
-const put = (id: number, album: IAlbum) => {
-  const request = axios.put(baseUrl  + '/' + basePath + '/' + id, album)
-  return request.then(response => response.data)
-}
-
-const escapeSearchValue = (searchValue: string): string => {
-  const searchValueEscaped = searchValue.replace('&', '%26')
-  return searchValueEscaped
-}
-
-
 const exportedObject = {
   getAll,
   getBySearchCriterias,
   create,
   remove,
   getById,
-  patch,
-  put
+  patch
 }
 
 export default exportedObject

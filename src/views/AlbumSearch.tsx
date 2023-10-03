@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import albumService from '../services/album'
 import genreService from '../services/genre'
-import { IAlbum, IGenre } from '../Interfaces'
+import { IAlbumPlain, IGenre } from '../Interfaces'
 import { Link } from 'react-router-dom'
 import { strings } from '../Localization'
 import Select from "react-select"
@@ -14,11 +14,11 @@ export const AlbumSearch = () => {
   const [hover, setHover] = useState(0)
   const [genres, setGenres] = useState<IGenre[]>([])
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
-  const [albums, setAlbums] = useState<IAlbum[]>([])
+  const [albums, setAlbums] = useState<IAlbumPlain[]>([])
 
   useEffect(() => {
     albumService.getAll().then((data) => setAlbums(data))
-    genreService.getAll(false).then((data) => setGenres(data))
+    genreService.getAll().then((data) => setGenres(data))
   }, [])
 
   const allGenresList: Genre[] = genres.map((genre) =>({
@@ -37,7 +37,7 @@ export const AlbumSearch = () => {
         setAlbums(data)
       })
     } else {
-      albumService.getBySearchCriterias(searchWord, searchGroup, rating, selectedGenres.map(g => g.value.title)).then(data => {
+      albumService.getBySearchCriterias(searchWord, searchGroup, rating, selectedGenres.map(g => g.value.id)).then(data => {
         setAlbums(data)
       })
     }
@@ -101,7 +101,7 @@ export const AlbumSearch = () => {
             <Link to={`/album/${a.id}`}>
               <img className="searchResultImg" src={a.cover} alt={a.title} />
               <div className="overlay">
-                <div className="heavyText">{a.artist.title}</div>
+                <div className="heavyText">{a.artist}</div>
                 <div>{a.title}</div>
                 <div>
                   {[...Array(5)].map((star, index) => {

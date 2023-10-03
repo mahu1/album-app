@@ -1,16 +1,16 @@
 import { IAlbum, ITrack, IArtist, IGenre } from '../Interfaces'
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import albumService from '../services/album'
 import trackService from '../services/track'
 import artistService from '../services/artist'
 import genreService from '../services/genre'
-import { FeedbackMessageContext } from '../FeedbackMessageContext'
+import { useFeedbackContext } from '../FeedbackMessageContextProvider'
 import { getTracksFullLength, getTrackFullLength, getFullLengthSeconds, getMinutes, getSeconds } from '../AlbumUtils'
-import { FeedbackMessageType } from '../App'
+import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { useNavigate, Link } from 'react-router-dom'
 import { strings } from '../Localization'
 import { StarRate } from '../components/StarRate'
-import Select from "react-select"
+import Select, { MultiValue } from "react-select"
 import { Genre } from '../AlbumUtils'
 
 export const AlbumInformation = (props: { albumId: number }) => {
@@ -22,7 +22,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
     const [newTrackLengthMinutes, setNewTrackLengthMinutes] = useState(0)
     const [newTrackLengthSeconds, setNewTrackLengthSeconds] = useState(0)
     const [album, setAlbum] = useState<IAlbum>()
-    const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
+    const {setFeedbackMessage} = useFeedbackContext()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -30,10 +30,10 @@ export const AlbumInformation = (props: { albumId: number }) => {
         setAlbum(data)
         setSelectedGenres(albumGenresList(data))
       })
-      artistService.getAll(false).then(data => {
+      artistService.getAll().then(data => {
         setArtists(data)
       })
-      genreService.getAll(false).then(data => {
+      genreService.getAll().then(data => {
         setGenres(data)
       })
     }, [albumId]) 
@@ -65,13 +65,13 @@ export const AlbumInformation = (props: { albumId: number }) => {
         label: genre.title
       }))
     }
-    
+
     const editArtist = async (album: IAlbum, artist: string): Promise<void> => {
       if (album.id) {
         const artistObject: IArtist = { title: artist }
         const editedAlbum = { ...album, artist: artistObject }
         try {
-          await albumService.put(album.id, editedAlbum)
+          await albumService.patch(album.id, editedAlbum)
           setAlbum(await albumService.getById(album.id))
           setFeedbackMessage( {text: strings.formatString(strings.artist_edited, album.artist.title, artist), feedbackMessageType: FeedbackMessageType.Info} )
         } catch (error) {
@@ -89,9 +89,9 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
 
       if (album.id && album.title !== title) {
-        const changedTitle: {} = { title: title }
+        const editedAlbum = { ...album, title: title }
         try {
-          await albumService.patch(album.id, changedTitle)
+          await albumService.patch(album.id, editedAlbum)
           setAlbum(await albumService.getById(album.id))
           setFeedbackMessage( {text: strings.formatString(strings.album_title_edited, album.title, title), feedbackMessageType: FeedbackMessageType.Info} )
         } catch (error) {
@@ -109,8 +109,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
 
       if (album.id && album.releaseDate !== releaseDate) {
-        const changedReleaseDate: {} = { releaseDate: releaseDate }
-        await albumService.patch(album.id, changedReleaseDate)
+        const editedAlbum = { ...album, releaseDate: releaseDate }
+        await albumService.patch(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
         setFeedbackMessage( {text: strings.formatString(strings.release_date_edited, album.releaseDate, releaseDate), feedbackMessageType: FeedbackMessageType.Info} )
       }
@@ -123,28 +123,29 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
 
       if (album.id && album.cover !== cover) {
-        const changedCover: {} = { cover: cover }
-        await albumService.patch(album.id, changedCover)
+        const editedAlbum = { ...album, cover: cover }
+        await albumService.patch(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
         setFeedbackMessage( { text: strings.formatString(strings.cover_edited, album.cover.split('/').pop() as string, cover.split('/').pop() as string), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 
-    const editGenres = async (selectedGenres: any): Promise<void> => {
-      setSelectedGenres(selectedGenres)
+    const editGenres = async (selectedGenres: MultiValue<Genre>): Promise<void> => {
       let converted = selectedGenres as Genre[]
+      setSelectedGenres(converted)
       if (album && album.id && album.genres) {
-        const updateGenres: IGenre[] = []
+        const editedGenres: IGenre[] = []
         genres.forEach((genre) => {
           if (converted.find((albumGenre) => albumGenre.label === genre.title)) {
-            updateGenres.push(genre)
+            editedGenres.push(genre)
           }
         })
         const originalGenres = album.genres
-        album.genres = updateGenres
-        await albumService.put(album.id, album)
+        album.genres = editedGenres
+        const editedAlbum = { ...album, genres: editedGenres }
+        await albumService.patch(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
-        setFeedbackMessage( { text: strings.formatString(strings.genres_edited, originalGenres.map(genre => genre.title).join(', '), converted.map(genre => genre.label).join(', ')), feedbackMessageType: FeedbackMessageType.Info} )
+        setFeedbackMessage( { text: strings.formatString(strings.genres_edited, originalGenres.sort((a, b) => a.title > b.title ? 1 : -1).map(genre => genre.title).join(', '), converted.sort().sort((a, b) => a.label > b.label ? 1 : -1).map(genre => genre.label).join(', ')), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 
@@ -219,7 +220,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
           trackNumber: Math.max(...album.tracks.map(o => o.trackNumber), 0) + 1,
           title: newTrackTitle,
           seconds: getFullLengthSeconds(newTrackLengthMinutes, newTrackLengthSeconds),
-          album: album
+          albumId: album.id
         }
 
         await trackService.create(track)

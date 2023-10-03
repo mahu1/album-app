@@ -12,13 +12,13 @@ export const StarRate = (props: { album: IAlbum }) => {
         if (props.album.rating) {
             setRating(props.album.rating)
         }
-      }, [])
+      }, [props.album])
 
     const rateAlbum = async (album: IAlbum, rating: number): Promise<void> => {
         if (album.id) {
             setRating(rating)
-            const changedRating: {} = { rating: rating }
-            await albumService.patch(album.id, changedRating)
+            const editedAlbum = { ...album, rating: rating }
+            await albumService.patch(album.id, editedAlbum)
         }
     }
 
@@ -26,8 +26,8 @@ export const StarRate = (props: { album: IAlbum }) => {
         if (album.id) {
             setHover(0)
             setRating(0)
-            const changedRating: {} = { rating: null }
-            await albumService.patch(album.id, changedRating)
+            const editedAlbum = { ...album, rating: undefined }
+            await albumService.patch(album.id, editedAlbum)
         }
     }
 

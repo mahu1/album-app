@@ -5,10 +5,10 @@ import { IArtist } from '../Interfaces'
 const baseUrl = 'http://localhost:8080'
 const basePath = 'artists'
 
-const getAll = (getAlbums: boolean): Promise<IArtist[]> => {
-  const albumsUrl = getAlbums ? '?_embed=ALBUMS' : ''
+
+const getAll = (): Promise<IArtist[]> => {
   return axios
-    .get<IArtist[]>(baseUrl + '/' + basePath + albumsUrl)
+    .get<IArtist[]>(baseUrl + '/' + basePath)
     .then(response => response.data)
 }
 

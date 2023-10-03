@@ -12,10 +12,9 @@ const getById = (id: number): Promise<IGenre> => {
     .then(response => response.data)
 }
 
-const getAll = (getAlbums: boolean): Promise<IGenre[]> => {
-  const albumsUrl = getAlbums ? '?_embed=ALBUMS' : ''
+const getAll = (): Promise<IGenre[]> => {
   return axios
-    .get<IGenre[]>(baseUrl + '/' + basePath + albumsUrl)
+    .get<IGenre[]>(baseUrl + '/' + basePath)
     .then(response => response.data)
 }
 

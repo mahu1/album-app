@@ -1,18 +1,18 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import artistService from '../services/artist'
 import { IArtist } from '../Interfaces'
-import { FeedbackMessageContext } from '../FeedbackMessageContext'
-import { FeedbackMessageType } from '../App'
+import { useFeedbackContext } from '../FeedbackMessageContextProvider'
+import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
 
 export const Artists = () => {
   const [artists, setArtists] = useState<IArtist[]>([])
-  const {setFeedbackMessage} = useContext(FeedbackMessageContext) as any
+  const {setFeedbackMessage} = useFeedbackContext()
   const [newArtistTitle, setNewArtistTitle] = useState('')
 
   useEffect(() => {
-    artistService.getAll(true).then((data) => setArtists(data))
+    artistService.getAll().then((data) => setArtists(data))
   }, [])
 
   const removeArtist = async (e: React.FormEvent, artist: IArtist): Promise<void> => {
@@ -20,7 +20,7 @@ export const Artists = () => {
     if (artist.id) {
       if (window.confirm(getArtistRemoveConfirmText(artist))) {
         await artistService.remove(artist.id)
-        artistService.getAll(true).then((data) => setArtists(data))
+        artistService.getAll().then((data) => setArtists(data))
         setFeedbackMessage( { text: strings.formatString(strings.artist_removed, artist.title), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
@@ -39,7 +39,7 @@ export const Artists = () => {
       if (artist.id && artist.title !== artistTitle) {
         const changedArtist: {} = { title: artistTitle }
         await artistService.patch(artist.id, changedArtist)
-        artistService.getAll(true).then((data) => setArtists(data))
+        artistService.getAll().then((data) => setArtists(data))
         setFeedbackMessage( { text: strings.formatString(strings.artist_title_edited, artist.title, artistTitle), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
@@ -55,7 +55,7 @@ export const Artists = () => {
       title: newArtistTitle,
     }
     await artistService.create(artist)
-    artistService.getAll(true).then((data) => setArtists(data))
+    artistService.getAll().then((data) => setArtists(data))
     setFeedbackMessage( { text: strings.formatString(strings.artist_added, artist.title), feedbackMessageType: FeedbackMessageType.Info })
     setNewArtistTitle('')
   }

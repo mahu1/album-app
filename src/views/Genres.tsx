@@ -9,7 +9,7 @@ export const Genres = () => {
   const [genres, setGenres] = useState<IGenre[]>([])
 
   useEffect(() => {
-    genreService.getAll(true).then((data) => setGenres(data))
+    genreService.getAll().then((data) => setGenres(data))
   }, [])
 
   return (
@@ -32,7 +32,7 @@ export const Genres = () => {
                 <td>
                   <ul className="smallText">
                     {genre.albums?.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1).map((album) => (
-                      <li key={album.id}><Link to={`/album/${album.id}`}>{album.title}</Link></li>
+                      <li key={album.id}><Link to={`/album/${album.id}`}>{album.artist} - {album.title}</Link></li>
                     ))}
                   </ul>
                 </td>
