@@ -6,12 +6,15 @@ import { Link } from 'react-router-dom'
 import { strings } from '../Localization'
 import Select from "react-select"
 import { ItemGroup, Genre } from '../AlbumUtils'
+import StyledRating from '@mui/material/Rating'
+import TextField from '@mui/material/TextField'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 
 export const AlbumSearch = () => {
   const [searchWord, setSearchWord] = useState('')
   const [searchGroup, setSearchGroup] = useState(ItemGroup.Artist)
   const [rating, setRating] = useState(0)
-  const [hover, setHover] = useState(0)
   const [genres, setGenres] = useState<IGenre[]>([])
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
   const [albums, setAlbums] = useState<IAlbumPlain[]>([])
@@ -32,7 +35,7 @@ export const AlbumSearch = () => {
     setRating(rating)
     setSelectedGenres(selectedGenres)
 
-    if (searchWord === '' && rating === 0 && genres.length === 0) {
+    if (searchWord === '' && rating === 0 && selectedGenres.length === 0) {
       albumService.getAll().then(data => {
         setAlbums(data)
       })
@@ -44,7 +47,6 @@ export const AlbumSearch = () => {
   }
 
   const clearRating = (): void => {
-    setHover(0)
     doSearch(searchWord, searchGroup, 0, selectedGenres)
   }
 
@@ -55,45 +57,43 @@ export const AlbumSearch = () => {
     return strings.formatString(strings.results, '' + albums.length) as string
   }
 
-  const getStarRateButtonText = (star: number): string => {
-    if (star === 1) {
-        return strings.formatString(strings.star_at_least, star) as string
-    }
-    return strings.formatString(strings.stars_at_least, star) as string
-}
-
   const changeGenreValue = (selectedGenres: any): void => {
     doSearch(searchWord, searchGroup, rating, selectedGenres)
+  }
+
+  const handleSearchGroupChange = (
+    event: React.MouseEvent<HTMLElement>,
+    searchGroup: ItemGroup,
+  ) => {
+    setSearchGroup(searchGroup);
   }
 
   return (
     <div>
       <Link to={`/albumAdd`}><img src="../icons8-add.png" className="addNewStaticIcon" alt={strings.add_album} title={strings.add_album}/><img src="../icons8-add.gif" className="addNewActiveIcon" alt={strings.add_album} title={strings.add_album}/></Link>
       <div className="searchFields">
-        <input className="searchTextField" value={searchWord} onChange={(e) => doSearch(e.target.value, searchGroup, rating, selectedGenres)} placeholder={strings.search} />
-          <label>
-            <input defaultChecked onChange={() => doSearch(searchWord, ItemGroup.Artist, rating, selectedGenres)} type="radio" value="artist" name="searchGroup" />{strings.artist}
-          </label>
-          <label>
-            <input onChange={() => doSearch(searchWord, ItemGroup.Album, rating, selectedGenres)} type="radio" value="album" name="searchGroup" />{strings.album}
-          </label>
-          <label>
-            <input onChange={() => doSearch(searchWord, ItemGroup.Track, rating, selectedGenres)} type="radio" value="track" name="searchGroup" />{strings.track}
-          </label>
-          <div className="searchPageFilters">
-            <Select className="searchPageSelectListInput" options={allGenresList} placeholder={strings.select_genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
-            {[...Array(5)].map((star, index) => {
-              index++
-              return (
-                <button title={getStarRateButtonText(index)} key={index} className={index <= (hover || rating) ? "starOn" : "starOff"} onClick={() => doSearch(searchWord, searchGroup, index, selectedGenres)} onMouseEnter={() => setHover(index)} onMouseLeave={() => setHover(rating)}>
-                  <span className="star">&#9733;</span>
-                </button>
-            )})}
-            <button title={strings.clear_rating} className={rating === 0 ? "hide" : "unRate"} onClick={() => clearRating()}>
-              <span>&#8709;</span>
-            </button>
-          </div>
+        <TextField className="searchTextField" size="small" label={strings.search} variant="outlined" value={searchWord} onChange={(e) => doSearch(e.target.value, searchGroup, rating, selectedGenres)}/>
+        <ToggleButtonGroup color="primary" size="small" value={searchGroup} exclusive onChange={handleSearchGroupChange}>
+          <ToggleButton value="artist">{strings.artist}</ToggleButton>
+          <ToggleButton value="album">{strings.album}</ToggleButton>
+          <ToggleButton value="track">{strings.track}</ToggleButton>
+        </ToggleButtonGroup>
+        <div className="searchPageFilters">
+          <Select className="searchPageSelectListInput" options={allGenresList} placeholder={strings.select_genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
+          <StyledRating 
+            name="rating" 
+            defaultValue={0}
+            precision={0.5}
+            size="large"
+            onChange={(event, newRating) => {
+              if (newRating !== null) {
+                doSearch(searchWord, searchGroup, newRating, selectedGenres)
+              } else {
+                clearRating()
+              }
+            }} />
         </div>
+      </div>
       <div className="smallText">{getResultText()}</div>
       {albums.map((a) => (
         <div key={a.id} className="image-container">
@@ -104,11 +104,7 @@ export const AlbumSearch = () => {
                 <div className="heavyText">{a.artist}</div>
                 <div>{a.title}</div>
                 <div>
-                  {[...Array(5)].map((star, index) => {
-                  index++
-                  return (
-                    <span key={index} className={(a.rating !== undefined && index > a.rating) ? "starOn" : "starOff"}>&#9733;</span>
-                  )})}
+                  <StyledRating name="rating" defaultValue={a.rating} precision={0.5} size="small" readOnly />
                 </div>
               </div>
             </Link>

@@ -3,6 +3,13 @@ import { useEffect, useState } from 'react'
 import genreService from '../services/genre'
 import { IGenre } from '../Interfaces'
 import { strings } from '../Localization'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
 
 export const Genres = () => {
 
@@ -18,28 +25,31 @@ export const Genres = () => {
       <br/>
       <br/>
       <div className="artistsInformation">
-        <table>
-          <thead>
-            <tr>
-              <th>{strings.genre}</th>
-              <th>{strings.albums}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {genres.map((genre) => (
-              <tr key={genre.id}>
-                <td>{genre.title}</td>
-                <td>
-                  <ul className="smallText">
-                    {genre.albums?.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1).map((album) => (
-                      <li key={album.id}><Link to={`/album/${album.id}`}>{album.artist} - {album.title}</Link></li>
-                    ))}
-                  </ul>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650, maxWidth: 850 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>{strings.genre}</TableCell>
+                <TableCell>{strings.albums}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {genres.map((genre) => (
+                <TableRow
+                  key={genre.id}>
+                    <TableCell>
+                      {genre.title}
+                    </TableCell>
+                    <TableCell>
+                        {genre.albums?.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1).map((album) => (
+                          <div className="smallText"><Link to={`/album/${album.id}`}>{album.artist} - {album.title}</Link></div>
+                        ))}
+                    </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </div>
   )

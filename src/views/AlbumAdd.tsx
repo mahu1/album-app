@@ -10,6 +10,10 @@ import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
 import Select from "react-select"
 import { Genre } from '../AlbumUtils'
+import TextField from '@mui/material/TextField'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select2, { SelectChangeEvent } from '@mui/material/Select'
 
 export const AlbumAdd = () => {
     const [artists, setArtists] = useState<IArtist[]>([])
@@ -81,16 +85,15 @@ export const AlbumAdd = () => {
           <br/>
           <div className="albumInformation">
             <form onSubmit={addAlbum}>
-              <select required value={artist} onChange={(e) => setArtist(e.target.value)}>
-                <option key="0" value="">{strings.select_artist}</option>
+              <InputLabel id="select-artist-label">{strings.artist}<Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link></InputLabel>
+              <Select2 required size="small" style={{minWidth: 250}} labelId="select-artist-label" label="Age" value={artist} onChange={(e) => setArtist(e.target.value)}>
                 {artists.map((artist) => (
-                  <option key={artist.title} value={artist.title}>{artist.title}</option>
+                  <MenuItem key={artist.id} value={artist.title}>{artist.title}</MenuItem>
                 ))}
-              </select>
-              <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
-              <input required type="text" placeholder={strings.album_title} value={title} name="title" onChange={(e) => setTitle(e.target.value)} />
+              </Select2>
+              <TextField required size="small" label={strings.album_title} variant="outlined" value={title} onChange={(e) => setTitle(e.target.value)} />
               <input required type="date" placeholder={strings.release_date} value={releaseDate} name="releaseDate" onChange={(e) => setReleaseDate(e.target.value)} />
-              <input required type="url" placeholder={strings.cover} value={cover} name="cover" onChange={(e) => setCover(e.target.value)} />
+              <TextField required type="url" size="small" label={strings.cover} variant="outlined" value={cover} onChange={(e) => setCover(e.target.value)} />
               <button type="submit"><img src="../icons8-plus.png" alt={strings.add_album} title={strings.add_album} /></button>
               <div className="selectList">
                 <Select className="selectListInput" options={allGenresList} placeholder={strings.select_genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />

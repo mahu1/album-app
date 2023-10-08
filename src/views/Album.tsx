@@ -7,6 +7,19 @@ import { getTracksFullLength, getTrackFullLength } from '../AlbumUtils'
 import { strings } from '../Localization'
 import { StarRate } from '../components/StarRate'
 import { format } from 'date-fns'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import { TableFooter } from '@mui/material'
+import Paper from '@mui/material/Paper'
+import { styled } from '@mui/material/styles'
+
+const AlbumTitlePaper = styled(Paper)(({ }) => ({
+  background: '#fafafa'
+}))
 
 export const Album = () => {
   const { id } = useParams() as { id: string }
@@ -29,35 +42,43 @@ export const Album = () => {
           <br/>
           <br/>
           <div className="albumInformation">
+            <AlbumTitlePaper elevation={1}>
+              <div className="strongText">{album.artist.title} - {album.title}</div>
+              <div>{format(new Date(album.releaseDate), 'dd-MM-yyy')}</div>
+              <div>{album.genres !== undefined ? album.genres.map((g) => g.title).sort().join(', ') : ''}</div>
+            </AlbumTitlePaper>
             <div className="albumImgAndRating">
               <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
               <div className="textCenter"><StarRate album={album} /></div>
             </div>
             <div className="albumInformation" key={album.id}>
-              <div className="strongText">{album.artist.title} - {album.title}</div>
-              <div>{format(new Date(album.releaseDate), 'dd-MM-yyy')}</div>
-              <div>{album.genres !== undefined ? album.genres.map((g) => g.title).sort().join(', ') : ''}</div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>{strings.no}</th>
-                    <th>{strings.title}</th>
-                    <th>{strings.length}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((t) => (
-                    <tr key={t.id}><td>{t.trackNumber}</td><td>{t.title}</td><td>{getTrackFullLength(t.seconds)}</td></tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                    <tr>
-                      <td/>
-                      <td/>
-                      <td>{getTracksFullLength(album.tracks)}</td>
-                    </tr>
-                  </tfoot>
-              </table>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650, maxWidth: 850 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>{strings.no}</TableCell>
+                      <TableCell>{strings.title}</TableCell>
+                      <TableCell>{strings.length}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((track) => (
+                      <TableRow key={track.id}>
+                        <TableCell>{track.trackNumber}</TableCell>
+                        <TableCell>{track.title}</TableCell>
+                        <TableCell>{getTrackFullLength(track.seconds)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell />
+                      <TableCell />
+                      <TableCell>{getTracksFullLength(album.tracks)}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </TableContainer>
             </div>
           </div>
         </div>

@@ -12,6 +12,13 @@ import { strings } from '../Localization'
 import { StarRate } from '../components/StarRate'
 import Select, { MultiValue } from "react-select"
 import { Genre } from '../AlbumUtils'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableFooter } from '@mui/material'
+import Paper from '@mui/material/Paper'
+import { styled } from '@mui/material/styles'
+
+const AlbumTitlePaper = styled(Paper)(({ }) => ({
+  background: '#fafafa'
+}))
 
 export const AlbumInformation = (props: { albumId: number }) => {
     const { albumId } = props;
@@ -253,64 +260,66 @@ export const AlbumInformation = (props: { albumId: number }) => {
             <br/>
             <br/>
             <div className="albumInformation">
+              <AlbumTitlePaper elevation={1}>
+                <select value={album.artist.title} onChange={(e) => editArtist(album, e.target.value)}>
+                    {artists.map((artist) => (
+                      <option key={artist.title} value={artist.title}>{artist.title}</option>
+                    ))}
+                </select>
+                <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
+                <input required type="text" placeholder={strings.album_title} name="title" key={album.title} defaultValue={album.title} onBlur={(e) => editTitle(album, e.target.value)} />
+                <input required type="date" placeholder={strings.release_date} name="releaseDate" key={album.releaseDate} defaultValue={album.releaseDate} onBlur={(e) => editReleaseDate(album, e.target.value)} />
+                <input required type="url" placeholder={strings.cover} name="cover" key={album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
+                <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt={strings.release_date} title={strings.remove_album} /></button>
+                <div className="selectList">
+                  <Select className="selectListInput" options={selectableGenresList(album)} placeholder={strings.select_genres} value={selectedGenres} onChange={editGenres} isSearchable={true} isMulti />
+                  <Link to={`/genres`}><img src="../icons8-view.png" className="staticIconSmall" alt={strings.view_genres} title={strings.view_genres}/><img src="../icons8-view.gif" className="activeIconSmall" alt={strings.view_genres} title={strings.view_genres}/></Link>
+                </div>
+              </AlbumTitlePaper>
               <div className="albumImgAndRating">
                 <Link to={`/album/${album.id}`}><img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} /></Link>
                 <div className="textCenter"><StarRate album={album} /></div>
               </div>
-            </div>
-            <div className="albumInformation">
-              <select value={album.artist.title} onChange={(e) => editArtist(album, e.target.value)}>
-                {artists.map((artist) => (
-                  <option key={artist.title} value={artist.title}>{artist.title}</option>
-                ))}
-              </select>
-              <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
-              <input required type="text" placeholder={strings.album_title} name="title" key={album.title} defaultValue={album.title} onBlur={(e) => editTitle(album, e.target.value)} />
-              <input required type="date" placeholder={strings.release_date} name="releaseDate" key={album.releaseDate} defaultValue={album.releaseDate} onBlur={(e) => editReleaseDate(album, e.target.value)} />
-              <input required type="url" placeholder={strings.cover} name="cover" key={album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
-              <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt={strings.release_date} title={strings.remove_album} /></button>
-              <div className="selectList">
-                <Select className="selectListInput" options={selectableGenresList(album)} placeholder={strings.select_genres} value={selectedGenres} onChange={editGenres} isSearchable={true} isMulti />
-                <Link to={`/genres`}><img src="../icons8-view.png" className="staticIconSmall" alt={strings.view_genres} title={strings.view_genres}/><img src="../icons8-view.gif" className="activeIconSmall" alt={strings.view_genres} title={strings.view_genres}/></Link>
+              <div className="albumInformation">
+                <form onSubmit={(e) => addTrack(e)}>
+                  <TableContainer  component={Paper}>
+                    <Table sx={{ minWidth: 650, maxWidth: 850 }}>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{strings.no}</TableCell>
+                          <TableCell>{strings.title}</TableCell>
+                          <TableCell>{strings.length}</TableCell>
+                          <TableCell />
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((track) => (
+                        <TableRow key={track.id}>
+                          <TableCell>{track.trackNumber}</TableCell>
+                          <TableCell><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={track.title} onBlur={(e) => editTrackTitle(track, e.target.value)} /></TableCell>
+                          <TableCell><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(track.seconds)} onBlur={(e) => editTrackLengthMinutes(track, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(track.seconds)} onBlur={(e) => editTrackLengthSeconds(track, e.target.valueAsNumber)} /></TableCell>
+                          <TableCell><button onClick={(e) => removeTrack(e, track)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></TableCell>
+                        </TableRow>
+                        ))}
+                        <TableRow>
+                          <TableCell />
+                          <TableCell><input required type="text" placeholder={strings.track_title} name="newTrackTitle" value={newTrackTitle} onChange={(e) => setNewTrackTitle(e.target.value)} /></TableCell>
+                          <TableCell><input required type="number" placeholder={strings.mm} min="0" max="99" name="newTrackLengthMinutes" value={newTrackLengthMinutes} onChange={(e) => setNewTrackLengthMinutes(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="newTrackLengthSeconds" value={newTrackLengthSeconds} onChange={(e) => setNewTrackLengthSeconds(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} /></TableCell>
+                          <TableCell><button type="submit"><img src="../icons8-plus.png" alt={strings.add_track} title={strings.add_track} /></button></TableCell>
+                        </TableRow>
+                      </TableBody>
+                      <TableFooter>
+                        <TableRow>
+                          <TableCell />
+                          <TableCell />
+                          <TableCell>{getTracksFullLength(album.tracks)}</TableCell>
+                          <TableCell />
+                        </TableRow>
+                      </TableFooter>
+                    </Table>
+                  </TableContainer>
+                </form>
               </div>
-            </div>
-            <br/>
-            <br/>
-            <div className="tracksInformation">
-              <form onSubmit={(e) => addTrack(e)}>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>{strings.no}</th>
-                      <th>{strings.title}</th>
-                      <th>{strings.length}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((t) => (
-                    <tr key={t.id}>
-                      <td><input disabled type="number" min="1" placeholder={strings.track_number} name="trackNumber" value={t.trackNumber} /></td>
-                      <td><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={t.title} onBlur={(e) => editTrackTitle(t, e.target.value)} /></td>
-                      <td><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(t.seconds)} onBlur={(e) => editTrackLengthMinutes(t, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(t.seconds)} onBlur={(e) => editTrackLengthSeconds(t, e.target.valueAsNumber)} /></td>
-                      <td><button onClick={(e) => removeTrack(e, t)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></td>
-                    </tr>
-                    ))}
-                    <tr>
-                      <td></td>
-                      <td><input required type="text" placeholder={strings.track_title} name="newTrackTitle" value={newTrackTitle} onChange={(e) => setNewTrackTitle(e.target.value)} /></td>
-                      <td><input required type="number" placeholder={strings.mm} min="0" max="99" name="newTrackLengthMinutes" value={newTrackLengthMinutes} onChange={(e) => setNewTrackLengthMinutes(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="newTrackLengthSeconds" value={newTrackLengthSeconds} onChange={(e) => setNewTrackLengthSeconds(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} /></td>
-                      <td><button type="submit"><img src="../icons8-plus.png" alt={strings.add_track} title={strings.add_track} /></button></td>
-                    </tr>
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td/>
-                      <td/>
-                      <td>{getTracksFullLength(album.tracks)}</td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </form>
             </div>
           </div>
         )}

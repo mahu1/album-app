@@ -4,7 +4,7 @@ export let strings = new LocalizedStrings({
  en:{
    back_to_album_search:"back to album search",
    edit:"edit",
-   search:"Search...",
+   search:"search",
    result:"{0} result",
    results:"{0} results",
    artist:"Artist",
@@ -51,7 +51,7 @@ export let strings = new LocalizedStrings({
    are_you_sure_you_want_to_remove_album:"Are you sure you want to remove album: {0} - {1}?",
    are_you_sure_you_want_to_remove_track: "Are you sure you want to remove track: {0}?",
    are_you_sure_you_want_to_remove_artist:"Are you sure you want to remove artist: {0}?",
-   are_you_sure_you_want_to_remove_artist_and_albums:"Are you sure you want to remove artist: {0}?\n\nAlso artist's all albums will be removed:{1}",
+   also_artists_all_albums_will_be_removed:"Also artist's all albums will be removed:{0}",
    track_added:"Track added: {0}",
    track_removed:"Track removed: {0}",
    track_title_cannot_be_empty:"Track title cannot be empty",
@@ -66,10 +66,6 @@ export let strings = new LocalizedStrings({
    album_title_cannot_be_empty:"Album title cannot be empty",
    release_date_cannot_be_empty:"Release date cannot be empty",
    remove:"remove",
-   clear_rating:"clear rating",
-   star:"{0} star",
-   stars:"{0} stars",
-   star_at_least:"{0} star at least",
-   stars_at_least:"{0} stars at least"
+   cancel:"cancel"
  }
 })
