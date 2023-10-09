@@ -108,7 +108,7 @@ export const Artists = () => {
             <Table sx={{ minWidth: 650, maxWidth: 850 }}>
               <TableHead>
                 <TableRow>
-                  <TableCell>{strings.genre}</TableCell>
+                  <TableCell>{strings.artist}</TableCell>
                   <TableCell>{strings.albums}</TableCell>
                   <TableCell />
                 </TableRow>
@@ -117,11 +117,11 @@ export const Artists = () => {
                 {artists.map((artist) => (
                 <TableRow key={artist.id}>
                   <TableCell>
-                    {artist.title}
+                    <input required type="text" key={artist.title} placeholder={strings.artist_title} name="editArtistTitle" defaultValue={artist.title} onBlur={(e) => editArtistTitle(artist, e.target.value)} />
                   </TableCell>
                   <TableCell>
                   {artist.albums?.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1).map((album) => (
-                    <div className="smallText"><Link to={`/album/${album.id}`}>{album.title}</Link></div>
+                    <div key={album.title} className="smallText"><Link to={`/album/${album.id}`}>{album.title}</Link></div>
                   ))}
                   </TableCell>
                   <TableCell><button onClick={(e) => removeArtistClick(e, artist)}><img src="../icons8-delete.png" title={strings.remove} alt={strings.remove} /></button></TableCell>
