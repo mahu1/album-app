@@ -13,7 +13,7 @@ import { Genre } from '../AlbumUtils'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
-import Select2, { SelectChangeEvent } from '@mui/material/Select'
+import Select2 from '@mui/material/Select'
 
 export const AlbumAdd = () => {
     const [artists, setArtists] = useState<IArtist[]>([])
@@ -96,7 +96,7 @@ export const AlbumAdd = () => {
               <TextField required type="url" size="small" label={strings.cover} variant="outlined" value={cover} onChange={(e) => setCover(e.target.value)} />
               <button type="submit"><img src="../icons8-plus.png" alt={strings.add_album} title={strings.add_album} /></button>
               <div className="selectList">
-                <Select className="selectListInput" options={allGenresList} placeholder={strings.select_genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
+                <Select className="selectListInput" options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
                 <Link to={`/genres`}><img src="../icons8-view.png" className="staticIconSmall" alt={strings.view_genres} title={strings.view_genres}/><img src="../icons8-view.gif" className="activeIconSmall" alt={strings.view_genres} title={strings.view_genres}/></Link>
               </div>
             </form>

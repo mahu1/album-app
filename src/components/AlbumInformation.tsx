@@ -16,7 +16,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
 
-const AlbumTitlePaper = styled(Paper)(({ }) => ({
+const AlbumTitlePaper = styled(Paper)(() => ({
   background: '#fafafa'
 }))
 
@@ -251,6 +251,22 @@ export const AlbumInformation = (props: { albumId: number }) => {
       }
     }
 
+    const moveTrackUp = async (e: React.FormEvent, track: ITrack): Promise<void> => {
+      e.preventDefault()
+      if (track.id) {
+        const changedTrack: {} = { trackNumber: track.trackNumber - 1 }
+        await trackService.patch(track.id, changedTrack)
+        setAlbum(await albumService.getById(albumId))}
+    }
+
+    const moveTrackDown = async (e: React.FormEvent, track: ITrack): Promise<void> => {
+      e.preventDefault()
+      if (track.id) {
+        const changedTrack: {} = { trackNumber: track.trackNumber + 1 }
+        await trackService.patch(track.id, changedTrack)
+        setAlbum(await albumService.getById(albumId))}
+    }
+
     return (
       <>
         {!album ? (
@@ -272,7 +288,7 @@ export const AlbumInformation = (props: { albumId: number }) => {
                 <input required type="url" placeholder={strings.cover} name="cover" key={album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
                 <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt={strings.release_date} title={strings.remove_album} /></button>
                 <div className="selectList">
-                  <Select className="selectListInput" options={selectableGenresList(album)} placeholder={strings.select_genres} value={selectedGenres} onChange={editGenres} isSearchable={true} isMulti />
+                  <Select className="selectListInput" options={selectableGenresList(album)} placeholder={strings.genres} value={selectedGenres} onChange={editGenres} isSearchable={true} isMulti />
                   <Link to={`/genres`}><img src="../icons8-view.png" className="staticIconSmall" alt={strings.view_genres} title={strings.view_genres}/><img src="../icons8-view.gif" className="activeIconSmall" alt={strings.view_genres} title={strings.view_genres}/></Link>
                 </div>
               </AlbumTitlePaper>
@@ -290,6 +306,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
                           <TableCell>{strings.title}</TableCell>
                           <TableCell>{strings.length}</TableCell>
                           <TableCell />
+                          <TableCell />
+                          <TableCell />
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -298,6 +316,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
                           <TableCell>{track.trackNumber}</TableCell>
                           <TableCell><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={track.title} onBlur={(e) => editTrackTitle(track, e.target.value)} /></TableCell>
                           <TableCell><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(track.seconds)} onBlur={(e) => editTrackLengthMinutes(track, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(track.seconds)} onBlur={(e) => editTrackLengthSeconds(track, e.target.valueAsNumber)} /></TableCell>
+                          {track.trackNumber !== 1 ? <TableCell><button onClick={(e) => moveTrackUp(e, track)}><img src="../icons8-up.png" alt={strings.move_up} title={strings.move_up} /></button></TableCell> : <TableCell /> }
+                          {track.trackNumber !== album.tracks?.length ? <TableCell><button onClick={(e) => moveTrackDown(e, track)}><img src="../icons8-down.png" alt={strings.move_down} title={strings.move_down} /></button></TableCell> : <TableCell /> }
                           <TableCell><button onClick={(e) => removeTrack(e, track)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></TableCell>
                         </TableRow>
                         ))}
@@ -313,6 +333,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
                           <TableCell />
                           <TableCell />
                           <TableCell>{getTracksFullLength(album.tracks)}</TableCell>
+                          <TableCell />
+                          <TableCell />
                           <TableCell />
                         </TableRow>
                       </TableFooter>

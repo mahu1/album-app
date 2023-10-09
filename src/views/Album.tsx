@@ -17,7 +17,7 @@ import { TableFooter } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
 
-const AlbumTitlePaper = styled(Paper)(({ }) => ({
+const AlbumTitlePaper = styled(Paper)(() => ({
   background: '#fafafa'
 }))
 
