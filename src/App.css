@@ -39,7 +39,7 @@
 }
 
 .searchTextField {
-    width: 500px;
+    width: 550px;
 }
 
 .albumImgAndRating {
@@ -251,14 +251,18 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .searchPageFilters {
-  padding-top: 5px;
+  padding-top: 10px;
   padding-bottom: 5px;
-  width: 550px;
+  width: 850px;
   line-height: 10px;
   display: flex;
 }
 
 .searchPageSelectListInput {
-  width: 100vh;
-  padding-right: 50px;
+  width: 70vh;
+  padding-right: 30px;
+}
+
+.searchPageRating {
+  margin-left: 30px;
 }
