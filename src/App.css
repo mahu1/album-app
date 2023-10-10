@@ -207,20 +207,6 @@ th, tfoot {
   padding-right: 10px;
 }
 
-.feedbackMessageError {
-  color: rgb(227, 63, 17);
-  background: rgb(255, 255, 255);
-  font-size: 20px;
-  text-align: center;
-}
-
-.feedbackMessageInfo {
-  color: rgb(43, 78, 9);
-  background: rgb(255, 255, 255);
-  font-size: 20px;
-  text-align: center;
-}
-
 body {
   font-family: "Verdana";
 }
@@ -248,21 +234,4 @@ a:link, a:visited, a:hover, a:active {
 
 .selectListInput {
   width: 100vh;
-}
-
-.searchPageFilters {
-  padding-top: 10px;
-  padding-bottom: 5px;
-  width: 850px;
-  line-height: 10px;
-  display: flex;
-}
-
-.searchPageSelectListInput {
-  width: 70vh;
-  padding-right: 30px;
-}
-
-.searchPageRating {
-  margin-left: 30px;
 }

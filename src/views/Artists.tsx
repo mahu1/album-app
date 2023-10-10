@@ -99,7 +99,6 @@ export const Artists = () => {
 
   return (
     <div>
-      <Link to={'/'}><img src="../icons8-go-back.png" className="staticIcon" alt={strings.back_to_album_search} title={strings.back_to_album_search}/><img src="../icons8-go-back.gif" className="activeIcon" alt={strings.back_to_album_search} title={strings.back_to_album_search}/></Link>
       <br/>
       <br/>
       <div className="artistsInformation">

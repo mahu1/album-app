@@ -13,7 +13,9 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { format } from 'date-fns'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Unstable_Grid2'
 
 export const AlbumSearch = () => {
   const [searchWord, setSearchWord] = useState('')
@@ -42,7 +44,6 @@ export const AlbumSearch = () => {
     setSelectedGenres(selectedGenres)
     setReleaseDateStart(releaseDateStart)
     setReleaseDateEnd(releaseDateEnd)
-    console.log(releaseDateStart)
 
     if (searchWord === '' && rating === 0 && selectedGenres.length === 0 && releaseDateStart === undefined && releaseDateEnd === undefined === undefined) {
       albumService.getAll().then(data => {
@@ -88,33 +89,44 @@ export const AlbumSearch = () => {
     <div>
       <Link to={`/albumAdd`}><img src="../icons8-add.png" className="addNewStaticIcon" alt={strings.add_album} title={strings.add_album}/><img src="../icons8-add.gif" className="addNewActiveIcon" alt={strings.add_album} title={strings.add_album}/></Link>
       <div className="searchFields">
-        <TextField className="searchTextField" size="small" label={strings.search} variant="outlined" value={searchWord} onChange={(e) => doSearch(e.target.value, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)}/>
-        <ToggleButtonGroup color="primary" size="small" value={searchGroup} exclusive onChange={handleSearchGroupChange}>
-          <ToggleButton value="artist">{strings.artist}</ToggleButton>
-          <ToggleButton value="album">{strings.album}</ToggleButton>
-          <ToggleButton value="track">{strings.track}</ToggleButton>
-        </ToggleButtonGroup>
-        <div className="searchPageFilters">
-          <Select className="searchPageSelectListInput" options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small", onBeforeInput: disableKeyboardEntry }}} label={strings.from} onChange={(releaseDateStart) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
-            <DatePicker format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small", onBeforeInput: disableKeyboardEntry }}} label={strings.to} onChange={(releaseDateEnd) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
-          </LocalizationProvider>
-          <StyledRating 
-            name="rating" 
-            className="searchPageRating"
-            title={strings.rating_at_least}
-            defaultValue={0}
-            precision={0.5}
-            size="large"
-            onChange={(event, newRating) => {
-              if (newRating !== null) {
-                doSearch(searchWord, searchGroup, newRating, selectedGenres, releaseDateStart, releaseDateEnd)
-              } else {
-                clearRating()
-              }
-            }} />
-        </div>
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={1} minHeight={100}>
+            <Grid xs={12} md={12}>
+              <TextField className="searchTextField" size="small" label={strings.search} variant="outlined" value={searchWord} onChange={(e) => doSearch(e.target.value, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)}/>
+              <ToggleButtonGroup color="primary" size="small" value={searchGroup} exclusive onChange={handleSearchGroupChange}>
+                <ToggleButton value="artist">{strings.artist}</ToggleButton>
+                <ToggleButton value="album">{strings.album}</ToggleButton>
+                <ToggleButton value="track">{strings.track}</ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
+            <Grid xs={12} md={4}>
+              <Select options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
+            </Grid>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Grid xs={6} md={3}>
+                <DatePicker sx={{ width: "100% " }} format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small", onBeforeInput: disableKeyboardEntry }}} label={strings.from} onChange={(releaseDateStart) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
+              </Grid>
+              <Grid xs={6} md={3}>
+                <DatePicker sx={{ width: "100% " }} format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small", onBeforeInput: disableKeyboardEntry }}} label={strings.to} onChange={(releaseDateEnd) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
+              </Grid>
+            </LocalizationProvider>
+            <Grid xs={12} md={2}>
+              <StyledRating 
+                name="rating"
+                title={strings.rating_at_least}
+                defaultValue={0}
+                precision={0.5}
+                size="large"
+                onChange={(event, newRating) => {
+                  if (newRating !== null) {
+                    doSearch(searchWord, searchGroup, newRating, selectedGenres, releaseDateStart, releaseDateEnd)
+                  } else {
+                    clearRating()
+                  }
+                }} />
+            </Grid>
+          </Grid>
+        </Box>
       </div>
       <div className="smallText">{getResultText()}</div>
       {albums.map((a) => (

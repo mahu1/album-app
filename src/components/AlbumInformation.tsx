@@ -316,8 +316,8 @@ export const AlbumInformation = (props: { albumId: number }) => {
                           <TableCell>{track.trackNumber}</TableCell>
                           <TableCell><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={track.title} onBlur={(e) => editTrackTitle(track, e.target.value)} /></TableCell>
                           <TableCell><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(track.seconds)} onBlur={(e) => editTrackLengthMinutes(track, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(track.seconds)} onBlur={(e) => editTrackLengthSeconds(track, e.target.valueAsNumber)} /></TableCell>
-                          {track.trackNumber !== 1 ? <TableCell><button onClick={(e) => moveTrackUp(e, track)}><img src="../icons8-up.png" alt={strings.move_up} title={strings.move_up} /></button></TableCell> : <TableCell /> }
-                          {track.trackNumber !== album.tracks?.length ? <TableCell><button onClick={(e) => moveTrackDown(e, track)}><img src="../icons8-down.png" alt={strings.move_down} title={strings.move_down} /></button></TableCell> : <TableCell /> }
+                          {track.trackNumber !== 1 ? <TableCell><button onClick={(e) => moveTrackUp(e, track)}><img src="../icons8-up.png" alt={strings.move_up} title={strings.move_up} /></button></TableCell> : <TableCell />}
+                          {track.trackNumber !== album.tracks?.length ? <TableCell><button onClick={(e) => moveTrackDown(e, track)}><img src="../icons8-down.png" alt={strings.move_down} title={strings.move_down} /></button></TableCell> : <TableCell />}
                           <TableCell><button onClick={(e) => removeTrack(e, track)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></TableCell>
                         </TableRow>
                         ))}
