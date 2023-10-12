@@ -7,30 +7,31 @@ import DialogTitle from '@mui/material/DialogTitle'
 import { strings } from '../Localization'
 
 interface DialogProps {
-  openDialog: boolean
-  closeDialog: () => void
-  removeObject: () => Promise<void>
-  dialogTitle: string
-  dialogContent: string
+  open: boolean
+  close: () => void
+  action: () => Promise<void>
+  titleText: string
+  contentText: string
+  actionButtonText: string
 }
 
-export const RemoveConfirmDialog: React.FC<DialogProps> = ( {openDialog, closeDialog, removeObject, dialogTitle, dialogContent} ) => {
+export const ConfirmDialog: React.FC<DialogProps> = ( {open, close, action, titleText, contentText, actionButtonText} ) => {
 
   return (
       <Dialog
-        open={openDialog}
-        onClose={closeDialog}>
+        open={open}
+        onClose={close}>
         <DialogTitle style={{whiteSpace: 'pre-line'}}>
-          {dialogTitle}
+          {titleText}
         </DialogTitle>
         <DialogContent>
             <DialogContentText style={{whiteSpace: 'pre-line'}}>
-              {dialogContent}
+              {contentText}
             </DialogContentText>
           </DialogContent>
         <DialogActions>
-          <Button onClick={closeDialog}>{strings.formatString(strings.cancel)}</Button>
-          <Button onClick={removeObject} autoFocus>{strings.formatString(strings.remove)}</Button>
+          <Button onClick={close}>{strings.formatString(strings.cancel)}</Button>
+          <Button onClick={action} autoFocus>{actionButtonText}</Button>
         </DialogActions>
       </Dialog>
   )

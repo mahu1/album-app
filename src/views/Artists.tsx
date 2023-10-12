@@ -12,7 +12,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
-import { RemoveConfirmDialog } from '../components/RemoveConfirmDialog'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 
 export const Artists = () => {
   const [artists, setArtists] = useState<IArtist[]>([])
@@ -132,12 +132,13 @@ export const Artists = () => {
           </TableContainer>
         </form>
       </div>
-        <RemoveConfirmDialog 
-                openDialog={openArtistRemoveConfirmDialog} 
-                closeDialog={() => setOpenArtistRemoveConfirmDialog(false)}
-                removeObject={() => removeArtist()}
-                dialogTitle={strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist ? artist.title : '') as string}
-                dialogContent={getArtistRemoveConfirmText()}/>
+        <ConfirmDialog 
+          open={openArtistRemoveConfirmDialog} 
+          close={() => setOpenArtistRemoveConfirmDialog(false)}
+          action={() => removeArtist()}
+          titleText={strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist ? artist.title : '') as string}
+          contentText={getArtistRemoveConfirmText()}
+          actionButtonText={strings.formatString(strings.remove) as string} />
     </div>
   )
 

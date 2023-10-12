@@ -15,7 +15,7 @@ import { Genre } from '../AlbumUtils'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableFooter } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
-import { RemoveConfirmDialog } from '../components/RemoveConfirmDialog'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 
 const AlbumTitlePaper = styled(Paper)(() => ({
   background: '#fafafa'
@@ -382,18 +382,20 @@ export const AlbumEdit= () => {
                 </form>
               </div>
             </div>
-            <RemoveConfirmDialog 
-              openDialog={openAlbumRemoveConfirmDialog} 
-              closeDialog={() => setOpenAlbumRemoveConfirmDialog(false)}
-              removeObject={() => removeAlbum(album)}
-              dialogTitle={strings.formatString(strings.are_you_sure_you_want_to_remove_album, album.artist.title, album.title) as string}
-              dialogContent="" />
-            <RemoveConfirmDialog 
-              openDialog={openTrackRemoveConfirmDialog} 
-              closeDialog={() => setOpenTrackRemoveConfirmDialog(false)}
-              removeObject={() => removeTrack()}
-              dialogTitle={strings.formatString(strings.are_you_sure_you_want_to_remove_track, track ? track.title : '') as string}
-              dialogContent="" />
+            <ConfirmDialog 
+              open={openAlbumRemoveConfirmDialog} 
+              close={() => setOpenAlbumRemoveConfirmDialog(false)}
+              action={() => removeAlbum(album)}
+              titleText={strings.formatString(strings.are_you_sure_you_want_to_remove_album, album.artist.title, album.title) as string}
+              contentText=""
+              actionButtonText={strings.formatString(strings.remove) as string} />
+            <ConfirmDialog 
+              open={openTrackRemoveConfirmDialog} 
+              close={() => setOpenTrackRemoveConfirmDialog(false)}
+              action={() => removeTrack()}
+              titleText={strings.formatString(strings.are_you_sure_you_want_to_remove_track, track ? track.title : '') as string}
+              contentText=""
+              actionButtonText={strings.formatString(strings.remove) as string} />
           </div>
         )}
       </>
