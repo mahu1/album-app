@@ -48,7 +48,7 @@ export function FeedbackMessageContextProvider( { children }: Props ) {
                   color="inherit"
                   size="small"
                   onClick={() => {
-                    setFeedbackMessage(null);
+                    setFeedbackMessage(null)
                   }}
                 >
                   <CloseIcon fontSize="inherit" />
@@ -64,7 +64,7 @@ export function FeedbackMessageContextProvider( { children }: Props ) {
 
     useEffect(() => { 
         if (feedbackMessage?.useTimer) {
-          emptyFeedbackMessageAfterTimer(5000)
+          emptyFeedbackMessageAfterTimer(4000)
         } else {
           setFeedbackMessage(null)
         }

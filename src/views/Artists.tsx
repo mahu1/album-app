@@ -5,13 +5,6 @@ import { IArtist } from '../Interfaces'
 import { useFeedbackContext } from '../FeedbackMessageContextProvider'
 import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
-import { AlertDialog } from '../components/AlertDialog'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -19,34 +12,31 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
+import { RemoveConfirmDialog } from '../components/RemoveConfirmDialog'
 
 export const Artists = () => {
   const [artists, setArtists] = useState<IArtist[]>([])
   const {setFeedbackMessage} = useFeedbackContext()
   const [newArtistTitle, setNewArtistTitle] = useState('')
-  const [openAlertDialog, setOpenAlertDialog] = useState(false)
   const [artist, setArtist] = useState<IArtist>()
+  const [openArtistRemoveConfirmDialog, setOpenArtistRemoveConfirmDialog] = useState(false)
 
   useEffect(() => {
     artistService.getAll().then((data) => setArtists(data))
   }, [])
 
-  const handleClose = () => {
-    setOpenAlertDialog(false);
-  }
-
   const removeArtistClick = async (e: React.FormEvent, artist: IArtist): Promise<void> => {
     e.preventDefault()
-    setOpenAlertDialog(true)
     setArtist(artist)
+    setOpenArtistRemoveConfirmDialog(true)
   }
 
   const removeArtist = async (): Promise<void> => {
     if (artist && artist.id) {
       await artistService.remove(artist.id)
       artistService.getAll().then((data) => setArtists(data))
+      setOpenArtistRemoveConfirmDialog(false)
       setFeedbackMessage( { text: strings.formatString(strings.artist_removed, artist.title), feedbackMessageType: FeedbackMessageType.Info} )
-      setOpenAlertDialog(false)
     }
   }
 
@@ -141,26 +131,13 @@ export const Artists = () => {
             </Table>
           </TableContainer>
         </form>
-        <div><AlertDialog openDialog={openAlertDialog} /></div>
       </div>
-      <div>
-        <Dialog
-          open={openAlertDialog}
-          onClose={handleClose}>
-          <DialogTitle>
-            {strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist ? artist.title : '')}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText style={{whiteSpace: 'pre-line'}}>
-              {getArtistRemoveConfirmText()}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>{strings.formatString(strings.cancel)}</Button>
-            <Button onClick={removeArtist} autoFocus>{strings.formatString(strings.remove)}</Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+        <RemoveConfirmDialog 
+                openDialog={openArtistRemoveConfirmDialog} 
+                closeDialog={() => setOpenArtistRemoveConfirmDialog(false)}
+                removeObject={() => removeArtist()}
+                dialogTitle={strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist ? artist.title : '') as string}
+                dialogContent={getArtistRemoveConfirmText()}/>
     </div>
   )
 

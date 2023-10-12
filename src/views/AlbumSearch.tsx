@@ -75,13 +75,13 @@ export const AlbumSearch = () => {
     event: React.MouseEvent<HTMLElement>,
     searchGroup: ItemGroup,
   ) => {
-    setSearchGroup(searchGroup);
+    setSearchGroup(searchGroup)
   }
 
   const disableKeyboardEntry = (e: any) => {
     if (e?.preventDefault) { 
-      e?.preventDefault();
-      e?.stopPropagation();
+      e?.preventDefault()
+      e?.stopPropagation()
     }
   }
 

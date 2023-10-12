@@ -11,6 +11,6 @@ describe('calculateTotalLengthOfTracks', () => {
     const secondTrack: ITrack = { "trackNumber": 2, "title": "Bird Stealing Bread", "seconds": 261, "albumId": 1, "id": 162 }
     const thirdTrack: ITrack = { "trackNumber": 3,  "title": "Faded from the Winter", "seconds": 197, "albumId": 1, "id": 163 }
     const allTracks: ITrack[] = [firstTrack, secondTrack, thirdTrack]
-    expect(getTracksFullLength(allTracks)).toBe('10:27');
+    expect(getTracksFullLength(allTracks)).toBe('10:27')
   })
 })

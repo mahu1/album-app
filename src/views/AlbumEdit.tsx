@@ -15,6 +15,7 @@ import { Genre } from '../AlbumUtils'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableFooter } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
+import { RemoveConfirmDialog } from '../components/RemoveConfirmDialog'
 
 const AlbumTitlePaper = styled(Paper)(() => ({
   background: '#fafafa'
@@ -29,6 +30,9 @@ export const AlbumEdit= () => {
     const [newTrackLengthMinutes, setNewTrackLengthMinutes] = useState(0)
     const [newTrackLengthSeconds, setNewTrackLengthSeconds] = useState(0)
     const [album, setAlbum] = useState<IAlbum>()
+    const [track, setTrack] = useState<ITrack>()
+    const [openAlbumRemoveConfirmDialog, setOpenAlbumRemoveConfirmDialog] = useState(false)
+    const [openTrackRemoveConfirmDialog, setOpenTrackRemoveConfirmDialog] = useState(false)
     const {setFeedbackMessage} = useFeedbackContext()
     const navigate = useNavigate()
 
@@ -225,11 +229,10 @@ export const AlbumEdit= () => {
 
     const removeAlbum = async (album: IAlbum): Promise<void> => {
       if (album.id) {
-        if (window.confirm(strings.formatString(strings.are_you_sure_you_want_to_remove_album, album.artist.title, album.title) as string)) {
-          await albumService.remove(album.id)
-          setFeedbackMessage({ text: strings.formatString(strings.album_removed, album.artist.title, album.title), feedbackMessageType: FeedbackMessageType.Info, useTimer: true } )
-          navigate('/')
-        }
+        await albumService.remove(album.id)
+        setOpenAlbumRemoveConfirmDialog(false)
+        setFeedbackMessage({ text: strings.formatString(strings.album_removed, album.artist.title, album.title), feedbackMessageType: FeedbackMessageType.Info, useTimer: true } )
+        navigate('/')
       }
     }
 
@@ -252,15 +255,19 @@ export const AlbumEdit= () => {
         setNewTrackLengthSeconds(0)
       }
     }
-    
-    const removeTrack = async (e: React.FormEvent, track: ITrack): Promise<void> => {
+
+    const removeTrackClick = async (e: React.FormEvent, track: ITrack): Promise<void> => {
       e.preventDefault()
-      if (track.id) {
-        if (window.confirm(strings.formatString(strings.are_you_sure_you_want_to_remove_track, track.title) as string)) {
-          await trackService.remove(track.id)
-          setAlbum(await albumService.getById(+id))
-          setFeedbackMessage({ text: strings.formatString(strings.track_removed, track.title), feedbackMessageType: FeedbackMessageType.Info })
-        }
+      setTrack(track)
+      setOpenTrackRemoveConfirmDialog(true)
+    }
+    
+    const removeTrack = async (): Promise<void> => {
+      if (track && track.id) {
+        await trackService.remove(track.id)
+        setAlbum(await albumService.getById(+id))
+        setOpenTrackRemoveConfirmDialog(false)
+        setFeedbackMessage({ text: strings.formatString(strings.track_removed, track.title), feedbackMessageType: FeedbackMessageType.Info })
       }
     }
 
@@ -310,7 +317,7 @@ export const AlbumEdit= () => {
                   <input required type="url" placeholder={strings.cover} name="cover" key={album.cover} defaultValue={album.cover} onBlur={(e) => editCover(album, e.target.value)} />
                 </span>
                 <span className="marginRight">
-                  <button onClick={() => removeAlbum(album)}><img src="../icons8-delete.png" alt={strings.release_date} title={strings.remove_album} /></button>
+                  <button onClick={() => setOpenAlbumRemoveConfirmDialog(true)}><img src="../icons8-delete.png" alt={strings.release_date} title={strings.remove_album} /></button>
                 </span>
                 <div className="selectList">
                   <Select className="selectListInput" options={selectableGenresList(album)} placeholder={strings.genres} value={selectedGenres} onChange={editGenres} isSearchable={true} isMulti />
@@ -354,7 +361,7 @@ export const AlbumEdit= () => {
                           <TableCell><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(track.seconds)} onBlur={(e) => editTrackLengthMinutes(track, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(track.seconds)} onBlur={(e) => editTrackLengthSeconds(track, e.target.valueAsNumber)} /></TableCell>
                           {track.trackNumber !== 1 ? <TableCell><button onClick={(e) => moveTrackUp(e, track)}><img src="../icons8-up.png" alt={strings.move_up} title={strings.move_up} /></button></TableCell> : <TableCell />}
                           {track.trackNumber !== album.tracks?.length ? <TableCell><button onClick={(e) => moveTrackDown(e, track)}><img src="../icons8-down.png" alt={strings.move_down} title={strings.move_down} /></button></TableCell> : <TableCell />}
-                          <TableCell><button onClick={(e) => removeTrack(e, track)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></TableCell>
+                          <TableCell><button onClick={(e) => removeTrackClick(e, track)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></TableCell>
                         </TableRow>
                         ))}
                         <TableRow>
@@ -381,6 +388,18 @@ export const AlbumEdit= () => {
                 </form>
               </div>
             </div>
+            <RemoveConfirmDialog 
+              openDialog={openAlbumRemoveConfirmDialog} 
+              closeDialog={() => setOpenAlbumRemoveConfirmDialog(false)}
+              removeObject={() => removeAlbum(album)}
+              dialogTitle={strings.formatString(strings.are_you_sure_you_want_to_remove_album, album.artist.title, album.title) as string}
+              dialogContent="" />
+            <RemoveConfirmDialog 
+              openDialog={openTrackRemoveConfirmDialog} 
+              closeDialog={() => setOpenTrackRemoveConfirmDialog(false)}
+              removeObject={() => removeTrack()}
+              dialogTitle={strings.formatString(strings.are_you_sure_you_want_to_remove_track, track ? track.title : '') as string}
+              dialogContent="" />
           </div>
         )}
       </>
