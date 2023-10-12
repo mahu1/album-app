@@ -163,13 +163,7 @@ export const AlbumEdit= () => {
         const editedAlbum = { ...album, rating: rating }
         await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
-        if (rating && !album.rating) {
-          setFeedbackMessage( { text: strings.formatString(strings.rating_added, rating === undefined ? strings.empty : rating) as string, feedbackMessageType: FeedbackMessageType.Info} )
-        } else if (!rating && album.rating) {
-          setFeedbackMessage( { text: strings.formatString(strings.rating_removed, album.rating) as string, feedbackMessageType: FeedbackMessageType.Info} )
-        } else if (rating && album.rating) {
-          setFeedbackMessage( { text: strings.formatString(strings.rating_edited, album.rating, rating) as string, feedbackMessageType: FeedbackMessageType.Info} )
-        }
+        setFeedbackMessage( { text: strings.formatString(strings.rating_edited, album.rating ? album.rating : '', rating ? rating : '') as string, feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 
