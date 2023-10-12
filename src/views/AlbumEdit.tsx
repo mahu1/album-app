@@ -78,7 +78,7 @@ export const AlbumEdit= () => {
         const artistObject: IArtist = { title: artist }
         const editedAlbum = { ...album, artist: artistObject }
         try {
-          await albumService.patch(album.id, editedAlbum)
+          await albumService.put(album.id, editedAlbum)
           setAlbum(await albumService.getById(album.id))
           setFeedbackMessage( {text: strings.formatString(strings.artist_edited, album.artist.title, artist), feedbackMessageType: FeedbackMessageType.Info} )
         } catch (error) {
@@ -98,7 +98,7 @@ export const AlbumEdit= () => {
       if (album.id && album.title !== title) {
         const editedAlbum = { ...album, title: title }
         try {
-          await albumService.patch(album.id, editedAlbum)
+          await albumService.put(album.id, editedAlbum)
           setAlbum(await albumService.getById(album.id))
           setFeedbackMessage( {text: strings.formatString(strings.album_title_edited, album.title, title), feedbackMessageType: FeedbackMessageType.Info} )
         } catch (error) {
@@ -117,7 +117,7 @@ export const AlbumEdit= () => {
 
       if (album.id && album.releaseDate !== releaseDate) {
         const editedAlbum = { ...album, releaseDate: releaseDate }
-        await albumService.patch(album.id, editedAlbum)
+        await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
         setFeedbackMessage( {text: strings.formatString(strings.release_date_edited, album.releaseDate, releaseDate), feedbackMessageType: FeedbackMessageType.Info} )
       }
@@ -131,7 +131,7 @@ export const AlbumEdit= () => {
 
       if (album.id && album.cover !== cover) {
         const editedAlbum = { ...album, cover: cover }
-        await albumService.patch(album.id, editedAlbum)
+        await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
         setFeedbackMessage( { text: strings.formatString(strings.cover_edited, album.cover.split('/').pop() as string, cover.split('/').pop() as string), feedbackMessageType: FeedbackMessageType.Info} )
       }
@@ -148,7 +148,7 @@ export const AlbumEdit= () => {
           }
         })
         const editedAlbum = { ...album, genres: editedGenres }
-        await albumService.patch(album.id, editedAlbum)
+        await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
         setFeedbackMessage( { text: strings.formatString(strings.genres_edited, album.genres.sort((a, b) => a.title > b.title ? 1 : -1).map(genre => genre.title).join(', '), converted.sort().sort((a, b) => a.label > b.label ? 1 : -1).map(genre => genre.label).join(', ')), feedbackMessageType: FeedbackMessageType.Info} )
       }
@@ -157,7 +157,7 @@ export const AlbumEdit= () => {
     const rateAlbum = async (album: IAlbum, rating: number | undefined): Promise<void> => {
       if (album.id) {
         const editedAlbum = { ...album, rating: rating }
-        await albumService.patch(album.id, editedAlbum)
+        await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
         if (rating && !album.rating) {
           setFeedbackMessage( { text: strings.formatString(strings.rating_added, rating === undefined ? strings.empty : rating) as string, feedbackMessageType: FeedbackMessageType.Info} )

@@ -48,8 +48,8 @@ const create = (album: IAlbum): Promise<IAlbum> => {
   return request.then(response => response.data)
 }
 
-const patch = (id: number, album: IAlbum): Promise<IAlbum> => {
-  const request = axios.patch(baseUrl  + '/' + basePath + '/' + id, album)
+const put = (id: number, album: IAlbum): Promise<IAlbum> => {
+  const request = axios.put(baseUrl  + '/' + basePath + '/' + id, album)
   return request.then(response => response.data)
 }
 
@@ -64,7 +64,7 @@ const exportedObject = {
   create,
   remove,
   getById,
-  patch
+  put
 }
 
 export default exportedObject
