@@ -11,12 +11,12 @@ const create = (track: ITrack): Promise<ITrack> => {
   return request.then(response => response.data)
 }
 
-const patch = (id: number, changes: {}) => {
+const patch = (id: number, changes: {}): Promise<ITrack> => {
   const request = axios.patch(baseUrl  + '/' + basePath + '/' + id, changes)
   return request.then(response => response.data)
 }
 
-const remove = (id: number) => {
+const remove = (id: number): Promise<ITrack> => {
   const request = axios.delete(baseUrl + '/' + basePath + '/' + id)
   return request.then(response => response.data)
 }

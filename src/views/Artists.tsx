@@ -119,7 +119,13 @@ export const Artists = () => {
                     <input required type="text" key={artist.title} placeholder={strings.artist_title} name="editArtistTitle" defaultValue={artist.title} onBlur={(e) => editArtistTitle(artist, e.target.value)} />
                   </TableCell>
                   <TableCell>
-                  {artist.albums?.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1).map((album) => (
+                  {artist.albums?.sort((a, b) => {
+                    if ( a.releaseDate !==  b.releaseDate) {
+                      return a.releaseDate > b.releaseDate ? 1 : -1
+                    } else {
+                      return a.title > b.title ? 1 : -1
+                    }
+                  }).map((album) => (
                     <div key={album.title} className="smallText"><Link to={`/album/${album.id}`}>{album.title}</Link></div>
                   ))}
                   </TableCell>

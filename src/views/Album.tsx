@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { getTracksFullLength, getTrackFullLength } from '../AlbumUtils'
 import { strings } from '../Localization'
-import { StarRate } from '../components/StarRate'
+import StyledRating from '@mui/material/Rating'
 import { format } from 'date-fns'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -48,7 +48,7 @@ export const Album = () => {
             </AlbumTitlePaper>
             <div className="albumImgAndRating">
               <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
-              <div className="textCenter"><StarRate album={album} /></div>
+              <div className="textCenter"><StyledRating readOnly={true} precision={0.5} value={album.rating} size="large" /></div>
             </div>
             <div className="albumInformation" key={album.id}>
               <TableContainer component={Paper}>

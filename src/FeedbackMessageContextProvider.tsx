@@ -64,7 +64,7 @@ export function FeedbackMessageContextProvider( { children }: Props ) {
 
     useEffect(() => { 
         if (feedbackMessage?.useTimer) {
-          emptyFeedbackMessageAfterTimer(3000)
+          emptyFeedbackMessageAfterTimer(5000)
         } else {
           setFeedbackMessage(null)
         }

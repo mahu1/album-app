@@ -12,12 +12,12 @@ const getAll = (): Promise<IArtist[]> => {
     .then(response => response.data)
 }
 
-const patch = (id: number, changes: {}) => {
+const patch = (id: number, changes: {}): Promise<IArtist> => {
   const request = axios.patch(baseUrl  + '/' + basePath + '/' + id, changes)
   return request.then(response => response.data)
 }
 
-const remove = (id: number) => {
+const remove = (id: number): Promise<IArtist> => {
   const request = axios.delete(baseUrl  + '/' + basePath + '/' + id)
   return request.then(response => response.data)
 }

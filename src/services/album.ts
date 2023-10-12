@@ -48,12 +48,12 @@ const create = (album: IAlbum): Promise<IAlbum> => {
   return request.then(response => response.data)
 }
 
-const patch = (id: number, album: IAlbum) => {
+const patch = (id: number, album: IAlbum): Promise<IAlbum> => {
   const request = axios.patch(baseUrl  + '/' + basePath + '/' + id, album)
   return request.then(response => response.data)
 }
 
-const remove = (id: number) => {
+const remove = (id: number): Promise<IAlbum> => {
   const request = axios.delete(baseUrl  + '/' + basePath + '/' + id)
   return request.then(response => response.data)
 }

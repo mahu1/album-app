@@ -13,9 +13,9 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Unstable_Grid2'
+import Container from '@mui/material/Container'
 
 export const AlbumSearch = () => {
   const [searchWord, setSearchWord] = useState('')
@@ -45,7 +45,7 @@ export const AlbumSearch = () => {
     setReleaseDateStart(releaseDateStart)
     setReleaseDateEnd(releaseDateEnd)
 
-    if (searchWord === '' && rating === 0 && selectedGenres.length === 0 && releaseDateStart === undefined && releaseDateEnd === undefined === undefined) {
+    if (searchWord === '' && rating === 0 && selectedGenres.length === 0 && releaseDateStart && releaseDateEnd) {
       albumService.getAll().then(data => {
         setAlbums(data)
       })
@@ -88,7 +88,8 @@ export const AlbumSearch = () => {
   return (
     <div>
       <Link to={`/albumAdd`}><img src="../icons8-add.png" className="addNewStaticIcon" alt={strings.add_album} title={strings.add_album}/><img src="../icons8-add.gif" className="addNewActiveIcon" alt={strings.add_album} title={strings.add_album}/></Link>
-      <div className="searchFields">
+      <br/>
+      <Container>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={1} minHeight={100}>
             <Grid xs={12} md={12}>
@@ -112,7 +113,6 @@ export const AlbumSearch = () => {
             </LocalizationProvider>
             <Grid xs={12} md={2}>
               <StyledRating 
-                name="rating"
                 title={strings.rating_at_least}
                 defaultValue={0}
                 precision={0.5}
@@ -127,7 +127,7 @@ export const AlbumSearch = () => {
             </Grid>
           </Grid>
         </Box>
-      </div>
+      </Container>
       <div className="smallText">{getResultText()}</div>
       {albums.map((a) => (
         <div key={a.id} className="image-container">
@@ -138,7 +138,7 @@ export const AlbumSearch = () => {
                 <div className="heavyText">{a.artist}</div>
                 <div>{a.title}</div>
                 <div>
-                  <StyledRating name="rating" defaultValue={a.rating} precision={0.5} size="small" readOnly />
+                  <StyledRating defaultValue={a.rating} precision={0.5} size="small" readOnly />
                 </div>
               </div>
             </Link>

@@ -3,17 +3,12 @@ import { useState, useEffect } from 'react'
 import albumService from '../services/album'
 import artistService from '../services/artist'
 import genreService from '../services/genre'
-import { Link } from 'react-router-dom'
-import { AlbumInformation } from '../components/AlbumInformation'
 import { useFeedbackContext } from '../FeedbackMessageContextProvider'
 import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
 import Select from "react-select"
 import { Genre } from '../AlbumUtils'
-import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Select2 from '@mui/material/Select'
+import { useNavigate, Link } from 'react-router-dom'
 
 export const AlbumAdd = () => {
     const [artists, setArtists] = useState<IArtist[]>([])
@@ -25,6 +20,7 @@ export const AlbumAdd = () => {
     const [cover, setCover] = useState('')
     const [albumId, setAlbumId] = useState(0)
     const {setFeedbackMessage} = useFeedbackContext()
+    const navigate = useNavigate()
 
     useEffect(() => {
       artistService.getAll().then(data => {
@@ -62,8 +58,9 @@ export const AlbumAdd = () => {
       try {
         const data = await albumService.create(album)
         if (data.id) {
+          navigate('/albumEdit/' + data.id)
           setAlbumId(data.id)
-          setFeedbackMessage( {text: strings.formatString(strings.album_added, album.artist.title, data.title), feedbackMessageType: FeedbackMessageType.Info} )
+          setFeedbackMessage( {text: strings.formatString(strings.album_added, album.artist.title, data.title), feedbackMessageType: FeedbackMessageType.Info,  useTimer: true} )
 
           setArtist('')
           setTitle('')
@@ -84,22 +81,32 @@ export const AlbumAdd = () => {
           <br/>
           <div className="albumInformation">
             <form onSubmit={addAlbum}>
-              <InputLabel id="select-artist-label">{strings.artist}<Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link></InputLabel>
-              <Select2 required size="small" style={{minWidth: 250}} labelId="select-artist-label" label="Age" value={artist} onChange={(e) => setArtist(e.target.value)}>
-                {artists.map((artist) => (
-                  <MenuItem key={artist.id} value={artist.title}>{artist.title}</MenuItem>
-                ))}
-              </Select2>
-              <TextField required size="small" label={strings.album_title} variant="outlined" value={title} onChange={(e) => setTitle(e.target.value)} />
-              <input required type="date" placeholder={strings.release_date} value={releaseDate} name="releaseDate" onChange={(e) => setReleaseDate(e.target.value)} />
-              <TextField required type="url" size="small" label={strings.cover} variant="outlined" value={cover} onChange={(e) => setCover(e.target.value)} />
-              <button type="submit"><img src="../icons8-plus.png" alt={strings.add_album} title={strings.add_album} /></button>
+              <span className="marginRight">
+                <select required value={artist} onChange={(e) => setArtist(e.target.value)}>
+                  <option key="0" value="">{strings.select_artist}</option>
+                  {artists.map((artist) => (
+                    <option key={artist.title} value={artist.title}>{artist.title}</option>
+                  ))}
+                </select>
+              <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
+              </span>
+              <span className="marginRight">
+                <input required type="text" placeholder={strings.album_title} value={title} name="title" onChange={(e) => setTitle(e.target.value)} />
+              </span>
+              <span className="marginRight">
+                <input required type="date" placeholder={strings.release_date} value={releaseDate} name="releaseDate" onChange={(e) => setReleaseDate(e.target.value)} />
+              </span>
+              <span className="marginRight">
+                <input required type="url" placeholder={strings.cover} value={cover} name="cover" onChange={(e) => setCover(e.target.value)} />
+              </span>
+              <span className="marginRight">
+                <button type="submit"><img src="../icons8-plus.png" alt={strings.add_album} title={strings.add_album} /></button>
+              </span>
               <div className="selectList">
                 <Select className="selectListInput" options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
                 <Link to={`/genres`}><img src="../icons8-view.png" className="staticIconSmall" alt={strings.view_genres} title={strings.view_genres}/><img src="../icons8-view.gif" className="activeIconSmall" alt={strings.view_genres} title={strings.view_genres}/></Link>
               </div>
             </form>
-            {albumId !== 0 ? (<AlbumInformation albumId={albumId} />) : <div/>}
           </div>
         </div>
     )

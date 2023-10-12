@@ -31,13 +31,6 @@
   height: 250px;
 }
 
-.searchFields {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 800px;
-}
-
 .searchTextField {
     width: 550px;
 }
@@ -234,4 +227,8 @@ a:link, a:visited, a:hover, a:active {
 
 .selectListInput {
   width: 100vh;
+}
+
+.marginRight {
+  margin-right: 10px;
 }
