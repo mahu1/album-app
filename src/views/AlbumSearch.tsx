@@ -4,7 +4,7 @@ import genreService from '../services/genre'
 import { IAlbumPlain, IGenre } from '../Interfaces'
 import { Link } from 'react-router-dom'
 import { strings } from '../Localization'
-import Select from "react-select"
+import Select, { MultiValue } from "react-select"
 import { ItemGroup, Genre } from '../AlbumUtils'
 import StyledRating from '@mui/material/Rating'
 import TextField from '@mui/material/TextField'
@@ -45,7 +45,7 @@ export const AlbumSearch = () => {
     setReleaseDateStart(releaseDateStart)
     setReleaseDateEnd(releaseDateEnd)
 
-    if (searchWord === '' && rating === 0 && selectedGenres.length === 0 && releaseDateStart && releaseDateEnd) {
+    if (searchWord === '' && rating === 0 && selectedGenres.length === 0 && releaseDateStart === undefined && releaseDateEnd === undefined) {
       albumService.getAll().then(data => {
         setAlbums(data)
       })
@@ -56,10 +56,6 @@ export const AlbumSearch = () => {
     }
   }
 
-  const clearRating = (): void => {
-    doSearch(searchWord, searchGroup, 0, selectedGenres, releaseDateStart, releaseDateEnd)
-  }
-
   const getResultText = (): string => {
     if (albums.length === 1) {
       return strings.formatString(strings.result, '' + albums.length) as string
@@ -67,15 +63,15 @@ export const AlbumSearch = () => {
     return strings.formatString(strings.results, '' + albums.length) as string
   }
 
-  const changeGenreValue = (selectedGenres: any): void => {
-    doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)
+  const handleSearchGroupChange = (event: React.MouseEvent<HTMLElement>, searchGroup: ItemGroup) => {
+    if (searchGroup !== null) {
+      doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)
+    }
   }
 
-  const handleSearchGroupChange = (
-    event: React.MouseEvent<HTMLElement>,
-    searchGroup: ItemGroup,
-  ) => {
-    setSearchGroup(searchGroup)
+  const changeGenreValue = (selectedGenres: MultiValue<Genre>): void => {
+    const converted = selectedGenres as Genre[]
+    doSearch(searchWord, searchGroup, rating, converted, releaseDateStart, releaseDateEnd)
   }
 
   const disableKeyboardEntry = (e: any) => {
@@ -95,7 +91,7 @@ export const AlbumSearch = () => {
             <Grid xs={12} md={12}>
               <TextField className="searchTextField" size="small" label={strings.search} variant="outlined" value={searchWord} onChange={(e) => doSearch(e.target.value, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)}/>
               <ToggleButtonGroup color="primary" size="small" value={searchGroup} exclusive onChange={handleSearchGroupChange}>
-                <ToggleButton value="artist">{strings.artist}</ToggleButton>
+                <ToggleButton defaultChecked value="artist">{strings.artist}</ToggleButton>
                 <ToggleButton value="album">{strings.album}</ToggleButton>
                 <ToggleButton value="track">{strings.track}</ToggleButton>
               </ToggleButtonGroup>
@@ -121,7 +117,7 @@ export const AlbumSearch = () => {
                   if (newRating !== null) {
                     doSearch(searchWord, searchGroup, newRating, selectedGenres, releaseDateStart, releaseDateEnd)
                   } else {
-                    clearRating()
+                    doSearch(searchWord, searchGroup, 0, selectedGenres, releaseDateStart, releaseDateEnd)
                   }
                 }} />
             </Grid>

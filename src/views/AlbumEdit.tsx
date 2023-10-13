@@ -142,7 +142,7 @@ export const AlbumEdit= () => {
     }
 
     const editGenres = async (selectedGenres: MultiValue<Genre>): Promise<void> => {
-      let converted = selectedGenres as Genre[]
+      const converted = selectedGenres as Genre[]
       setSelectedGenres(converted)
       if (album && album.id && album.genres) {
         const editedGenres: IGenre[] = []

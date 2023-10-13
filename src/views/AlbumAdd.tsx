@@ -6,7 +6,7 @@ import genreService from '../services/genre'
 import { useFeedbackContext } from '../FeedbackMessageContextProvider'
 import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
-import Select from "react-select"
+import Select, { MultiValue } from "react-select"
 import { Genre } from '../AlbumUtils'
 import { useNavigate, Link } from 'react-router-dom'
 
@@ -36,8 +36,9 @@ export const AlbumAdd = () => {
       label: genre.title
     }))
 
-    const changeGenreValue = (selectedGenres: any): void => {
-      setSelectedGenres(selectedGenres)
+    const changeGenreValue = (selectedGenres: MultiValue<Genre>): void => {
+      const converted = selectedGenres as Genre[]
+      setSelectedGenres(converted)
     }
 
     const addAlbum = async (e: React.FormEvent): Promise<void> => {
