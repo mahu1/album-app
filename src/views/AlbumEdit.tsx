@@ -225,7 +225,7 @@ export const AlbumEdit= () => {
       if (album.id) {
         await albumService.remove(album.id)
         setOpenAlbumRemoveConfirmDialog(false)
-        setFeedbackMessage({ text: strings.formatString(strings.album_removed, album.artist.title, album.title), feedbackMessageType: FeedbackMessageType.Info, useTimer: true } )
+        setFeedbackMessage({ text: strings.formatString(strings.album_removed, album.artist.title, album.title), feedbackMessageType: FeedbackMessageType.Info } )
         navigate('/')
       }
     }

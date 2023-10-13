@@ -60,7 +60,7 @@ export const AlbumAdd = () => {
         if (data.id) {
           navigate('/albumEdit/' + data.id)
           setAlbumId(data.id)
-          setFeedbackMessage( {text: strings.formatString(strings.album_added, album.artist.title, data.title), feedbackMessageType: FeedbackMessageType.Info,  useTimer: true} )
+          setFeedbackMessage( {text: strings.formatString(strings.album_added, album.artist.title, data.title), feedbackMessageType: FeedbackMessageType.Info} )
 
           setArtist('')
           setTitle('')

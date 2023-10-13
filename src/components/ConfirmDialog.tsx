@@ -18,21 +18,21 @@ interface DialogProps {
 export const ConfirmDialog: React.FC<DialogProps> = ( {open, close, action, titleText, contentText, actionButtonText} ) => {
 
   return (
-      <Dialog
-        open={open}
-        onClose={close}>
-        <DialogTitle style={{whiteSpace: 'pre-line'}}>
-          {titleText}
-        </DialogTitle>
-        <DialogContent>
-            <DialogContentText style={{whiteSpace: 'pre-line'}}>
-              {contentText}
-            </DialogContentText>
-          </DialogContent>
-        <DialogActions>
-          <Button onClick={close}>{strings.formatString(strings.cancel)}</Button>
-          <Button onClick={action} autoFocus>{actionButtonText}</Button>
-        </DialogActions>
-      </Dialog>
+    <Dialog
+      open={open}
+      onClose={close}>
+      <DialogTitle style={{whiteSpace: 'pre-line'}}>
+        {titleText}
+      </DialogTitle>
+      <DialogContent>
+          <DialogContentText style={{whiteSpace: 'pre-line'}}>
+            {contentText}
+          </DialogContentText>
+        </DialogContent>
+      <DialogActions>
+        <Button onClick={close}>{strings.formatString(strings.cancel)}</Button>
+        <Button onClick={action} autoFocus>{actionButtonText}</Button>
+      </DialogActions>
+    </Dialog>
   )
 }
