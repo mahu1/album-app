@@ -14,11 +14,11 @@ An application used to search albums by names, artists and songs. User can inser
 
 ### Album edit
 
-<img src="readmeImages/edit.png" width="800">
+<img src="readmeImages/edit.png" width="600">
 
 ### Album insert
 
-<img src="readmeImages/insert.png" width="800">
+<img src="readmeImages/insert.png" width="600">
 
 ## Docker
 ### `docker build . -t album-app` // build image
