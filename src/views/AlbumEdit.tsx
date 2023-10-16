@@ -56,7 +56,7 @@ export const AlbumEdit= () => {
 
       const selectableGenres: IGenre[] = []
       genres.forEach((genre) => {
-        if (!album.genres?.find((albumGenre) => albumGenre.title === genre.title)) {
+        if (!album.genres?.find((g) => g.title === genre.title)) {
           selectableGenres.push(genre)
         }
       })
@@ -234,7 +234,7 @@ export const AlbumEdit= () => {
       e.preventDefault()
       if (album?.id && album.tracks) {
         const track: ITrack = {
-          trackNumber: Math.max(...album.tracks.map(o => o.trackNumber), 0) + 1,
+          trackNumber: Math.max(...album.tracks.map(t => t.trackNumber), 0) + 1,
           title: newTrackTitle,
           seconds: getFullLengthSeconds(newTrackLengthMinutes, newTrackLengthSeconds),
           albumId: album.id

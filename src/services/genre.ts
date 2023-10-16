@@ -5,13 +5,6 @@ import { IGenre } from '../Interfaces'
 const baseUrl = 'http://localhost:8080'
 const basePath = 'genres'
 
-
-const getById = (id: number): Promise<IGenre> => {  
-  return axios
-    .get<IGenre>(baseUrl + '/' + basePath + '/' + id)
-    .then(response => response.data)
-}
-
 const getAll = (): Promise<IGenre[]> => {
   return axios
     .get<IGenre[]>(baseUrl + '/' + basePath)
@@ -19,7 +12,6 @@ const getAll = (): Promise<IGenre[]> => {
 }
 
 const exportedObject = {
-  getById,
   getAll
 }
 

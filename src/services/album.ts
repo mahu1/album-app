@@ -17,11 +17,11 @@ const getAll = (): Promise<IAlbumPlain[]> => {
 const getBySearchCriterias = (searchWord: string, searchGroup: ItemGroup, rating: number, genres: number[], releaseDateStart: Date | undefined | null, releaseDateEnd: Date | undefined | null): Promise<IAlbumPlain[]>  => {
   let releaseDateStartString = ''
   if (releaseDateStart) {
-    releaseDateStartString = format(new Date(releaseDateStart), 'dd-MM-yyy')
+    releaseDateStartString = format(new Date(releaseDateStart), 'dd-MM-yyyy')
   }
   let releaseDateEndString = ''
   if (releaseDateEnd) {
-    releaseDateEndString = format(new Date(releaseDateEnd), 'dd-MM-yyy')
+    releaseDateEndString = format(new Date(releaseDateEnd), 'dd-MM-yyyy')
   }
   const params = {
     album: searchGroup === ItemGroup.Album && searchWord.length > 0 ? searchWord : undefined,
