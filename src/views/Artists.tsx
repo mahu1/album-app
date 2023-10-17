@@ -74,7 +74,7 @@ export const Artists = () => {
     setNewArtistTitle('')
   }
 
-  const getArtistRemoveConfirmText = (): string => {
+  const getRemoveArtistAlbumsConfirmText = (): string => {
     let artistRemoveConfirmText = ''
     if (artist && artist.albums && artist.albums.length > 0) {
       let albumsList: string = '\n'
@@ -132,13 +132,13 @@ export const Artists = () => {
           </TableContainer>
         </form>
       </div>
-        <ConfirmDialog 
-          open={openArtistRemoveConfirmDialog} 
-          close={() => setOpenArtistRemoveConfirmDialog(false)}
-          action={() => removeArtist()}
-          titleText={strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist ? artist.title : '') as string}
-          contentText={getArtistRemoveConfirmText()}
-          actionButtonText={strings.formatString(strings.remove) as string} />
+      <ConfirmDialog 
+        open={openArtistRemoveConfirmDialog} 
+        close={() => setOpenArtistRemoveConfirmDialog(false)}
+        action={() => removeArtist()}
+        titleText={strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist ? artist.title : '') as string}
+        contentText={getRemoveArtistAlbumsConfirmText()}
+        actionButtonText={strings.formatString(strings.remove) as string} />
     </div>
   )
 

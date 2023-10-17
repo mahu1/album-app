@@ -50,11 +50,8 @@ export function FeedbackMessageContextProvider( { children }: Props ) {
                 aria-label="close"
                 color="inherit"
                 size="small"
-                onClick={() => {
-                  setFeedbackMessage(null)
-                }}
-              >
-              <CloseIcon fontSize="inherit" />
+                onClick={() => {setFeedbackMessage(null)}}>
+                <CloseIcon fontSize="inherit" />
               </IconButton>
             }
           >

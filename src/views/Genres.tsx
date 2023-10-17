@@ -41,7 +41,7 @@ export const Genres = () => {
                     </TableCell>
                     <TableCell>
                         {genre.albums?.sort((a, b) => {
-                          if ( a.releaseDate !==  b.releaseDate) {
+                          if (a.releaseDate !==  b.releaseDate) {
                             return a.releaseDate > b.releaseDate ? 1 : -1
                           } else if (a.artist !== b.artist) {
                             return a.artist > b.artist ? 1 : -1
