@@ -4,7 +4,7 @@ import genreService from '../services/genre'
 import { IAlbumPlain, IGenre } from '../Interfaces'
 import { Link } from 'react-router-dom'
 import { strings } from '../Localization'
-import Select, { MultiValue } from "react-select"
+import Select from "react-select"
 import { ItemGroup, Genre } from '../AlbumUtils'
 import StyledRating from '@mui/material/Rating'
 import TextField from '@mui/material/TextField'
@@ -38,6 +38,19 @@ export const AlbumSearch = () => {
   }))
 
   const doSearch = (searchWord: string, searchGroup: ItemGroup, rating: number, selectedGenres: Genre[], releaseDateStart: Date | undefined | null,  releaseDateEnd: Date | undefined | null): void => {
+    if (releaseDateStart) {
+      const convertedDate = new Date(releaseDateStart)
+      if (isNaN(convertedDate.getTime())) {
+        return
+      }
+    }
+    if (releaseDateEnd) {
+      const convertedDate = new Date(releaseDateEnd)
+      if (isNaN(convertedDate.getTime())) {
+        return
+      }
+    }
+
     setSearchWord(searchWord)
     setSearchGroup(searchGroup)
     setRating(rating)
@@ -45,15 +58,9 @@ export const AlbumSearch = () => {
     setReleaseDateStart(releaseDateStart)
     setReleaseDateEnd(releaseDateEnd)
 
-    if (searchWord === '' && rating === 0 && selectedGenres.length === 0 && releaseDateStart === undefined && releaseDateEnd === undefined) {
-      albumService.getAll().then(data => {
-        setAlbums(data)
-      })
-    } else {
-      albumService.getBySearchCriterias(searchWord, searchGroup, rating, selectedGenres.map(g => g.value.id), releaseDateStart, releaseDateEnd).then(data => {
-        setAlbums(data)
-      })
-    }
+    albumService.getBySearchCriterias(searchWord, searchGroup, rating, selectedGenres.map(g => g.value.id), releaseDateStart, releaseDateEnd).then(data => {
+      setAlbums(data)
+    })
   }
 
   const getResultText = (): string => {
@@ -61,24 +68,6 @@ export const AlbumSearch = () => {
       return strings.formatString(strings.result, '' + albums.length) as string
     }
     return strings.formatString(strings.results, '' + albums.length) as string
-  }
-
-  const handleSearchGroupChange = (event: React.MouseEvent<HTMLElement>, searchGroup: ItemGroup) => {
-    if (searchGroup !== null) {
-      doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)
-    }
-  }
-
-  const changeGenreValue = (selectedGenres: MultiValue<Genre>): void => {
-    const converted = selectedGenres as Genre[]
-    doSearch(searchWord, searchGroup, rating, converted, releaseDateStart, releaseDateEnd)
-  }
-
-  const disableKeyboardEntry = (e: any) => {
-    if (e?.preventDefault) { 
-      e?.preventDefault()
-      e?.stopPropagation()
-    }
   }
 
   return (
@@ -90,21 +79,21 @@ export const AlbumSearch = () => {
           <Grid container spacing={1} minHeight={100}>
             <Grid xs={12} md={12}>
               <TextField className="searchTextField" size="small" label={strings.search} variant="outlined" value={searchWord} onChange={(e) => doSearch(e.target.value, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)}/>
-              <ToggleButtonGroup color="primary" size="small" value={searchGroup} exclusive onChange={handleSearchGroupChange}>
+              <ToggleButtonGroup color="primary" size="small" value={searchGroup} exclusive onChange={(e, value) => value != null ? doSearch(searchWord, value, rating, selectedGenres, releaseDateStart, releaseDateEnd) : ''}>
                 <ToggleButton defaultChecked value="artist">{strings.artist}</ToggleButton>
                 <ToggleButton value="album">{strings.album}</ToggleButton>
                 <ToggleButton value="track">{strings.track}</ToggleButton>
               </ToggleButtonGroup>
             </Grid>
             <Grid xs={12} md={4}>
-              <Select options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={changeGenreValue} isSearchable={true} isMulti />
+              <Select options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={(value) => doSearch(searchWord, searchGroup, rating, value as Genre[], releaseDateStart, releaseDateEnd)} isSearchable={true} isMulti />
             </Grid>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Grid xs={6} md={3}>
-                <DatePicker sx={{ width: "100% " }} format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small", onBeforeInput: disableKeyboardEntry }}} label={strings.from} onChange={(releaseDateStart) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
+                <DatePicker sx={{ width: "100% " }} format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small" }}} label={strings.from} onChange={(releaseDateStart) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
               </Grid>
               <Grid xs={6} md={3}>
-                <DatePicker sx={{ width: "100% " }} format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small", onBeforeInput: disableKeyboardEntry }}} label={strings.to} onChange={(releaseDateEnd) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
+                <DatePicker sx={{ width: "100% " }} format="DD-MM-YYYY" defaultValue={undefined} slotProps={{ field: { clearable: true }, textField: { size: "small" }}} label={strings.to} onChange={(releaseDateEnd) => doSearch(searchWord, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)} />
               </Grid>
             </LocalizationProvider>
             <Grid xs={12} md={2}>
