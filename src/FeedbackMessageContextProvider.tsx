@@ -39,7 +39,7 @@ export function FeedbackMessageContextProvider( { children }: Props ) {
     return () => clearTimeout(timeoutId)
   }, [feedbackMessage?.text])
 
-  const FeedbackMessage = (): JSX.Element | null => {
+  const FeedbackMessage = (): JSX.Element => {
     return(
       <Box fontFamily="Verdana" display="flex" justifyContent="center">
         <Collapse in={feedbackMessage ? true : false}>
