@@ -23,6 +23,8 @@ const AlbumTitlePaper = styled(Paper)(() => ({
 
 export const AlbumEdit= () => {
     const { id } = useParams() as { id: string }
+    const { setFeedbackMessage } = useFeedbackContext()
+    const navigate = useNavigate()
     const [artists, setArtists] = useState<IArtist[]>([])
     const [genres, setGenres] = useState<IGenre[]>([])
     const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
@@ -33,8 +35,6 @@ export const AlbumEdit= () => {
     const [track, setTrack] = useState<ITrack>()
     const [openAlbumRemoveConfirmDialog, setOpenAlbumRemoveConfirmDialog] = useState(false)
     const [openTrackRemoveConfirmDialog, setOpenTrackRemoveConfirmDialog] = useState(false)
-    const {setFeedbackMessage} = useFeedbackContext()
-    const navigate = useNavigate()
 
     useEffect(() => {
       albumService.getById(+id).then(data => {
@@ -145,13 +145,7 @@ export const AlbumEdit= () => {
       const converted = selectedGenres as Genre[]
       setSelectedGenres(converted)
       if (album && album.id && album.genres) {
-        const editedGenres: IGenre[] = []
-        genres.forEach((genre) => {
-          if (converted.find((albumGenre) => albumGenre.label === genre.title)) {
-            editedGenres.push(genre)
-          }
-        })
-        const editedAlbum = { ...album, genres: editedGenres }
+        const editedAlbum = { ...album, genres: selectedGenres.map(g => g.value) }
         await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
         setFeedbackMessage( { text: strings.formatString(strings.genres_edited, album.genres.sort((a, b) => a.title > b.title ? 1 : -1).map(genre => genre.title).join(', '), converted.sort().sort((a, b) => a.label > b.label ? 1 : -1).map(genre => genre.label).join(', ')), feedbackMessageType: FeedbackMessageType.Info} )

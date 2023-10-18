@@ -11,6 +11,8 @@ import { Genre } from '../AlbumUtils'
 import { useNavigate, Link } from 'react-router-dom'
 
 export const AlbumAdd = () => {
+    const { setFeedbackMessage } = useFeedbackContext()
+    const navigate = useNavigate()
     const [artists, setArtists] = useState<IArtist[]>([])
     const [genres, setGenres] = useState<IGenre[]>([])
     const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
@@ -19,8 +21,6 @@ export const AlbumAdd = () => {
     const [releaseDate, setReleaseDate] = useState('')
     const [cover, setCover] = useState('')
     const [albumId, setAlbumId] = useState(0)
-    const {setFeedbackMessage} = useFeedbackContext()
-    const navigate = useNavigate()
 
     useEffect(() => {
       artistService.getAll().then(data => {

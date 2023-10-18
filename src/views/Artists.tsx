@@ -15,8 +15,8 @@ import Paper from '@mui/material/Paper'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 
 export const Artists = () => {
+  const { setFeedbackMessage } = useFeedbackContext()
   const [artists, setArtists] = useState<IArtist[]>([])
-  const {setFeedbackMessage} = useFeedbackContext()
   const [newArtistTitle, setNewArtistTitle] = useState('')
   const [artist, setArtist] = useState<IArtist>()
   const [openArtistRemoveConfirmDialog, setOpenArtistRemoveConfirmDialog] = useState(false)
