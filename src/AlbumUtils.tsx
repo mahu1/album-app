@@ -35,7 +35,7 @@ export enum ItemGroup {
   Track = 'track'
 }
 
-export interface Genre {
+export type Genre = {
   value: IGenre,
   label: string
 }

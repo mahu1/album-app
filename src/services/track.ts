@@ -21,10 +21,17 @@ const remove = (id: number): Promise<ITrack> => {
   return request.then(response => response.data)
 }
 
+const getAllTrackTitles = (): Promise<string[]> => {
+  return axios
+    .get<string[]>(baseUrl + '/' + basePath)
+     .then(response => response.data)
+}
+
 const exportedObject = {
   create,
   patch,
-  remove
+  remove,
+  getAllTrackTitles
 }
 
 export default exportedObject
