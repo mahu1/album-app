@@ -1,6 +1,6 @@
 # Album application
 
-An application used to search albums by different search criteria. User can insert, remove and update albums information. Frontend is built with React (material UI), TypeScript and CSS. Backend with Java, Spring Boot and PostgreSQL. 
+An application used to search albums by different search criteria. User can insert, remove and update albums information. Frontend is built with React (material UI), TypeScript, CSS and HTML. Backend with Java, Spring Boot and PostgreSQL. 
 
 # Screenshots
 
