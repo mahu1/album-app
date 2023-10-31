@@ -78,8 +78,8 @@ export const AlbumSearch = () => {
   const getSuggestions = (): Suggestion[] => {
     const albumsCopy = [...albums]
     if (ItemGroup.Artist === searchGroup) {
-      return albumsCopy.filter((obj, index) => albumsCopy.findIndex((album) => album.artist === obj.artist) === index).sort((a, b) => a.artist > b.artist ? 1 : -1).map((album) => ({
-        label: album.artist
+      return albumsCopy.filter((obj, index) => albumsCopy.findIndex((album) => album.artistTitle === obj.artistTitle) === index).sort((a, b) => a.artistTitle > b.artistTitle ? 1 : -1).map((album) => ({
+        label: album.artistTitle
       }))
     } else if (ItemGroup.Album === searchGroup) {
       return albumsCopy.sort((a, b) => a.title > b.title ? 1 : -1).map((album) => ({
@@ -180,7 +180,7 @@ export const AlbumSearch = () => {
             <Link to={`/album/${a.id}`}>
               <img className="searchResultImg" src={a.cover} alt={a.title} />
               <div className="overlay">
-                <div className="heavyText">{a.artist}</div>
+                <div className="heavyText">{a.artistTitle}</div>
                 <div>{a.title}</div>
                 <div>
                   <StyledRating defaultValue={a.rating} precision={0.5} size="small" readOnly />

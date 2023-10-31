@@ -12,7 +12,7 @@ export interface IAlbum {
 export interface IAlbumPlain {
   id: number
   title: string
-  artist: string
+  artistTitle: string
   cover: string
   releaseDate: string
   rating?: number

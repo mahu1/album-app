@@ -43,13 +43,13 @@ export const Genres = () => {
                         {genre.albums?.sort((a, b) => {
                           if (a.releaseDate !==  b.releaseDate) {
                             return a.releaseDate > b.releaseDate ? 1 : -1
-                          } else if (a.artist !== b.artist) {
-                            return a.artist > b.artist ? 1 : -1
+                          } else if (a.artistTitle !== b.artistTitle) {
+                            return a.artistTitle > b.artistTitle ? 1 : -1
                           } else {
                             return a.title > b.title ? 1 : -1
                           }
                         }).map((album) => (
-                          <div key={album.id} className="smallText"><Link to={`/album/${album.id}`}>{album.artist} - {album.title}</Link></div>
+                          <div key={album.id} className="smallText"><Link to={`/album/${album.id}`}>{album.artistTitle} - {album.title}</Link></div>
                         ))}
                     </TableCell>
                 </TableRow>
