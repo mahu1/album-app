@@ -22,7 +22,7 @@ import match from 'autosuggest-highlight/match'
 
 export const AlbumSearch = () => {
   const [searchWord, setSearchWord] = useState('')
-  const [searchGroup, setSearchGroup] = useState(ItemGroup.Artist)
+  const [searchGroup, setSearchGroup] = useState(ItemGroup.Album)
   const [rating, setRating] = useState(0)
   const [genres, setGenres] = useState<IGenre[]>([])
   const [allTrackTitles, setAllTrackTitles] = useState<string[]>([])
@@ -133,8 +133,8 @@ export const AlbumSearch = () => {
               }}
             />
             <ToggleButtonGroup sx={{ height: '80%' }} color="primary" size="small" value={searchGroup} exclusive onChange={(e, value) => value != null ? doSearch(searchWord, value, rating, selectedGenres, releaseDateStart, releaseDateEnd) : ''}>
-              <ToggleButton defaultChecked value="artist">{strings.artist}</ToggleButton>
-              <ToggleButton value="album">{strings.album}</ToggleButton>
+              <ToggleButton defaultChecked value="album">{strings.album}</ToggleButton>
+              <ToggleButton value="artist">{strings.artist}</ToggleButton>
               <ToggleButton value="track">{strings.track}</ToggleButton>
             </ToggleButtonGroup>
           </Grid>
