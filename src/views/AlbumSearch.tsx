@@ -107,17 +107,9 @@ export const AlbumSearch = () => {
               sx={{ width: 500 }}
               freeSolo={true}
               options={getSuggestions()}
-              onChange={(event, newValue) => {
-                if (typeof newValue === 'string') {
-                  doSearch(newValue, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)
-                } else if (newValue && newValue.label) {
-                  doSearch(newValue.label, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)
-                } else {
-                  doSearch('', searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)
-                }
-              }}
+              onInputChange={(event, newValue) => doSearch(newValue, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)}
               renderInput={(params) => (
-                <TextField {...params} size="small" label={strings.search} variant="outlined" value={searchWord} onChange={(e) => doSearch(e.target.value, searchGroup, rating, selectedGenres, releaseDateStart, releaseDateEnd)}/>
+                <TextField {...params} size="small" label={strings.search} variant="outlined" value={searchWord} />
               )}
               renderOption={(props, option, { inputValue }) => {
                 const matches = match(option.label, inputValue, { insideWords: true });
