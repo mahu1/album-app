@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { FeedbackMessageContextProvider } from "./FeedbackMessageContextProvider"
 import { AlbumSearch } from './views/AlbumSearch'
-import { Album } from './views/Album'
+import { AlbumView } from './views/AlbumView'
 import { AlbumAdd } from './views/AlbumAdd'
 import { AlbumEdit } from './views/AlbumEdit'
 import { NotFoundError } from './views/NotFoundError'
@@ -19,7 +19,7 @@ export const App = () => {
       <FeedbackMessageContextProvider>
         <Routes>
           <Route path="/" Component={AlbumSearch} />
-          <Route path="/album/:id" Component={Album} />
+          <Route path="/album/:id" Component={AlbumView} />
           <Route path="/albumAdd" Component={AlbumAdd} />
           <Route path="/albumEdit/:id" Component={AlbumEdit} />
           <Route path="/artists" Component={Artists} />

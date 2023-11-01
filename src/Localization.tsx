@@ -73,6 +73,8 @@ export let strings = new LocalizedStrings({
    cancel:"cancel",
    from:"from",
    to:"to",
-   rating_at_least:"rating at least"
+   rating_at_least:"rating at least",
+   rating:"rating: {0}",
+   unrated:"unrated"
  }
 })

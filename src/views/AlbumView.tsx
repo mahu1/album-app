@@ -21,7 +21,7 @@ const AlbumTitlePaper = styled(Paper)(() => ({
   background: '#fafafa'
 }))
 
-export const Album = () => {
+export const AlbumView = () => {
   const { id } = useParams() as { id: string }
   const [album, setAlbum] = useState<IAlbum>()
 
@@ -30,6 +30,14 @@ export const Album = () => {
       setAlbum(data)
     })
   }, [id])
+
+  const getRatingText = (): string => {
+    if (album?.rating) {
+      return strings.formatString(strings.rating, album.rating) as string
+    }
+    return strings.unrated
+  }
+
 
   return (
     <>
@@ -48,7 +56,7 @@ export const Album = () => {
             </AlbumTitlePaper>
             <div className="albumImgAndRating">
               <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />
-              <div className="textCenter"><StyledRating readOnly={true} precision={0.5} value={album.rating} size="large" /></div>
+              <div className="textCenter" title={getRatingText()}><StyledRating title={strings.rating_at_least} readOnly={true} precision={0.5} value={album.rating} size="large" /></div>
             </div>
             <div className="albumInformation" key={album.id}>
               <TableContainer component={Paper}>

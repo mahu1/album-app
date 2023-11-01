@@ -138,7 +138,7 @@ export const Artists = () => {
         action={() => removeArtist()}
         titleText={strings.formatString(strings.are_you_sure_you_want_to_remove_artist, artist ? artist.title : '') as string}
         contentText={getRemoveArtistAlbumsConfirmText()}
-        actionButtonText={strings.formatString(strings.remove) as string} />
+        actionButtonText={strings.remove} />
     </div>
   )
 

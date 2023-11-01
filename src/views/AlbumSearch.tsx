@@ -77,18 +77,19 @@ export const AlbumSearch = () => {
 
   const getSuggestions = (): Suggestion[] => {
     const albumsCopy = [...albums]
-    if (ItemGroup.Artist === searchGroup) {
-      return albumsCopy.filter((obj, index) => albumsCopy.findIndex((album) => album.artistTitle === obj.artistTitle) === index).sort((a, b) => a.artistTitle > b.artistTitle ? 1 : -1).map((album) => ({
-        label: album.artistTitle
-      }))
-    } else if (ItemGroup.Album === searchGroup) {
-      return albumsCopy.sort((a, b) => a.title > b.title ? 1 : -1).map((album) => ({
-        label: album.title  
-      }))
-    } else {
-      return allTrackTitles.map((track) => ({
-        label: track
-      }))
+    switch (searchGroup) {
+      case ItemGroup.Album:
+        return albumsCopy.sort((a, b) => a.title > b.title ? 1 : -1).map((album) => ({
+          label: album.title  
+        }))
+      case ItemGroup.Artist:
+        return albumsCopy.filter((obj, index) => albumsCopy.findIndex((album) => album.artistTitle === obj.artistTitle) === index).sort((a, b) => a.artistTitle > b.artistTitle ? 1 : -1).map((album) => ({
+          label: album.artistTitle
+        }))
+      case ItemGroup.Track:
+        return allTrackTitles.map((track) => ({
+          label: track
+        }))
     }
   }
 
