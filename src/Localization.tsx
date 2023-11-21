@@ -64,7 +64,7 @@ export let strings = new LocalizedStrings({
     are_you_sure_you_want_to_remove_artist:"Are you sure you want to remove artist:\n* {0}",
     also_artists_all_albums_will_be_removed:"Also artist's all albums will be removed:{0}",
     are_you_sure_you_want_to_remove_genre:"Are you sure you want to remove genre:\n* {0}",
-    also_genre_will_be_removed_from_all_related_albums:"Also genre's all related albums will be removed:{0}",
+    also_genre_will_be_removed_from_all_related_albums:"Also genre will be removed from all related albums:{0}",
     track_added:"Track added: {0}",
     track_removed:"Track removed: {0}",
     track_number_edited:"Track number edited: {0} → {1}",
