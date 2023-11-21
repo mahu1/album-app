@@ -1,4 +1,4 @@
-import { ITrack, IGenre } from "./Interfaces"
+import { ITrack, IGenre, IAlbumPlain } from "./Interfaces"
 
 const SECONDSONMINUTE: number = 60
 
@@ -27,6 +27,15 @@ export const getMinutes = (seconds: number): number => {
 
 export const getSeconds = (seconds: number): number => {
   return seconds % SECONDSONMINUTE
+}
+
+export const getAlbumsListText = (albums: IAlbumPlain[]): string => {
+  let albumsList: string = '\n'
+  albums.forEach((album) => {
+    const albumItem: string = ' * ' + album.title + '\n'
+    albumsList += albumItem
+  })
+  return albumsList
 }
 
 export enum ItemGroup {

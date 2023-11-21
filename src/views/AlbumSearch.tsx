@@ -63,7 +63,7 @@ export const AlbumSearch = () => {
     setReleaseDateStart(releaseDateStart)
     setReleaseDateEnd(releaseDateEnd)
 
-    albumService.getBySearchCriterias(searchWord, searchGroup, rating, selectedGenres.map(g => g.value.id), releaseDateStart, releaseDateEnd).then(data => {
+    albumService.getBySearchCriterias(searchWord, searchGroup, rating, selectedGenres.map(g => g.value.id!), releaseDateStart, releaseDateEnd).then(data => {
       setAlbums(data)
     })
   }
@@ -102,7 +102,7 @@ export const AlbumSearch = () => {
       <Link to={`/albumAdd`}><img src="../icons8-add.png" className="addNewStaticIcon" alt={strings.add_album} title={strings.add_album}/><img src="../icons8-add.gif" className="addNewActiveIcon" alt={strings.add_album} title={strings.add_album}/></Link>
       <br/>
       <Container>
-        <Grid container minHeight={100}>
+        <Grid container>
           <Grid container xs={12} md={12}>
             <Autocomplete
               sx={{ width: 500 }}

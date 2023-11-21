@@ -13,6 +13,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { getAlbumsListText } from '../AlbumUtils'
 
 export const Artists = () => {
   const { setFeedbackMessage } = useFeedbackContext()
@@ -77,12 +78,7 @@ export const Artists = () => {
   const getRemoveArtistAlbumsConfirmText = (): string => {
     let artistRemoveConfirmText = ''
     if (artist && artist.albums && artist.albums.length > 0) {
-      let albumsList: string = '\n'
-      artist.albums.forEach((album) => {
-        const albumItem: string = ' * ' + album.title + '\n'
-        albumsList += albumItem
-      })
-      artistRemoveConfirmText = strings.formatString(strings.also_artists_all_albums_will_be_removed, albumsList) as string
+      artistRemoveConfirmText = strings.formatString(strings.also_artists_all_albums_will_be_removed, getAlbumsListText(artist.albums)) as string
     }
     return artistRemoveConfirmText
   }

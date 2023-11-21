@@ -3,7 +3,7 @@ import { IAlbum, IAlbumPlain } from '../Interfaces'
 import { ItemGroup } from '../AlbumUtils'
 import { format } from 'date-fns'
 
-//const baseUrl = '/api/albums'
+//const baseUrl = 'http://ec2-13-53-170-200.eu-north-1.compute.amazonaws.com:5000'
 const baseUrl = 'http://localhost:8080'
 const basePath = 'albums'
 

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ITrack } from '../Interfaces'
 
-//const baseUrl = '/api/tracks'
+//const baseUrl = 'http://ec2-13-53-170-200.eu-north-1.compute.amazonaws.com:5000'
 const baseUrl = 'http://localhost:8080'
 const basePath = 'tracks'
 

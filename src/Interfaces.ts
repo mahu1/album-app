@@ -33,7 +33,7 @@ export interface IArtist {
 }
 
 export interface IGenre {
-  id: number
+  id?: number
   title: string
   albums?: Array<IAlbumPlain>
 }

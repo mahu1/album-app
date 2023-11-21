@@ -100,7 +100,7 @@ export const AlbumAdd = () => {
             </span>
             <div className="selectList">
               <Select className="selectListInput" options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={(value) => setSelectedGenres(value as Genre[])} isSearchable={true} isMulti />
-              <Link to={`/genres`}><img src="../icons8-view.png" className="staticIconSmall" alt={strings.view_genres} title={strings.view_genres}/><img src="../icons8-view.gif" className="activeIconSmall" alt={strings.view_genres} title={strings.view_genres}/></Link>
+              <Link to={`/genres`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_genres} title={strings.edit_genres}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_genres} title={strings.edit_genres}/></Link>
             </div>
           </form>
         </div>
