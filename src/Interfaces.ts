@@ -23,6 +23,7 @@ export interface ITrack {
   title: string
   seconds: number
   trackNumber: number
+  discNumber: number
   albumId: number
 }
 

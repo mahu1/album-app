@@ -6,13 +6,13 @@ import artistService from '../services/artist'
 import genreService from '../services/genre'
 import { useFeedbackContext } from '../FeedbackMessageContextProvider'
 import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
-import { getTracksFullLength, getTrackFullLength, getFullLengthSeconds, getMinutes, getSeconds } from '../AlbumUtils'
+import { getTracksFullLength, getTrackFullLength, getFullLengthSeconds, getMinutes, getSeconds, mapTracksToRecord, getDiscsLengths } from '../AlbumUtils'
 import { useNavigate, Link, useParams } from 'react-router-dom'
 import { strings } from '../Localization'
 import StyledRating from '@mui/material/Rating'
 import Select, { MultiValue } from "react-select"
 import { Genre } from '../AlbumUtils'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableFooter } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableFooter, Tooltip } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
 import { ConfirmDialog } from '../components/ConfirmDialog'
@@ -28,6 +28,7 @@ export const AlbumEdit= () => {
     const [artists, setArtists] = useState<IArtist[]>([])
     const [genres, setGenres] = useState<IGenre[]>([])
     const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
+    const [newTrackDiscNumber, setNewTrackDiscNumber] = useState(0)
     const [newTrackTitle, setNewTrackTitle] = useState('')
     const [newTrackLengthMinutes, setNewTrackLengthMinutes] = useState(0)
     const [newTrackLengthSeconds, setNewTrackLengthSeconds] = useState(0)
@@ -226,9 +227,11 @@ export const AlbumEdit= () => {
 
     const addTrack = async (e: React.FormEvent): Promise<void> => {
       e.preventDefault()
-      if (album?.id && album.tracks) {
+      const trackNumber = tracksMap[newTrackDiscNumber] === undefined ? 1 : tracksMap[newTrackDiscNumber].length + 1
+      if (album?.id) {
         const track: ITrack = {
-          trackNumber: Math.max(...album.tracks.map(t => t.trackNumber), 0) + 1,
+          discNumber: newTrackDiscNumber,
+          trackNumber: trackNumber,
           title: newTrackTitle,
           seconds: getFullLengthSeconds(newTrackLengthMinutes, newTrackLengthSeconds),
           albumId: album.id
@@ -262,20 +265,45 @@ export const AlbumEdit= () => {
     const moveTrackUp = async (e: React.FormEvent, track: ITrack): Promise<void> => {
       e.preventDefault()
       if (track.id) {
-        const changedTrack: {} = { trackNumber: track.trackNumber - 1 }
-        await trackService.patch(track.id, changedTrack)
-        setAlbum(await albumService.getById(+id))}
-        setFeedbackMessage({ text: strings.formatString(strings.track_number_edited, track.trackNumber, track.trackNumber - 1) as string, feedbackMessageType: FeedbackMessageType.Info })
+        const discNumberChange = track.trackNumber === 1
+        let trackNumber = track.trackNumber - 1
+        let discNumber = track.discNumber
+        if (discNumberChange) {
+          trackNumber = tracksMap[track.discNumber - 1].length
+          discNumber--
+        }
+        moveTrackUpdate(track, discNumber, trackNumber, discNumberChange)
+      }
     }
 
     const moveTrackDown = async (e: React.FormEvent, track: ITrack): Promise<void> => {
       e.preventDefault()
       if (track.id) {
-        const changedTrack: {} = { trackNumber: track.trackNumber + 1 }
-        await trackService.patch(track.id, changedTrack)
-        setAlbum(await albumService.getById(+id))}  
-        setFeedbackMessage({ text: strings.formatString(strings.track_number_edited, track.trackNumber, track.trackNumber + 1) as string, feedbackMessageType: FeedbackMessageType.Info })
+        const discNumberChange = tracksMap[track.discNumber].length === track.trackNumber ? true : false
+        let trackNumber = track.trackNumber + 1
+        let discNumber = track.discNumber
+        if (discNumberChange) {
+          trackNumber = 1
+          discNumber++
+        }
+        moveTrackUpdate(track, discNumber, trackNumber, discNumberChange)
+      }
     }
+
+    const moveTrackUpdate = async (track: ITrack, discNumber: number, trackNumber: number, discNumberChange: boolean): Promise<void> => {
+      if (track.id) {
+        const changedTrack: {} = { trackNumber: trackNumber, discNumber: discNumber } 
+        await trackService.patch(track.id, changedTrack)
+        setAlbum(await albumService.getById(+id))
+        let feebackText = strings.formatString(strings.track_number_edited, track.trackNumber, trackNumber)
+        if (discNumberChange) {
+          feebackText = strings.formatString(strings.track_disc_and_number_edited, track.discNumber, discNumber, track.trackNumber, trackNumber)
+        }
+        setFeedbackMessage({ text: feebackText as string, feedbackMessageType: FeedbackMessageType.Info })
+      }
+    }
+
+    const tracksMap = mapTracksToRecord(album?.tracks === undefined ? [] : album.tracks)
 
     return (
       <>
@@ -333,6 +361,7 @@ export const AlbumEdit= () => {
                     <Table sx={{ minWidth: 650, maxWidth: 850 }}>
                       <TableHead>
                         <TableRow>
+                          <TableCell>{strings.disc}</TableCell>
                           <TableCell>{strings.no}</TableCell>
                           <TableCell>{strings.title}</TableCell>
                           <TableCell>{strings.length}</TableCell>
@@ -342,17 +371,20 @@ export const AlbumEdit= () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((track) => (
-                        <TableRow key={track.id}>
-                          <TableCell>{track.trackNumber}</TableCell>
-                          <TableCell><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={track.title} onBlur={(e) => editTrackTitle(track, e.target.value)} /></TableCell>
-                          <TableCell style={{whiteSpace: 'nowrap'}}><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(track.seconds)} onBlur={(e) => editTrackLengthMinutes(track, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(track.seconds)} onBlur={(e) => editTrackLengthSeconds(track, e.target.valueAsNumber)} /></TableCell>
-                          {track.trackNumber !== 1 ? <TableCell><button onClick={(e) => moveTrackUp(e, track)}><img src="../icons8-up.png" alt={strings.move_up} title={strings.move_up} /></button></TableCell> : <TableCell />}
-                          {track.trackNumber !== album.tracks?.length ? <TableCell><button onClick={(e) => moveTrackDown(e, track)}><img src="../icons8-down.png" alt={strings.move_down} title={strings.move_down} /></button></TableCell> : <TableCell />}
-                          <TableCell><button onClick={(e) => removeTrackClick(e, track)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></TableCell>
-                        </TableRow>
-                        ))}
+                          {Object.keys(tracksMap).map(discNumber => (tracksMap[parseInt(discNumber)]
+                            .map((track, index) => (
+                              <TableRow key={track.id}>
+                                {index === 0 && (<TableCell rowSpan={tracksMap[parseInt(discNumber)].length}>{track.discNumber}</TableCell>)}
+                                <TableCell>{track.trackNumber}</TableCell>
+                                <TableCell><input required type="text" placeholder={strings.track_title} name="trackTitle" defaultValue={track.title} onBlur={(e) => editTrackTitle(track, e.target.value)} /></TableCell>
+                                <TableCell style={{whiteSpace: 'nowrap'}}><input required type="number" placeholder={strings.mm} min="0" max="99" name="trackLengthMinutes" defaultValue={getMinutes(track.seconds)} onBlur={(e) => editTrackLengthMinutes(track, e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="trackLengthSeconds" defaultValue={getSeconds(track.seconds)} onBlur={(e) => editTrackLengthSeconds(track, e.target.valueAsNumber)} /></TableCell>
+                                {track.discNumber !== 1 || track.trackNumber !== 1 ? <TableCell><button onClick={(e) => moveTrackUp(e, track)}><img src="../icons8-up.png" alt={strings.move_up} title={strings.move_up} /></button></TableCell> : <TableCell />}
+                                {Object.values(tracksMap).flat().slice(-1)[0].id !== track.id ? <TableCell><button onClick={(e) => moveTrackDown(e, track)}><img src="../icons8-down.png" alt={strings.move_down} title={strings.move_down} /></button></TableCell> : <TableCell />}
+                                <TableCell><button onClick={(e) => removeTrackClick(e, track)}><img src="../icons8-delete.png" alt={strings.remove_track} title={strings.remove_track} /></button></TableCell>
+                              </TableRow>
+                          ))))}
                         <TableRow>
+                          <TableCell><input required type="number" placeholder={strings.track_title} min="1" name="newTrackDiscNumber" defaultValue={Object.keys(tracksMap).length === 0 ? 1 : Object.keys(tracksMap).length} onChange={(e) => setNewTrackDiscNumber(e.target.valueAsNumber)} /></TableCell>
                           <TableCell />
                           <TableCell><input required type="text" placeholder={strings.track_title} name="newTrackTitle" value={newTrackTitle} onChange={(e) => setNewTrackTitle(e.target.value)} /></TableCell>
                           <TableCell><input required type="number" placeholder={strings.mm} min="0" max="99" name="newTrackLengthMinutes" value={newTrackLengthMinutes} onChange={(e) => setNewTrackLengthMinutes(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} />:<input required type="number" placeholder={strings.ss} min="0" max="59" name="newTrackLengthSeconds" value={newTrackLengthSeconds} onChange={(e) => setNewTrackLengthSeconds(isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber)} /></TableCell>
@@ -365,7 +397,8 @@ export const AlbumEdit= () => {
                         <TableRow>
                           <TableCell />
                           <TableCell />
-                          <TableCell>{getTracksFullLength(album.tracks)}</TableCell>
+                          <TableCell />
+                          <TableCell><Tooltip title={getDiscsLengths(tracksMap)}><Link to={''}>{getTracksFullLength(album.tracks)}</Link></Tooltip></TableCell>
                           <TableCell />
                           <TableCell />
                           <TableCell />

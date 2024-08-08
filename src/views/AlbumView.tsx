@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import albumService from '../services/album'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { getTracksFullLength, getTrackFullLength } from '../AlbumUtils'
+import { getTracksFullLength, getTrackFullLength, mapTracksToRecord, getDiscsLengths } from '../AlbumUtils'
 import { strings } from '../Localization'
 import StyledRating from '@mui/material/Rating'
 import { format } from 'date-fns'
@@ -13,7 +13,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import { TableFooter } from '@mui/material'
+import { TableFooter, Tooltip } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
 
@@ -37,6 +37,8 @@ export const AlbumView = () => {
     }
     return strings.unrated
   }
+
+  const tracksMap = mapTracksToRecord(album?.tracks === undefined ? [] : album.tracks)
 
 
   return (
@@ -63,25 +65,29 @@ export const AlbumView = () => {
                 <Table sx={{ minWidth: 650, maxWidth: 850 }} aria-label="simple table">
                   <TableHead>
                     <TableRow>
+                      {Object.keys(tracksMap).length > 1 && (<TableCell>{strings.disc}</TableCell>)}
                       <TableCell>{strings.no}</TableCell>
                       <TableCell>{strings.title}</TableCell>
                       <TableCell>{strings.length}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {album.tracks?.sort((a, b) => a.trackNumber > b.trackNumber ? 1 : -1).map((track) => (
-                      <TableRow key={track.id}>
-                        <TableCell>{track.trackNumber}</TableCell>
-                        <TableCell>{track.title}</TableCell>
-                        <TableCell>{getTrackFullLength(track.seconds)}</TableCell>
-                      </TableRow>
-                    ))}
+                    {Object.keys(tracksMap).map(discNumber => (tracksMap[parseInt(discNumber)]
+                      .map((track, index) => (
+                        <TableRow key={track.id}>
+                          {Object.keys(tracksMap).length > 1 && index === 0 && (<TableCell rowSpan={tracksMap[parseInt(discNumber)].length}>{track.discNumber}</TableCell>)}
+                          <TableCell>{track.trackNumber}</TableCell>
+                          <TableCell>{track.title}</TableCell>
+                          <TableCell>{getTrackFullLength(track.seconds)}</TableCell>
+                        </TableRow>
+                    ))))}
                   </TableBody>
                   <TableFooter>
                     <TableRow>
+                      {Object.keys(tracksMap).length > 1 && (<TableCell></TableCell>)}
                       <TableCell />
                       <TableCell />
-                      <TableCell>{getTracksFullLength(album.tracks)}</TableCell>
+                      <TableCell><Tooltip title={getDiscsLengths(tracksMap)}><Link to={''}>{getTracksFullLength(album.tracks)}</Link></Tooltip></TableCell>
                     </TableRow>
                   </TableFooter>
                 </Table>
