@@ -119,7 +119,7 @@ export const Genres = () => {
                 </TableRow>
                 ))}
               <TableRow>
-                <TableCell><input required type="text" placeholder={strings.artist_title} name="newGenreTitle" value={newGenreTitle} onChange={(e) => setNewGenreTitle(e.target.value)} /></TableCell>
+                <TableCell><input required type="text" placeholder={strings.genre_title} name="newGenreTitle" value={newGenreTitle} onChange={(e) => setNewGenreTitle(e.target.value)} /></TableCell>
                 <TableCell />
                 <TableCell><button type="submit"><img src="../icons8-plus.png" alt={strings.add_genre} title={strings.add_genre} /></button></TableCell>
               </TableRow>
