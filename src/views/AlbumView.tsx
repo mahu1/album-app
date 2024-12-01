@@ -54,7 +54,7 @@ export const AlbumView = () => {
             <AlbumTitlePaper elevation={1}>
               <div className="strongText">{album.artist.title} - {album.title}</div>
               <div>{format(new Date(album.releaseDate), 'dd-MM-yyyy')}</div>
-              <div>{album.genres !== undefined ? album.genres.map((g) => g.title).sort().join(', ') : ''}</div>
+              <div style={{ width: '500px' }}>{album.genres !== undefined ? album.genres.map((g) => g.title).sort().join(', ') : ''}</div>
             </AlbumTitlePaper>
             <div className="albumImgAndRating">
               <img className="albumImg" src={album.cover} alt={album.title} title={album.artist.title + " - " + album.title} />

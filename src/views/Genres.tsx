@@ -87,7 +87,7 @@ export const Genres = () => {
     <div>
       <br/>
       <br/>
-      <div className="artistsInformation">
+      <div className="genresInformation">
         <form onSubmit={(e) => addArtist(e)}>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650, maxWidth: 850 }}>

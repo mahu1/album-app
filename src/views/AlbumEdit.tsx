@@ -138,7 +138,7 @@ export const AlbumEdit= () => {
         const editedAlbum = { ...album, cover: cover }
         await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
-        setFeedbackMessage( { text: strings.formatString(strings.cover_edited, album.cover.split('/').pop() as string, cover.split('/').pop() as string), feedbackMessageType: FeedbackMessageType.Info} )
+        setFeedbackMessage( { text: strings.formatString(strings.cover_edited, album.cover!.split('/').pop() as string, cover.split('/').pop() as string), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 

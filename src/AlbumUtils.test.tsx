@@ -1,4 +1,4 @@
-import { getTracksFullLength } from './AlbumUtils';
+import { getTracksFullLength } from './AlbumUtils'
 import { ITrack } from './Interfaces'
 
 describe('calculateTotalLengthOfTracks', () => {

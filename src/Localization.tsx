@@ -31,6 +31,8 @@ export let strings = new LocalizedStrings({
     album_removed:"Album removed: {0} - {1}",
     album_added:"Album added: {0} - {1}",
     album_already_found:"Album already found: {0} - {1}",
+    album_found_from_spotify:"Album found from Spotify: {0} - {1}",
+    album_not_found_from_spotify:"Album not found from Spotify: {0} - {1}",
     page_not_found:"Page not found", 
     albums:"Albums",
     artist_title:"Artist title",

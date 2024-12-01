@@ -40,7 +40,7 @@
   height: 500px;
 }
 
-.albumInformation, .tracksInformation, .artistsInformation {
+.albumInformation, .tracksInformation, .artistsInformation, genresInformation {
   padding-left: 20px;
   float: left;
 }
@@ -216,7 +216,7 @@ a:link, a:visited, a:hover, a:active {
 .selectList {
   padding-top: 5px;
   padding-bottom: 5px;
-  width: 350px;
+  width: 550px;
   line-height: 10px;
   display: flex;
 }

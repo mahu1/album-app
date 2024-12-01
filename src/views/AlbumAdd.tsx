@@ -1,41 +1,32 @@
-import { IAlbum, IArtist, IGenre } from '../Interfaces'
+import { IAlbum, IArtist } from '../Interfaces'
 import { useState, useEffect } from 'react'
+import spotifyService from '../services/spotify'
 import albumService from '../services/album'
 import artistService from '../services/artist'
-import genreService from '../services/genre'
 import { useFeedbackContext } from '../FeedbackMessageContextProvider'
 import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
-import Select from "react-select"
-import { Genre } from '../AlbumUtils'
 import { useNavigate, Link } from 'react-router-dom'
+import { Autocomplete, TextField } from '@mui/material'
+import parse from 'autosuggest-highlight/parse'
+import match from 'autosuggest-highlight/match'
 
 export const AlbumAdd = () => {
     const { setFeedbackMessage } = useFeedbackContext()
     const navigate = useNavigate()
+    const [albumTitleSuggestions, setAlbumTitleSuggestions] = useState<string[]>([])
     const [artists, setArtists] = useState<IArtist[]>([])
-    const [genres, setGenres] = useState<IGenre[]>([])
-    const [selectedGenres, setSelectedGenres] = useState<Genre[]>([])
     const [artist, setArtist] = useState('')
     const [title, setTitle] = useState('')
-    const [releaseDate, setReleaseDate] = useState('')
-    const [cover, setCover] = useState('')
     const [albumId, setAlbumId] = useState(0)
+    const [spotifyAlbum, setSpotifyAlbum] = useState<IAlbum>()
 
     useEffect(() => {
       artistService.getAll().then(data => {
         setArtists(data)
       })
-      genreService.getAll().then(data => {
-        setGenres(data)
-      })
     }, [albumId])
-    
-    const allGenresList: Genre[] = genres.map((genre) => ({
-      value: genre,
-      label: genre.title
-    }))
-
+  
     const addAlbum = async (e: React.FormEvent): Promise<void> => {
       e.preventDefault()
 
@@ -43,27 +34,24 @@ export const AlbumAdd = () => {
         title: artist 
       }
 
-      const album: IAlbum = {
+      let album: IAlbum = {
         artist: artistObject,
         title: title,
-        releaseDate: releaseDate,
-        cover: cover,
-        genres: selectedGenres.map(genre => genre.value)
+        releaseDate: '',
+        cover: '',
       }
 
       try {
-        const data = await albumService.create(album)
-        if (data.id) {
-          navigate('/albumEdit/' + data.id)
-          setAlbumId(data.id)
-          setFeedbackMessage( {text: strings.formatString(strings.album_added, album.artist.title, data.title), feedbackMessageType: FeedbackMessageType.Info} )
-
-          setArtist('')
-          setTitle('')
-          setReleaseDate('')
-          setCover('')
-          setSelectedGenres([])
+        if (spotifyAlbum) {
+          album = spotifyAlbum
         }
+        album = await albumService.create(album)
+        setAlbumId(album.id!)
+        navigate('/albumEdit/' + album.id)
+        setFeedbackMessage( {text: strings.formatString(strings.album_added, album.artist.title, album.title), feedbackMessageType: FeedbackMessageType.Info} )
+
+        setArtist('')
+        setTitle('')
       } catch(error) {
         if (error instanceof Error && error.message === 'Request failed with status code 302') {
           setFeedbackMessage( {text: strings.formatString(strings.album_already_found, album.artist.title, title), feedbackMessageType: FeedbackMessageType.Error} )
@@ -71,6 +59,44 @@ export const AlbumAdd = () => {
       }
     }
 
+    const changeArtist = async (artist: string): Promise<void> => {
+      setArtist(artist)
+
+      const spotifyAlbums = await spotifyService.getAlbumsByArtistName(artist)
+      if (spotifyAlbums) {
+        setAlbumTitleSuggestions(spotifyAlbums.map((sa) => sa.title))
+      }
+      findAlbumFromSpotify(artist, title)
+    }
+
+    const changeTitle = async (value: string): Promise<void> => {
+      setTitle(value)
+      findAlbumFromSpotify(artist, value)
+    }
+
+    const findAlbumFromSpotify = async (artist: string, title: string): Promise<void> => {
+      if (artist && title) {
+        const spotifyAlbum = await spotifyService.getAlbum(artist, title)
+        if (spotifyAlbum) {
+          setSpotifyAlbum(spotifyAlbum)
+          setFeedbackMessage( {text: strings.formatString(strings.album_found_from_spotify, artist, title), feedbackMessageType: FeedbackMessageType.Info} )
+        } else {
+          setSpotifyAlbum(undefined)
+          setFeedbackMessage( {text: strings.formatString(strings.album_not_found_from_spotify, artist, title), feedbackMessageType: FeedbackMessageType.Info} )
+        }
+      }
+    }
+
+    const getSuggestions = (): Suggestion[] => {
+      return albumTitleSuggestions.map((ats) => ({
+        label: ats
+      }))
+    }
+  
+    type Suggestion = {
+      label: string
+    }
+  
     return (
       <div>
         <br/>
@@ -78,30 +104,46 @@ export const AlbumAdd = () => {
         <div className="albumInformation">
           <form onSubmit={addAlbum}>
             <span className="marginRight">
-              <select required value={artist} onChange={(e) => setArtist(e.target.value)}>
+              <select required value={artist} onChange={(e) => changeArtist(e.target.value)}>
                 <option key="0" value="">{strings.select_artist}</option>
                 {artists.map((artist) => (
                   <option key={artist.title} value={artist.title}>{artist.title}</option>
                 ))}
               </select>
-            <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
+              <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
             </span>
-            <span className="marginRight">
-              <input required type="text" placeholder={strings.album_title} value={title} name="title" onChange={(e) => setTitle(e.target.value)} />
-            </span>
-            <span className="marginRight">
-              <input required type="date" placeholder={strings.release_date} value={releaseDate} name="releaseDate" onChange={(e) => setReleaseDate(e.target.value)} />
-            </span>
-            <span className="marginRight">
-              <input required type="url" placeholder={strings.cover} value={cover} name="cover" onChange={(e) => setCover(e.target.value)} />
-            </span>
+            <Autocomplete
+              sx={{ width: 500 }}
+              freeSolo={true}
+              options={getSuggestions()}
+              onInputChange={(event, newValue) => changeTitle(newValue)}
+              renderInput={(params) => (
+                <TextField {...params} size="small" label={strings.album} variant="outlined" value={title} />
+              )}
+              renderOption={(props, option, { inputValue }) => {
+                const matches = match(option.label, inputValue, { insideWords: true });
+                const parts = parse(option.label, matches);
+                return (
+                  <li {...props}>
+                    <div>
+                        {parts.map((part, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            fontWeight: part.highlight ? 700 : 400,
+                          }}
+                        >
+                          {part.text}
+                        </span>
+                      ))}
+                    </div>
+                  </li>
+                )
+              }}
+            />
             <span className="marginRight">
               <button type="submit"><img src="../icons8-plus.png" alt={strings.add_album} title={strings.add_album} /></button>
             </span>
-            <div className="selectList">
-              <Select className="selectListInput" options={allGenresList} placeholder={strings.genres} value={selectedGenres} onChange={(value) => setSelectedGenres(value as Genre[])} isSearchable={true} isMulti />
-              <Link to={`/genres`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_genres} title={strings.edit_genres}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_genres} title={strings.edit_genres}/></Link>
-            </div>
           </form>
         </div>
       </div>

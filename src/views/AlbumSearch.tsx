@@ -113,8 +113,8 @@ export const AlbumSearch = () => {
                 <TextField {...params} size="small" label={strings.search} variant="outlined" value={searchWord} />
               )}
               renderOption={(props, option, { inputValue }) => {
-                const matches = match(option.label, inputValue, { insideWords: true });
-                const parts = parse(option.label, matches);
+                const matches = match(option.label, inputValue, { insideWords: true })
+                const parts = parse(option.label, matches)
                 return (
                   <li {...props}>
                     <div>
