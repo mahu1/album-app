@@ -1,9 +1,11 @@
+import { RoleGroup } from "./AlbumUtils"
+
 export interface IAlbum {
   id?: number
   title: string
   artist: IArtist
-  cover: string
-  releaseDate: string
+  cover?: string
+  releaseDate?: string
   rating?: number
   tracks?: Array<ITrack>
   genres?: Array<IGenre>

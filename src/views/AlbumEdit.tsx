@@ -124,7 +124,7 @@ export const AlbumEdit= () => {
         const editedAlbum = { ...album, releaseDate: releaseDate }
         await albumService.put(album.id, editedAlbum)
         setAlbum(await albumService.getById(album.id))
-        setFeedbackMessage( {text: strings.formatString(strings.release_date_edited, album.releaseDate, releaseDate), feedbackMessageType: FeedbackMessageType.Info} )
+        setFeedbackMessage( {text: strings.formatString(strings.release_date_edited, album.releaseDate ? album.releaseDate : '', releaseDate), feedbackMessageType: FeedbackMessageType.Info} )
       }
     }
 

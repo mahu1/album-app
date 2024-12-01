@@ -37,8 +37,6 @@ export const AlbumAdd = () => {
       let album: IAlbum = {
         artist: artistObject,
         title: title,
-        releaseDate: '',
-        cover: '',
       }
 
       try {

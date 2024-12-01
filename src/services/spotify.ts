@@ -91,7 +91,7 @@ const searchArtist = async (artistName: string, token: string) => {
       }
     }
   
-    allAlbums.sort((a, b) => new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime())
+    allAlbums.filter(a => a.releaseDate !== undefined).sort((a, b) => new Date(a.releaseDate!).getTime() - new Date(b.releaseDate!).getTime())
     return allAlbums
   }
   
