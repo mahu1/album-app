@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { IAlbum, IArtist, IGenre } from '../Interfaces'
+//import lyricsService from '../services/lyrics'
 
 const getSpotifyToken = async (): Promise<string | null> => {
   const clientId: string = '899530afd3fc40d38b9d6cb9710e7be6'
@@ -43,58 +44,129 @@ const searchArtist = async (artistName: string, token: string) => {
     } 
   }
   
-  const getArtistAlbums = async (artistId: string, token: string): Promise<IAlbum[] | null> => {
+
+  const getArtistAlbums = async (artistId: string, token: string): Promise<IAlbum[]> => {
     const url = `https://api.spotify.com/v1/artists/${artistId}/albums`
     const headers = {
       'Authorization': `Bearer ${token}`,
     }
   
-    const limit = 50
+    const limit = 50  // Max limit per request
     let offset = 0
     let allAlbums: IAlbum[] = []
     let fetching = true
+    const albumTitles = new Set<string>()
   
     while (fetching) {
       try {
         const response = await axios.get(url, {
           headers,
-          params: { limit, offset, include_groups: 'album' },
+          params: { limit, offset, include_groups: 'album,single,compilation' },
         })
   
         const albums = response.data.items
-        for (const album of albums) {
-          const artistObject: IArtist = {
-            title: album.artists[0].name
-          }
-
-          const genresObject: IGenre[] = [{
-            title: album.genres
-          }]
-
-          const albumObject: IAlbum = {
-            artist: artistObject,
-            title: album.name,
-            releaseDate: parseAlbumReleaseDate(album.release_date),
-            cover: album.images[0].url,
-            genres: genresObject,
-          }
-          allAlbums.push(albumObject)
-        }
-
-        offset += limit
+        console.log(`Fetched ${albums.length} albums from offset ${offset}`)
   
+        for (const album of albums) {
+          // Ensure unique albums by title
+          if (!albumTitles.has(album.name)) {
+            albumTitles.add(album.name)
+  
+            const artistObject: IArtist = {
+              title: album.artists[0].name
+            }
+  
+            // Safeguard: Ensure album.genres is defined and is an array
+            const genresObject: IGenre[] = [{
+              title: album.genres && Array.isArray(album.genres) ? album.genres.join(", ") : "Unknown"
+            }]
+  
+            const albumObject: IAlbum = {
+              artist: artistObject,
+              title: album.name,
+              releaseDate: parseAlbumReleaseDate(album.release_date),
+              cover: album.images[0]?.url,  // Safe access in case the images array is empty
+              genres: genresObject,
+            }
+            allAlbums.push(albumObject)
+          }
+        }
+  
+        // If fewer albums are returned than the limit, it means we've fetched all available albums
         if (albums.length < limit) {
           fetching = false
+        } else {
+          offset += limit  // Move the offset forward to fetch the next batch
         }
       } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+          console.error('Error fetching albums from Spotify:', error.response?.data)
+          console.error('Error status:', error.response?.status)
+        } else {
+          console.error('Error message:', error.message)
+        }
         fetching = false
       }
     }
   
-    allAlbums.filter(a => a.releaseDate !== undefined).sort((a, b) => new Date(a.releaseDate!).getTime() - new Date(b.releaseDate!).getTime())
-    return allAlbums
+    // Sort the albums by release date before returning
+    return allAlbums.sort((a, b) => new Date(a.releaseDate!).getTime() - new Date(b.releaseDate!).getTime())
   }
+      
   
+  const searchArtists = async (artistName: string, token: string): Promise<IArtist[]> => {
+    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist`;
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+    };
+  
+    const limit = 50; // Limit number of results per page
+    const maxPages = 5; // Maximum number of pages to fetch in parallel
+    const allArtists: IArtist[] = [];
+  
+    // Generate the requests for parallel fetching
+    const requests: Promise<AxiosResponse>[] = [];
+    for (let offset = 0; offset < maxPages * limit; offset += limit) {
+      requests.push(
+        axios.get(url, {
+          headers,
+          params: { limit, offset },
+        })
+      );
+    }
+  
+    try {
+      // Make all requests in parallel
+      const responses = await Promise.all(requests);
+  
+      const uniqueArtistTitles = new Set<string>(); // Track unique artist names
+  
+      // Process all responses
+      responses.forEach((response) => {
+        const artists = response.data.artists.items;
+  
+        // Filter and process artist data
+        artists.forEach((artist: any) => {
+          // Case-insensitive check for artistName match
+          if (artist.name.toLowerCase().includes(artistName.toLowerCase())) {
+            // Ensure the artist name is unique
+            if (!uniqueArtistTitles.has(artist.name)) {
+              uniqueArtistTitles.add(artist.name); // Add artist's name to Set
+              const artistObject: IArtist = {
+                title: artist.name,
+              };
+              allArtists.push(artistObject); // Add the artist to the result list
+            }
+          }
+        });
+      });
+    } catch (error: any) {
+      console.error('Error fetching artists:', error.message || error);
+    }
+  
+    console.log('All Artists:', allArtists);
+    return allArtists;
+  }
   
   
   const getAlbumsByArtistName = async (artistName: string) => { 
@@ -110,6 +182,17 @@ const searchArtist = async (artistName: string, token: string) => {
     const albums = await getArtistAlbums(artistId, token)
     return albums
   }
+
+  const getArtistByArtistName = async (artistName: string) => { 
+    const token = await getSpotifyToken()
+    if (!token) {
+      console.error('Failed to get access token')
+      return
+    } 
+    const artists = await searchArtists(artistName, token)
+    return artists
+  }
+
 
 
   const getAlbum = async (artistQuery: string, albumQuery: string): Promise<IAlbum | null> => {
@@ -177,7 +260,7 @@ const searchArtist = async (artistName: string, token: string) => {
           title: genre,
         }))
       } else if (artistDetails.genres && artistDetails.genres.length > 0) {
-        genresObject= artistDetails.genres.map((genre: string) => ({
+        genresObject = artistDetails.genres.map((genre: string) => ({
           title: genre,
         }))
       }
@@ -188,13 +271,21 @@ const searchArtist = async (artistName: string, token: string) => {
         releaseDate: parseAlbumReleaseDate(albumDetails.release_date),
         cover: albumDetails.images[0].url,
         genres: genresObject,
-        tracks: albumDetails.tracks.items.map((track: any, index: number) => ({
-          trackNumber: index + 1,
-          title: track.name,
-          seconds: track.duration_ms / 1000,
-          discNumber: track.disc_number,
-        })),
+        tracks: await Promise.all(
+          albumDetails.tracks.items.map(async (track: any, index: number) => ({
+            trackNumber: index + 1,
+            title: track.name,
+            seconds: track.duration_ms / 1000,
+            discNumber: track.disc_number,
+            //lyrics: await lyricsService.fetchLyrics(artistObject.title, track.name) || '',  // Return empty string if no lyrics
+          }))
+        )
       }
+
+      //lyricsService.fetchLyrics('Aerosmith12', 'Angel12')
+      //.then(lyrics => console.log('Lyrics:', lyrics))
+      //.catch(error => console.log('Error:', 'error'));
+
       return albumObject
   
     } catch (error: any) {
@@ -202,6 +293,7 @@ const searchArtist = async (artistName: string, token: string) => {
     }
   }
 
+  
   const parseAlbumReleaseDate = (date: string): string => {
     if (date.length === 4) {
       return `${date}-01-01`
@@ -214,7 +306,8 @@ const searchArtist = async (artistName: string, token: string) => {
 
 const exportedObject = {
   getAlbum,
-  getAlbumsByArtistName
+  getAlbumsByArtistName,
+  getArtistByArtistName
 }
 
 export default exportedObject

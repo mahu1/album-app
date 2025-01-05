@@ -1,8 +1,7 @@
 import { IAlbum, IArtist } from '../Interfaces'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import spotifyService from '../services/spotify'
 import albumService from '../services/album'
-import artistService from '../services/artist'
 import { useFeedbackContext } from '../FeedbackMessageContextProvider'
 import { FeedbackMessageType } from '../FeedbackMessageContextProvider'
 import { strings } from '../Localization'
@@ -14,18 +13,11 @@ import match from 'autosuggest-highlight/match'
 export const AlbumAdd = () => {
     const { setFeedbackMessage } = useFeedbackContext()
     const navigate = useNavigate()
+    const [artistTitleSuggestions, setArtistTitleSuggestions] = useState<string[]>([])
     const [albumTitleSuggestions, setAlbumTitleSuggestions] = useState<string[]>([])
-    const [artists, setArtists] = useState<IArtist[]>([])
     const [artist, setArtist] = useState('')
     const [title, setTitle] = useState('')
-    const [albumId, setAlbumId] = useState(0)
     const [spotifyAlbum, setSpotifyAlbum] = useState<IAlbum>()
-
-    useEffect(() => {
-      artistService.getAll().then(data => {
-        setArtists(data)
-      })
-    }, [albumId])
   
     const addAlbum = async (e: React.FormEvent): Promise<void> => {
       e.preventDefault()
@@ -44,7 +36,6 @@ export const AlbumAdd = () => {
           album = spotifyAlbum
         }
         album = await albumService.create(album)
-        setAlbumId(album.id!)
         navigate('/albumEdit/' + album.id)
         setFeedbackMessage( {text: strings.formatString(strings.album_added, album.artist.title, album.title), feedbackMessageType: FeedbackMessageType.Info} )
 
@@ -60,16 +51,17 @@ export const AlbumAdd = () => {
     const changeArtist = async (artist: string): Promise<void> => {
       setArtist(artist)
 
-      const spotifyAlbums = await spotifyService.getAlbumsByArtistName(artist)
-      if (spotifyAlbums) {
-        setAlbumTitleSuggestions(spotifyAlbums.map((sa) => sa.title))
+      if (artist.length > 1) {
+        const spotifyArtists = await spotifyService.getArtistByArtistName(artist)
+        if (spotifyArtists) {
+          setArtistTitleSuggestions(spotifyArtists.map((sa) => sa.title))
+          const spotifyAlbums = await spotifyService.getAlbumsByArtistName(artist)
+          if (spotifyAlbums) {
+            setAlbumTitleSuggestions(spotifyAlbums.map((sa) => sa.title))
+          }
+        }
+        findAlbumFromSpotify(artist, title)
       }
-      findAlbumFromSpotify(artist, title)
-    }
-
-    const changeTitle = async (value: string): Promise<void> => {
-      setTitle(value)
-      findAlbumFromSpotify(artist, value)
     }
 
     const findAlbumFromSpotify = async (artist: string, title: string): Promise<void> => {
@@ -85,7 +77,13 @@ export const AlbumAdd = () => {
       }
     }
 
-    const getSuggestions = (): Suggestion[] => {
+    const getArtistTitleSuggestions = (): Suggestion[] => {
+      return artistTitleSuggestions.map((ats) => ({
+        label: ats
+      }))
+    }
+
+    const getAlbumTitleSuggestions = (): Suggestion[] => {
       return albumTitleSuggestions.map((ats) => ({
         label: ats
       }))
@@ -95,32 +93,60 @@ export const AlbumAdd = () => {
       label: string
     }
   
+  function changeAlbumTitle(title: string): void {
+    setTitle(title)
+    findAlbumFromSpotify(artist, title)
+  }
+
     return (
       <div>
         <br/>
         <br/>
         <div className="albumInformation">
           <form onSubmit={addAlbum}>
-            <span className="marginRight">
-              <select required value={artist} onChange={(e) => changeArtist(e.target.value)}>
-                <option key="0" value="">{strings.select_artist}</option>
-                {artists.map((artist) => (
-                  <option key={artist.title} value={artist.title}>{artist.title}</option>
-                ))}
-              </select>
+            <div style={{ display: 'flex', alignItems: 'center', width: 'fit-content' }}>
+              <Autocomplete
+                sx={{ width: 500 }}
+                freeSolo={true}
+                options={getArtistTitleSuggestions()}
+                onInputChange={(event, newValue) => changeArtist(newValue)}
+                renderInput={(params) => (
+                  <TextField {...params} size="small" label={strings.artist} variant="outlined" value={title} required />
+                )}
+                renderOption={(props, option, { inputValue }) => {
+                  const matches = match(option.label, inputValue, { insideWords: true })
+                  const parts = parse(option.label, matches)
+                  return (
+                    <li {...props}>
+                      <div>
+                          {parts.map((part, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              fontWeight: part.highlight ? 700 : 400,
+                            }}
+                          >
+                            {part.text}
+                          </span>
+                        ))}
+                      </div>
+                    </li>
+                  )
+                }}
+              />
               <Link to={`/artists`}><img src="../icons8-edit.png" className="staticIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/><img src="../icons8-edit.gif" className="activeIconSmall" alt={strings.edit_artists} title={strings.edit_artists}/></Link>
-            </span>
+            </div>
             <Autocomplete
               sx={{ width: 500 }}
               freeSolo={true}
-              options={getSuggestions()}
-              onInputChange={(event, newValue) => changeTitle(newValue)}
+              options={getAlbumTitleSuggestions()}
+              onInputChange={(event, newValue) => changeAlbumTitle(newValue)}
               renderInput={(params) => (
-                <TextField {...params} size="small" label={strings.album} variant="outlined" value={title} />
+                <TextField {...params} size="small" label={strings.album} variant="outlined" value={title} required/>
               )}
               renderOption={(props, option, { inputValue }) => {
-                const matches = match(option.label, inputValue, { insideWords: true });
-                const parts = parse(option.label, matches);
+                const matches = match(option.label, inputValue, { insideWords: true })
+                const parts = parse(option.label, matches)
                 return (
                   <li {...props}>
                     <div>
@@ -139,6 +165,7 @@ export const AlbumAdd = () => {
                 )
               }}
             />
+            
             <span className="marginRight">
               <button type="submit"><img src="../icons8-plus.png" alt={strings.add_album} title={strings.add_album} /></button>
             </span>
