@@ -16,6 +16,7 @@ import TableRow from '@mui/material/TableRow'
 import { TableFooter, Tooltip } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
+import { YouTube } from '@mui/icons-material'
 
 const AlbumTitlePaper = styled(Paper)(() => ({
   background: '#fafafa'
@@ -36,6 +37,15 @@ export const AlbumView = () => {
       return strings.formatString(strings.rating, album.rating) as string
     }
     return strings.unrated
+  }
+
+  const getYoutubeLink = (artist: string, album: string, track: string): string => {
+    console.log('https://www.youtube.com/results?search_query=' + parseText(artist, '+') + '+' + parseText(album, '+') + '+' + parseText(track, '+'))
+    return 'https://www.youtube.com/results?search_query=' + parseText(artist, '+') + '+' + parseText(album, '+') + '+' + parseText(track, '+')
+  }
+
+  const parseText = (text: string, joinText: string): string => {
+    return text.replace(/&/g, '').replace(/\s{2,}/g, ' ').trim().split(' ').join(joinText)
   }
 
   const tracksMap = mapTracksToRecord(album?.tracks === undefined ? [] : album.tracks)
@@ -69,6 +79,7 @@ export const AlbumView = () => {
                       <TableCell>{strings.no}</TableCell>
                       <TableCell>{strings.title}</TableCell>
                       <TableCell>{strings.length}</TableCell>
+                      <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -79,6 +90,7 @@ export const AlbumView = () => {
                           <TableCell>{track.trackNumber}</TableCell>
                           <TableCell>{track.title}</TableCell>
                           <TableCell>{getTrackFullLength(track.seconds)}</TableCell>
+                          <TableCell><Link title={getYoutubeLink(album.artist.title, album.title, track.title)} to={getYoutubeLink(album.artist.title, album.title, track.title)} target='_blank'><YouTube/></Link></TableCell>
                         </TableRow>
                     ))))}
                   </TableBody>
@@ -88,6 +100,7 @@ export const AlbumView = () => {
                       <TableCell />
                       <TableCell />
                       <TableCell><Tooltip title={getDiscsLengths(tracksMap)}><Link to={''}>{getTracksFullLength(album.tracks)}</Link></Tooltip></TableCell>
+                      <TableCell />
                     </TableRow>
                   </TableFooter>
                 </Table>
